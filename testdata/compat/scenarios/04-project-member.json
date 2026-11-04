@@ -1,0 +1,97 @@
+{
+  "description": "M2-2：项目成员的添加、角色、邮件通知、删除，以及开发者、组长在成员管理上的权限。依赖场景 03 注册的 dev2",
+  "steps": [
+    {
+      "name": "管理员登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" },
+      "capture": { "admin_uid": "data.uid" }
+    },
+    {
+      "name": "找到 dev2", "method": "GET", "path": "/api/user/search", "query": { "q": "dev2" },
+      "capture": { "dev2_uid": "data.0.uid" }
+    },
+    {
+      "name": "注册 dev3", "method": "POST", "path": "/api/user/reg",
+      "body": { "email": "dev3@apiyard.test", "password": "dev3-pass", "username": "dev3" },
+      "capture": { "dev3_uid": "data.uid" }
+    },
+    {
+      "name": "管理员重新登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    {
+      "name": "新建分组", "method": "POST", "path": "/api/group/add",
+      "body": { "group_name": "成员组", "owner_uids": [] },
+      "capture": { "gid": "data._id" }
+    },
+    {
+      "name": "新建项目", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "成员项目", "group_id": "{{gid}}" },
+      "capture": { "pid": "data._id" }
+    },
+    { "name": "初始成员列表", "method": "GET", "path": "/api/project/get_member_list", "query": { "id": "{{pid}}" } },
+    {
+      "name": "添加成员（含不存在的用户）", "method": "POST", "path": "/api/project/add_member",
+      "body": { "id": "{{pid}}", "member_uids": ["{{dev2_uid}}", 99999], "role": "dev" }
+    },
+    {
+      "name": "再次添加（含已是成员的用户）", "method": "POST", "path": "/api/project/add_member",
+      "body": { "id": "{{pid}}", "member_uids": ["{{dev2_uid}}", "{{dev3_uid}}"], "role": "guest" }
+    },
+    { "name": "添加后的成员列表", "method": "GET", "path": "/api/project/get_member_list", "query": { "id": "{{pid}}" } },
+    {
+      "name": "把 dev3 设为组长", "method": "POST", "path": "/api/project/change_member_role",
+      "body": { "id": "{{pid}}", "member_uid": "{{dev3_uid}}", "role": "owner" }
+    },
+    {
+      "name": "修改不存在的成员", "method": "POST", "path": "/api/project/change_member_role",
+      "body": { "id": "{{pid}}", "member_uid": 99999, "role": "dev" }, "errcode": 400
+    },
+    {
+      "name": "关闭 dev2 的邮件通知", "method": "POST", "path": "/api/project/change_member_email_notice",
+      "body": { "id": "{{pid}}", "member_uid": "{{dev2_uid}}", "notice": false }
+    },
+    { "name": "修改后的成员列表", "method": "GET", "path": "/api/project/get_member_list", "query": { "id": "{{pid}}" } },
+    {
+      "name": "dev2 登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "dev2@apiyard.test", "password": "dev2-pass" }
+    },
+    { "name": "dev2 在项目中的角色", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" } },
+    {
+      "name": "开发者可以添加成员", "method": "POST", "path": "/api/project/add_member",
+      "body": { "id": "{{pid}}", "member_uids": ["{{admin_uid}}"] }
+    },
+    {
+      "name": "开发者不能修改角色", "method": "POST", "path": "/api/project/change_member_role",
+      "body": { "id": "{{pid}}", "member_uid": "{{dev3_uid}}", "role": "dev" }, "errcode": 405
+    },
+    {
+      "name": "开发者不能删除成员", "method": "POST", "path": "/api/project/del_member",
+      "body": { "id": "{{pid}}", "member_uid": "{{dev3_uid}}" }, "errcode": 405
+    },
+    {
+      "name": "dev3 登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "dev3@apiyard.test", "password": "dev3-pass" }
+    },
+    { "name": "dev3 在项目中的角色", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" } },
+    {
+      "name": "项目组长删除成员", "method": "POST", "path": "/api/project/del_member",
+      "body": { "id": "{{pid}}", "member_uid": "{{dev2_uid}}" }
+    },
+    {
+      "name": "删除不存在的成员", "method": "POST", "path": "/api/project/del_member",
+      "body": { "id": "{{pid}}", "member_uid": "{{dev2_uid}}" }, "errcode": 400
+    },
+    { "name": "删除后的成员列表", "method": "GET", "path": "/api/project/get_member_list", "query": { "id": "{{pid}}" } },
+    {
+      "name": "管理员再次登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    {
+      "name": "项目动态", "method": "GET", "path": "/api/log/list",
+      "query": { "typeid": "{{pid}}", "type": "project", "page": "1", "limit": "20" }, "unordered": ["data.list"]
+    },
+    { "name": "删除项目", "method": "POST", "path": "/api/project/del", "body": { "id": "{{pid}}" } },
+    { "name": "清理分组", "method": "POST", "path": "/api/group/del", "body": { "id": "{{gid}}" } }
+  ]
+}

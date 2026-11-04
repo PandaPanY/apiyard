@@ -18,6 +18,7 @@ var implementedScenarios = map[string]bool{
 	"01-user-and-group": true,
 	"02-user-profile":   true,
 	"03-project":        true,
+	"04-project-member": true,
 }
 
 // TestCompatWithYApi 在进程内启动一个全新的 ApiYard，按顺序执行已实现的兼容场景，

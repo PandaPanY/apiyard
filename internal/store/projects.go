@@ -191,6 +191,64 @@ func (s *Store) ProjectMemberOf(ctx context.Context, projectID, uid int64) (*Pro
 		projectID, uid))
 }
 
+// AddProjectMembers 把成员追加到项目末尾（默认接收邮件通知），回填 SubID；返回项目是否存在。
+func (s *Store) AddProjectMembers(ctx context.Context, projectID int64, members []Member) (bool, error) {
+	var exists bool
+	err := s.withTx(ctx, func(tx *sql.Tx) error {
+		var n, next int
+		if err := tx.QueryRowContext(ctx, "SELECT count(*) FROM projects WHERE id = ?", projectID).Scan(&n); err != nil {
+			return err
+		}
+		if exists = n > 0; !exists {
+			return nil
+		}
+		if err := tx.QueryRowContext(ctx,
+			"SELECT coalesce(max(position) + 1, 0) FROM project_members WHERE project_id = ?", projectID).Scan(&next); err != nil {
+			return err
+		}
+		for i := range members {
+			members[i].SubID = NewObjectID()
+			if _, err := tx.ExecContext(ctx,
+				`INSERT INTO project_members (project_id, uid, role, username, email, email_notice, sub_id, position)
+				 VALUES (?, ?, ?, ?, ?, 1, ?, ?)`,
+				projectID, members[i].UID, members[i].Role, nullString(members[i].Username), nullString(members[i].Email),
+				members[i].SubID, next+i); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return exists, err
+}
+
+// ChangeProjectMemberRole 修改项目成员角色，返回匹配的行数。
+func (s *Store) ChangeProjectMemberRole(ctx context.Context, projectID, uid int64, role string) (int64, error) {
+	res, err := s.db.ExecContext(ctx, "UPDATE project_members SET role = ? WHERE project_id = ? AND uid = ?", role, projectID, uid)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
+// SetProjectMemberNotice 设置项目成员是否接收邮件通知，返回匹配的行数。
+func (s *Store) SetProjectMemberNotice(ctx context.Context, projectID, uid int64, notice bool) (int64, error) {
+	res, err := s.db.ExecContext(ctx, "UPDATE project_members SET email_notice = ? WHERE project_id = ? AND uid = ?",
+		boolInt(notice), projectID, uid)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
+// RemoveProjectMember 移除项目成员，返回删除的行数。
+func (s *Store) RemoveProjectMember(ctx context.Context, projectID, uid int64) (int64, error) {
+	res, err := s.db.ExecContext(ctx, "DELETE FROM project_members WHERE project_id = ? AND uid = ?", projectID, uid)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 // ProjectMember 是项目成员，比分组成员多一个是否接收邮件通知。
 type ProjectMember struct {
 	Member

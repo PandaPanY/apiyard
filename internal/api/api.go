@@ -39,6 +39,7 @@ func (a *API) Register(mux *http.ServeMux) {
 	a.registerProfile(mux)
 	a.registerGroup(mux)
 	a.registerProject(mux)
+	a.registerProjectMember(mux)
 	a.registerFollow(mux)
 	a.registerLog(mux)
 }

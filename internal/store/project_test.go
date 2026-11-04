@@ -65,6 +65,40 @@ func TestProjectsAndCats(t *testing.T) {
 	}
 }
 
+func TestProjectMembers(t *testing.T) {
+	ctx := context.Background()
+	s := openTest(t)
+	_, p := newProject(t, s, "pay", nil)
+	a, b := newUser(t, s, "aaa@example.com"), newUser(t, s, "bbb@example.com")
+
+	if ok, err := s.AddProjectMembers(ctx, p.ID, []Member{{UID: a.ID, Role: "dev"}, {UID: b.ID, Role: "guest"}}); !ok || err != nil {
+		t.Fatalf("AddProjectMembers: %v %v", ok, err)
+	}
+	if ok, _ := s.AddProjectMembers(ctx, 999, []Member{{UID: a.ID, Role: "dev"}}); ok {
+		t.Error("向不存在的项目添加成员应返回 false")
+	}
+	members, _ := s.ProjectMembers(ctx, p.ID)
+	if len(members) != 2 || members[0].UID != a.ID || !members[0].EmailNotice || len(members[1].SubID) != 24 {
+		t.Errorf("成员应按加入顺序排列、默认接收通知: %+v", members)
+	}
+
+	if n, _ := s.ChangeProjectMemberRole(ctx, p.ID, b.ID, "owner"); n != 1 {
+		t.Error("ChangeProjectMemberRole 应影响 1 行")
+	}
+	if n, _ := s.SetProjectMemberNotice(ctx, p.ID, a.ID, false); n != 1 {
+		t.Error("SetProjectMemberNotice 应影响 1 行")
+	}
+	if m, _ := s.ProjectMemberOf(ctx, p.ID, a.ID); m.EmailNotice {
+		t.Error("邮件通知应已关闭")
+	}
+	if n, _ := s.RemoveProjectMember(ctx, p.ID, a.ID); n != 1 {
+		t.Error("RemoveProjectMember 应影响 1 行")
+	}
+	if members, _ := s.ProjectMembers(ctx, p.ID); len(members) != 1 || members[0].Role != "owner" {
+		t.Errorf("移除后应只剩一名组长: %+v", members)
+	}
+}
+
 func TestFollowsAndTokens(t *testing.T) {
 	ctx := context.Background()
 	s := openTest(t)

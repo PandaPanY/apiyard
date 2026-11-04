@@ -129,3 +129,43 @@ func TestUserProjectNotFound(t *testing.T) {
 		t.Errorf("应同时返回项目和所在分组: %v", data)
 	}
 }
+
+func TestProjectMemberPermissions(t *testing.T) {
+	e := newProjectEnv(t)
+	outsideUID := e.outside.call("GET", "/api/user/status", nil)["data"].(map[string]any)["_id"]
+	devUID := e.dev.call("GET", "/api/user/status", nil)["data"].(map[string]any)["_id"]
+	expectCode(t, e.admin.call("POST", "/api/project/add_member",
+		map[string]any{"id": e.pid, "member_uids": []any{outsideUID, devUID}, "role": "guest"}), 0)
+
+	// 与 YApi 不同：私有项目的成员列表要求有查看权限；访客可以看
+	expectCode(t, e.outside.call("GET", "/api/project/get_member_list?id="+q(e.pid), nil), 0)
+	e.admin.call("POST", "/api/project/del_member", map[string]any{"id": e.pid, "member_uid": outsideUID})
+	expectCode(t, e.outside.call("GET", "/api/project/get_member_list?id="+q(e.pid), nil), 406)
+	expectCode(t, e.outside.call("POST", "/api/project/add_member", map[string]any{"id": e.pid, "member_uids": []any{devUID}}), 405)
+
+	// 与 YApi 不同：只能修改自己的邮件通知，组长和管理员可以改任何人的
+	notice := func(c *client, uid any) map[string]any {
+		return c.call("POST", "/api/project/change_member_email_notice", map[string]any{"id": e.pid, "member_uid": uid, "notice": false})
+	}
+	expectCode(t, notice(e.dev, devUID), 0)
+	expectCode(t, notice(e.admin, devUID), 0)
+	expectCode(t, notice(e.admin, 99999), 400)
+
+	devAsGuest := e.env.client()
+	devAsGuest.login("outside@apiyard.test", "pass")
+	expectCode(t, devAsGuest.call("POST", "/api/project/add_member", map[string]any{"id": e.pid, "member_uids": []any{outsideUID}}), 405)
+	expectCode(t, notice(devAsGuest, devUID), 405)
+}
+
+func TestProjectAddMemberDeletedUser(t *testing.T) {
+	e := newProjectEnv(t)
+	devUID := e.dev.call("GET", "/api/user/status", nil)["data"].(map[string]any)["_id"]
+	expectCode(t, e.admin.call("POST", "/api/project/add_member", map[string]any{"id": e.pid, "member_uids": []any{devUID}}), 0)
+	expectCode(t, e.admin.call("POST", "/api/user/del", map[string]any{"id": devUID}), 0)
+
+	// 用户已被删除但仍在成员列表里时，YApi 在 exist_members 中放 null
+	r := e.admin.call("POST", "/api/project/add_member", map[string]any{"id": e.pid, "member_uids": []any{devUID}})
+	if exist := r["data"].(map[string]any)["exist_members"].([]any); len(exist) != 1 || exist[0] != nil {
+		t.Errorf("已删除用户应以 null 出现在 exist_members: %v", exist)
+	}
+}

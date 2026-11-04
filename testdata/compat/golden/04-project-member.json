@@ -1,0 +1,771 @@
+[
+  {
+    "step": "管理员登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "找到 dev2",
+    "method": "GET",
+    "url": "/api/user/search?q=dev2",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "addTime": "<time>",
+          "email": "dev2@apiyard.test",
+          "role": "member",
+          "uid": "<id>",
+          "upTime": "<time>",
+          "username": "dev2"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "ok"
+    }
+  },
+  {
+    "step": "注册 dev3",
+    "method": "POST",
+    "url": "/api/user/reg",
+    "request": {
+      "email": "dev3@apiyard.test",
+      "password": "dev3-pass",
+      "username": "dev3"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev3@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev3"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员重新登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "新建分组",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_name": "成员组",
+      "owner_uids": []
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_name": "成员组",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "admin@admin.com",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建项目",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "group_id": "{{gid}}",
+      "name": "成员项目"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "成员项目",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "初始成员列表",
+    "method": "GET",
+    "url": "/api/project/get_member_list?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "添加成员（含不存在的用户）",
+    "method": "POST",
+    "url": "/api/project/add_member",
+    "request": {
+      "id": "{{pid}}",
+      "member_uids": [
+        "{{dev2_uid}}",
+        99999
+      ],
+      "role": "dev"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_members": [
+          {
+            "email": "dev2@apiyard.test",
+            "role": "dev",
+            "uid": "<id>",
+            "username": "dev2"
+          }
+        ],
+        "exist_members": [],
+        "no_members": [
+          99999
+        ],
+        "result": {
+          "n": 1,
+          "nModified": 1,
+          "ok": 1
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "再次添加（含已是成员的用户）",
+    "method": "POST",
+    "url": "/api/project/add_member",
+    "request": {
+      "id": "{{pid}}",
+      "member_uids": [
+        "{{dev2_uid}}",
+        "{{dev3_uid}}"
+      ],
+      "role": "guest"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_members": [
+          {
+            "email": "dev3@apiyard.test",
+            "role": "guest",
+            "uid": "<id>",
+            "username": "dev3"
+          }
+        ],
+        "exist_members": [
+          {
+            "email": "dev2@apiyard.test",
+            "role": "guest",
+            "uid": "<id>",
+            "username": "dev2"
+          }
+        ],
+        "no_members": [],
+        "result": {
+          "n": 1,
+          "nModified": 1,
+          "ok": 1
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "添加后的成员列表",
+    "method": "GET",
+    "url": "/api/project/get_member_list?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<objectid>",
+          "email": "dev2@apiyard.test",
+          "email_notice": true,
+          "role": "dev",
+          "uid": "<id>",
+          "username": "dev2"
+        },
+        {
+          "_id": "<objectid>",
+          "email": "dev3@apiyard.test",
+          "email_notice": true,
+          "role": "guest",
+          "uid": "<id>",
+          "username": "dev3"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "把 dev3 设为组长",
+    "method": "POST",
+    "url": "/api/project/change_member_role",
+    "request": {
+      "id": "{{pid}}",
+      "member_uid": "{{dev3_uid}}",
+      "role": "owner"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改不存在的成员",
+    "method": "POST",
+    "url": "/api/project/change_member_role",
+    "request": {
+      "id": "{{pid}}",
+      "member_uid": 99999,
+      "role": "dev"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "项目成员不存在"
+    }
+  },
+  {
+    "step": "关闭 dev2 的邮件通知",
+    "method": "POST",
+    "url": "/api/project/change_member_email_notice",
+    "request": {
+      "id": "{{pid}}",
+      "member_uid": "{{dev2_uid}}",
+      "notice": false
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改后的成员列表",
+    "method": "GET",
+    "url": "/api/project/get_member_list?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<objectid>",
+          "email": "dev2@apiyard.test",
+          "email_notice": false,
+          "role": "dev",
+          "uid": "<id>",
+          "username": "dev2"
+        },
+        {
+          "_id": "<objectid>",
+          "email": "dev3@apiyard.test",
+          "email_notice": true,
+          "role": "owner",
+          "uid": "<id>",
+          "username": "dev3"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "dev2@apiyard.test",
+      "password": "dev2-pass"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev2@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev2"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "dev2 在项目中的角色",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "",
+        "cat": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "公共分类",
+            "index": 0,
+            "name": "公共分类",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ],
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "成员项目",
+        "project_type": "private",
+        "role": "dev",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "开发者可以添加成员",
+    "method": "POST",
+    "url": "/api/project/add_member",
+    "request": {
+      "id": "{{pid}}",
+      "member_uids": [
+        "{{admin_uid}}"
+      ]
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_members": [
+          {
+            "email": "admin@admin.com",
+            "role": "dev",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "exist_members": [],
+        "no_members": [],
+        "result": {
+          "n": 1,
+          "nModified": 1,
+          "ok": 1
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "开发者不能修改角色",
+    "method": "POST",
+    "url": "/api/project/change_member_role",
+    "request": {
+      "id": "{{pid}}",
+      "member_uid": "{{dev3_uid}}",
+      "role": "dev"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 405,
+      "errmsg": "没有权限"
+    }
+  },
+  {
+    "step": "开发者不能删除成员",
+    "method": "POST",
+    "url": "/api/project/del_member",
+    "request": {
+      "id": "{{pid}}",
+      "member_uid": "{{dev3_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 405,
+      "errmsg": "没有权限"
+    }
+  },
+  {
+    "step": "dev3 登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "dev3@apiyard.test",
+      "password": "dev3-pass"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev3@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev3"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "dev3 在项目中的角色",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "",
+        "cat": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "公共分类",
+            "index": 0,
+            "name": "公共分类",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ],
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "成员项目",
+        "project_type": "private",
+        "role": "owner",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "项目组长删除成员",
+    "method": "POST",
+    "url": "/api/project/del_member",
+    "request": {
+      "id": "{{pid}}",
+      "member_uid": "{{dev2_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除不存在的成员",
+    "method": "POST",
+    "url": "/api/project/del_member",
+    "request": {
+      "id": "{{pid}}",
+      "member_uid": "{{dev2_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "项目成员不存在"
+    }
+  },
+  {
+    "step": "删除后的成员列表",
+    "method": "GET",
+    "url": "/api/project/get_member_list?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<objectid>",
+          "email": "dev3@apiyard.test",
+          "email_notice": true,
+          "role": "owner",
+          "uid": "<id>",
+          "username": "dev3"
+        },
+        {
+          "_id": "<objectid>",
+          "email": "admin@admin.com",
+          "email_notice": true,
+          "role": "dev",
+          "uid": "<id>",
+          "username": "admin"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员再次登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "项目动态",
+    "method": "GET",
+    "url": "/api/log/list?limit=20&page=1&type=project&typeid={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 修改了项目中的成员 <a href=\"/user/profile/<id>\">dev3</a> 的角色为 \"组长\"",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 添加了项目 <a href=\"/project/<id>\">成员项目</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 添加了项目成员 <a href = \"/user/profile/<id>\">dev2</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 添加了项目成员 <a href = \"/user/profile/<id>\">dev3</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">dev2</a> 添加了项目成员 <a href = \"/user/profile/<id>\">admin</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "dev2"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">dev3</a> 删除了项目中的成员 <a href=\"/user/profile/<id>\">dev2</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "dev3"
+          }
+        ],
+        "total": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除项目",
+    "method": "POST",
+    "url": "/api/project/del",
+    "request": {
+      "id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "清理分组",
+    "method": "POST",
+    "url": "/api/group/del",
+    "request": {
+      "id": "{{gid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  }
+]
