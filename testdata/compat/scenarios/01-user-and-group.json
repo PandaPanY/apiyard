@@ -1,0 +1,53 @@
+{
+  "description": "M1：登录状态、注册、分组的增删改查与成员管理",
+  "steps": [
+    { "name": "未登录时查询状态", "method": "GET", "path": "/api/user/status", "errcode": 40011 },
+    {
+      "name": "管理员登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" },
+      "capture": { "admin_uid": "data.uid" }
+    },
+    { "name": "登录后查询状态", "method": "GET", "path": "/api/user/status" },
+    { "name": "我的个人空间", "method": "GET", "path": "/api/group/get_mygroup" },
+    { "name": "初始分组列表", "method": "GET", "path": "/api/group/list" },
+    {
+      "name": "新建分组", "method": "POST", "path": "/api/group/add",
+      "body": { "group_name": "后端组", "group_desc": "兼容测试用分组", "owner_uids": [] },
+      "capture": { "gid": "data._id" }
+    },
+    { "name": "查询分组", "method": "GET", "path": "/api/group/get", "query": { "id": "{{gid}}" } },
+    {
+      "name": "修改分组", "method": "POST", "path": "/api/group/up",
+      "body": { "id": "{{gid}}", "group_name": "后端组（改名）", "group_desc": "描述已修改" }
+    },
+    { "name": "修改后的分组列表", "method": "GET", "path": "/api/group/list" },
+    {
+      "name": "注册普通用户", "method": "POST", "path": "/api/user/reg",
+      "body": { "email": "dev1@apiyard.test", "password": "dev1-pass", "username": "dev1" },
+      "capture": { "dev_uid": "data.uid" }
+    },
+    { "name": "注册后自动登录为新用户", "method": "GET", "path": "/api/user/status" },
+    {
+      "name": "管理员重新登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    { "name": "搜索用户", "method": "GET", "path": "/api/user/search", "query": { "q": "dev" } },
+    {
+      "name": "添加分组成员", "method": "POST", "path": "/api/group/add_member",
+      "body": { "id": "{{gid}}", "member_uids": ["{{dev_uid}}"], "role": "dev" }
+    },
+    { "name": "分组成员列表", "method": "GET", "path": "/api/group/get_member_list", "query": { "id": "{{gid}}" } },
+    {
+      "name": "修改成员角色", "method": "POST", "path": "/api/group/change_member_role",
+      "body": { "id": "{{gid}}", "member_uid": "{{dev_uid}}", "role": "owner" }
+    },
+    {
+      "name": "删除分组成员", "method": "POST", "path": "/api/group/del_member",
+      "body": { "id": "{{gid}}", "member_uid": "{{dev_uid}}" }
+    },
+    { "name": "用户列表", "method": "GET", "path": "/api/user/list", "query": { "page": "1", "limit": "20" } },
+    { "name": "删除分组", "method": "POST", "path": "/api/group/del", "body": { "id": "{{gid}}" } },
+    { "name": "退出登录", "method": "GET", "path": "/api/user/logout" },
+    { "name": "退出后查询状态", "method": "GET", "path": "/api/user/status", "errcode": 40011 }
+  ]
+}

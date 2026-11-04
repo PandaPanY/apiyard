@@ -1,0 +1,33 @@
+# YApi 1.12.0 对照实例：只绑定 127.0.0.1，通过 SSH 隧道访问。
+# YApi 存在未修复的远程代码执行漏洞，不要改成 0.0.0.0，也不要加入内网穿透。
+name: apiyard-testenv
+
+services:
+  mongo:
+    image: mongo:4.4
+    container_name: apiyard-yapi-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  yapi:
+    build: .
+    image: apiyard/yapi:1.12.0
+    container_name: apiyard-yapi
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:13000:3000"
+    volumes:
+      - yapi-state:/app/state
+
+volumes:
+  mongo-data:
+  yapi-state:

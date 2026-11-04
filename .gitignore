@@ -1,0 +1,22 @@
+# 构建产物
+/apiyard
+/apiyard.exe
+/dist/
+
+# 由 tools/fetch-yapi-web 下载的 YApi 前端，是否随仓库发布在 M6 决定
+/web/yapi/
+
+# 本地数据与配置
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+.env
+
+# 测试与工具输出
+coverage.out
+*.test
+
+# 编辑器
+.idea/
+.vscode/

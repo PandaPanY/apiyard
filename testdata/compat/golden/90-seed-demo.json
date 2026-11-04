@@ -1,0 +1,2633 @@
+[
+  {
+    "step": "管理员登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "新建分组 支付中台",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_desc": "支付与账务相关服务",
+      "group_name": "支付中台",
+      "owner_uids": []
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_desc": "支付与账务相关服务",
+        "group_name": "支付中台",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "admin@admin.com",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建分组 用户中心",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_desc": "账号与权限相关服务",
+      "group_name": "用户中心",
+      "owner_uids": []
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_desc": "账号与权限相关服务",
+        "group_name": "用户中心",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "admin@admin.com",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建项目 支付网关",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "basepath": "/pay",
+      "color": "blue",
+      "desc": "对外支付接口",
+      "group_id": 17,
+      "icon": "code-o",
+      "name": "支付网关",
+      "project_type": "private"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/pay",
+        "color": "blue",
+        "desc": "对外支付接口",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "icon": "code-o",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "支付网关",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建项目 账务系统",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "basepath": "/ledger",
+      "color": "green",
+      "group_id": 17,
+      "icon": "code-o",
+      "name": "账务系统",
+      "project_type": "private"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/ledger",
+        "color": "green",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "icon": "code-o",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "账务系统",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建项目 用户服务",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "basepath": "/user",
+      "color": "purple",
+      "group_id": 19,
+      "icon": "code-o",
+      "name": "用户服务",
+      "project_type": "private"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/user",
+        "color": "purple",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "icon": "code-o",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "用户服务",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建分类 订单",
+    "method": "POST",
+    "url": "/api/interface/add_cat",
+    "request": {
+      "desc": "下单与查询",
+      "name": "订单",
+      "project_id": 11
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "desc": "下单与查询",
+        "index": 0,
+        "name": "订单",
+        "project_id": "<id>",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建分类 流水",
+    "method": "POST",
+    "url": "/api/interface/add_cat",
+    "request": {
+      "desc": "",
+      "name": "流水",
+      "project_id": 18
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "desc": "",
+        "index": 0,
+        "name": "流水",
+        "project_id": "<id>",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建分类 账号",
+    "method": "POST",
+    "url": "/api/interface/add_cat",
+    "request": {
+      "desc": "",
+      "name": "账号",
+      "project_id": 25
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "desc": "",
+        "index": 0,
+        "name": "账号",
+        "project_id": "<id>",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口 创建订单",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "desc": "<p>创建一笔待支付订单</p>",
+      "method": "POST",
+      "path": "/orders",
+      "project_id": 11,
+      "req_body_is_json_schema": true,
+      "req_body_other": "{\"type\":\"object\",\"required\":[\"amount\",\"currency\"],\"properties\":{\"amount\":{\"type\":\"integer\",\"description\":\"金额，单位分\"},\"currency\":{\"type\":\"string\",\"enum\":[\"CNY\",\"USD\"]},\"remark\":{\"type\":\"string\"}}}",
+      "req_body_type": "json",
+      "req_headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "res_body": "{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"mock\":{\"mock\":\"@guid\"}},\"status\":{\"type\":\"string\",\"enum\":[\"pending\"]}}}",
+      "res_body_is_json_schema": true,
+      "res_body_type": "json",
+      "status": "done",
+      "title": "创建订单"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "desc": "<p>创建一笔待支付订单</p>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/orders",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/orders"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": true,
+        "req_body_other": "{\"type\":\"object\",\"required\":[\"amount\",\"currency\"],\"properties\":{\"amount\":{\"type\":\"integer\",\"description\":\"金额，单位分\"},\"currency\":{\"type\":\"string\",\"enum\":[\"CNY\",\"USD\"]},\"remark\":{\"type\":\"string\"}}}",
+        "req_body_type": "json",
+        "req_headers": [
+          {
+            "_id": "<objectid>",
+            "name": "Content-Type",
+            "required": "1",
+            "value": "application/json"
+          }
+        ],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"mock\":{\"mock\":\"@guid\"}},\"status\":{\"type\":\"string\",\"enum\":[\"pending\"]}}}",
+        "res_body_is_json_schema": true,
+        "res_body_type": "json",
+        "status": "done",
+        "tag": [],
+        "title": "创建订单",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口 查询订单",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/orders/{id}",
+      "project_id": 11,
+      "req_params": [
+        {
+          "desc": "订单号",
+          "example": "o-1001",
+          "name": "id"
+        }
+      ],
+      "req_query": [
+        {
+          "desc": "是否返回明细",
+          "example": "true",
+          "name": "with_items",
+          "required": "0"
+        }
+      ],
+      "res_body": "{\"order_id\":\"o-1001\",\"amount\":100,\"status\":\"paid\"}",
+      "res_body_is_json_schema": false,
+      "res_body_type": "json",
+      "title": "查询订单"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/orders/{id}",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/orders/{id}"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [
+          {
+            "_id": "<objectid>",
+            "desc": "订单号",
+            "example": "o-1001",
+            "name": "id"
+          }
+        ],
+        "req_query": [
+          {
+            "_id": "<objectid>",
+            "desc": "是否返回明细",
+            "example": "true",
+            "name": "with_items",
+            "required": "0"
+          }
+        ],
+        "res_body": "{\"order_id\":\"o-1001\",\"amount\":100,\"status\":\"paid\"}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "查询订单",
+        "type": "var",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #1",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/1",
+      "project_id": 11,
+      "title": "支付示例接口 1"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/1",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/1"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 1",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #2",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/2",
+      "project_id": 11,
+      "title": "支付示例接口 2"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/2",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/2"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 2",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #3",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/3",
+      "project_id": 11,
+      "title": "支付示例接口 3"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/3",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/3"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 3",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #4",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/4",
+      "project_id": 11,
+      "title": "支付示例接口 4"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/4",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/4"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 4",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #5",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/5",
+      "project_id": 11,
+      "title": "支付示例接口 5"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/5",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/5"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 5",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #6",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/6",
+      "project_id": 11,
+      "title": "支付示例接口 6"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/6",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/6"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 6",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #7",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/7",
+      "project_id": 11,
+      "title": "支付示例接口 7"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/7",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/7"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 7",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #8",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/8",
+      "project_id": 11,
+      "title": "支付示例接口 8"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/8",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/8"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 8",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #9",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/9",
+      "project_id": 11,
+      "title": "支付示例接口 9"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/9",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/9"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 9",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #10",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/10",
+      "project_id": 11,
+      "title": "支付示例接口 10"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/10",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/10"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 10",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #11",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/11",
+      "project_id": 11,
+      "title": "支付示例接口 11"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/11",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/11"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 11",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 支付网关 #12",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 20,
+      "method": "GET",
+      "path": "/demo/12",
+      "project_id": 11,
+      "title": "支付示例接口 12"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/demo/12",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/demo/12"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "支付示例接口 12",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #1",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/1",
+      "project_id": 18,
+      "title": "账务示例接口 1"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/1",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/1"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 1",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #2",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/2",
+      "project_id": 18,
+      "title": "账务示例接口 2"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/2",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/2"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 2",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #3",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/3",
+      "project_id": 18,
+      "title": "账务示例接口 3"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/3",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/3"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 3",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #4",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/4",
+      "project_id": 18,
+      "title": "账务示例接口 4"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/4",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/4"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 4",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #5",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/5",
+      "project_id": 18,
+      "title": "账务示例接口 5"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/5",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/5"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 5",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #6",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/6",
+      "project_id": 18,
+      "title": "账务示例接口 6"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/6",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/6"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 6",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #7",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/7",
+      "project_id": 18,
+      "title": "账务示例接口 7"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/7",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/7"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 7",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #8",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/8",
+      "project_id": 18,
+      "title": "账务示例接口 8"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/8",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/8"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 8",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #9",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/9",
+      "project_id": 18,
+      "title": "账务示例接口 9"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/9",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/9"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 9",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #10",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/10",
+      "project_id": 18,
+      "title": "账务示例接口 10"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/10",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/10"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 10",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #11",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/11",
+      "project_id": 18,
+      "title": "账务示例接口 11"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/11",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/11"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 11",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 账务系统 #12",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 23,
+      "method": "GET",
+      "path": "/entries/12",
+      "project_id": 18,
+      "title": "账务示例接口 12"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/entries/12",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/entries/12"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "账务示例接口 12",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #1",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/1",
+      "project_id": 25,
+      "title": "用户示例接口 1"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/1",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/1"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 1",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #2",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/2",
+      "project_id": 25,
+      "title": "用户示例接口 2"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/2",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/2"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 2",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #3",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/3",
+      "project_id": 25,
+      "title": "用户示例接口 3"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/3",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/3"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 3",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #4",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/4",
+      "project_id": 25,
+      "title": "用户示例接口 4"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/4",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/4"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 4",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #5",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/5",
+      "project_id": 25,
+      "title": "用户示例接口 5"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/5",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/5"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 5",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #6",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/6",
+      "project_id": 25,
+      "title": "用户示例接口 6"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/6",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/6"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 6",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #7",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/7",
+      "project_id": 25,
+      "title": "用户示例接口 7"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/7",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/7"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 7",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #8",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/8",
+      "project_id": 25,
+      "title": "用户示例接口 8"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/8",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/8"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 8",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #9",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/9",
+      "project_id": 25,
+      "title": "用户示例接口 9"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/9",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/9"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 9",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #10",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/10",
+      "project_id": 25,
+      "title": "用户示例接口 10"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/10",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/10"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 10",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #11",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/11",
+      "project_id": 25,
+      "title": "用户示例接口 11"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/11",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/11"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 11",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "批量接口 用户服务 #12",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": 26,
+      "method": "POST",
+      "path": "/users/12",
+      "project_id": 25,
+      "title": "用户示例接口 12"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/12",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/12"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户示例接口 12",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "支付网关接口列表",
+    "method": "GET",
+    "url": "/api/interface/list?limit=50&page=1&project_id=11",
+    "status": 200,
+    "response": {
+      "data": {
+        "count": 14,
+        "list": [
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "POST",
+            "path": "/orders",
+            "project_id": "<id>",
+            "status": "done",
+            "tag": [],
+            "title": "创建订单",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/orders/{id}",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "查询订单",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/1",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 1",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/2",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 2",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/3",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 3",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/4",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 4",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/5",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 5",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/6",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 6",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/7",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 7",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/8",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 8",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/9",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 9",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/10",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 10",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/11",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 11",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/demo/12",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "支付示例接口 12",
+            "uid": "<id>"
+          }
+        ],
+        "total": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "支付网关菜单",
+    "method": "GET",
+    "url": "/api/interface/list_menu?project_id=11",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "公共分类",
+          "index": 0,
+          "list": [],
+          "name": "公共分类",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "下单与查询",
+          "index": 0,
+          "list": [
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "POST",
+              "path": "/orders",
+              "project_id": "<id>",
+              "status": "done",
+              "tag": [],
+              "title": "创建订单",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/orders/{id}",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "查询订单",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/1",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 1",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/2",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 2",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/3",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 3",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/4",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 4",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/5",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 5",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/6",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 6",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/7",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 7",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/8",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 8",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/9",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 9",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/10",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 10",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/11",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 11",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/demo/12",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "支付示例接口 12",
+              "uid": "<id>",
+              "up_time": "<time>"
+            }
+          ],
+          "name": "订单",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "分组 支付中台 的项目",
+    "method": "GET",
+    "url": "/api/project/list?group_id=17&limit=10&page=1",
+    "status": 200,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "basepath": "/ledger",
+            "color": "green",
+            "env": [
+              {
+                "_id": "<objectid>",
+                "domain": "http://127.0.0.1",
+                "global": [],
+                "header": [],
+                "name": "local"
+              }
+            ],
+            "follow": false,
+            "group_id": "<id>",
+            "icon": "code-o",
+            "name": "账务系统",
+            "project_type": "private",
+            "switch_notice": true,
+            "uid": "<id>",
+            "up_time": "<time>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "basepath": "/pay",
+            "color": "blue",
+            "desc": "对外支付接口",
+            "env": [
+              {
+                "_id": "<objectid>",
+                "domain": "http://127.0.0.1",
+                "global": [],
+                "header": [],
+                "name": "local"
+              }
+            ],
+            "follow": false,
+            "group_id": "<id>",
+            "icon": "code-o",
+            "name": "支付网关",
+            "project_type": "private",
+            "switch_notice": true,
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ]
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  }
+]

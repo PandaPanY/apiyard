@@ -1,0 +1,86 @@
+{
+  "description": "示例数据：2 个分组、3 个项目、38 个接口。最后执行，执行后对照实例保留这份数据，供界面验证和 M4 迁移测试使用",
+  "steps": [
+    {
+      "name": "管理员登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    {
+      "name": "新建分组 支付中台", "method": "POST", "path": "/api/group/add",
+      "body": { "group_name": "支付中台", "group_desc": "支付与账务相关服务", "owner_uids": [] },
+      "capture": { "g1": "data._id" }
+    },
+    {
+      "name": "新建分组 用户中心", "method": "POST", "path": "/api/group/add",
+      "body": { "group_name": "用户中心", "group_desc": "账号与权限相关服务", "owner_uids": [] },
+      "capture": { "g2": "data._id" }
+    },
+    {
+      "name": "新建项目 支付网关", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "支付网关", "basepath": "/pay", "group_id": "{{g1}}", "project_type": "private", "icon": "code-o", "color": "blue", "desc": "对外支付接口" },
+      "capture": { "p1": "data._id" }
+    },
+    {
+      "name": "新建项目 账务系统", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "账务系统", "basepath": "/ledger", "group_id": "{{g1}}", "project_type": "private", "icon": "code-o", "color": "green" },
+      "capture": { "p2": "data._id" }
+    },
+    {
+      "name": "新建项目 用户服务", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "用户服务", "basepath": "/user", "group_id": "{{g2}}", "project_type": "private", "icon": "code-o", "color": "purple" },
+      "capture": { "p3": "data._id" }
+    },
+    {
+      "name": "新建分类 订单", "method": "POST", "path": "/api/interface/add_cat",
+      "body": { "name": "订单", "project_id": "{{p1}}", "desc": "下单与查询" },
+      "capture": { "c1": "data._id" }
+    },
+    {
+      "name": "新建分类 流水", "method": "POST", "path": "/api/interface/add_cat",
+      "body": { "name": "流水", "project_id": "{{p2}}", "desc": "" },
+      "capture": { "c2": "data._id" }
+    },
+    {
+      "name": "新建分类 账号", "method": "POST", "path": "/api/interface/add_cat",
+      "body": { "name": "账号", "project_id": "{{p3}}", "desc": "" },
+      "capture": { "c3": "data._id" }
+    },
+    {
+      "name": "新建接口 创建订单", "method": "POST", "path": "/api/interface/add",
+      "body": {
+        "title": "创建订单", "path": "/orders", "method": "POST", "catid": "{{c1}}", "project_id": "{{p1}}",
+        "status": "done", "desc": "<p>创建一笔待支付订单</p>",
+        "req_headers": [{ "name": "Content-Type", "value": "application/json" }],
+        "req_body_type": "json", "req_body_is_json_schema": true,
+        "req_body_other": "{\"type\":\"object\",\"required\":[\"amount\",\"currency\"],\"properties\":{\"amount\":{\"type\":\"integer\",\"description\":\"金额，单位分\"},\"currency\":{\"type\":\"string\",\"enum\":[\"CNY\",\"USD\"]},\"remark\":{\"type\":\"string\"}}}",
+        "res_body_type": "json", "res_body_is_json_schema": true,
+        "res_body": "{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\",\"mock\":{\"mock\":\"@guid\"}},\"status\":{\"type\":\"string\",\"enum\":[\"pending\"]}}}"
+      }
+    },
+    {
+      "name": "新建接口 查询订单", "method": "POST", "path": "/api/interface/add",
+      "body": {
+        "title": "查询订单", "path": "/orders/{id}", "method": "GET", "catid": "{{c1}}", "project_id": "{{p1}}",
+        "req_params": [{ "name": "id", "desc": "订单号", "example": "o-1001" }],
+        "req_query": [{ "name": "with_items", "required": "0", "example": "true", "desc": "是否返回明细" }],
+        "res_body_type": "json", "res_body_is_json_schema": false,
+        "res_body": "{\"order_id\":\"o-1001\",\"amount\":100,\"status\":\"paid\"}"
+      }
+    },
+    {
+      "name": "批量接口 支付网关", "method": "POST", "path": "/api/interface/add", "repeat": 12,
+      "body": { "title": "支付示例接口 {{i}}", "path": "/demo/{{i}}", "method": "GET", "catid": "{{c1}}", "project_id": "{{p1}}" }
+    },
+    {
+      "name": "批量接口 账务系统", "method": "POST", "path": "/api/interface/add", "repeat": 12,
+      "body": { "title": "账务示例接口 {{i}}", "path": "/entries/{{i}}", "method": "GET", "catid": "{{c2}}", "project_id": "{{p2}}" }
+    },
+    {
+      "name": "批量接口 用户服务", "method": "POST", "path": "/api/interface/add", "repeat": 12,
+      "body": { "title": "用户示例接口 {{i}}", "path": "/users/{{i}}", "method": "POST", "catid": "{{c3}}", "project_id": "{{p3}}" }
+    },
+    { "name": "支付网关接口列表", "method": "GET", "path": "/api/interface/list", "query": { "project_id": "{{p1}}", "page": "1", "limit": "50" } },
+    { "name": "支付网关菜单", "method": "GET", "path": "/api/interface/list_menu", "query": { "project_id": "{{p1}}" } },
+    { "name": "分组 支付中台 的项目", "method": "GET", "path": "/api/project/list", "query": { "group_id": "{{g1}}", "page": "1", "limit": "10" } }
+  ]
+}

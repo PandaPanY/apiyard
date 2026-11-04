@@ -1,0 +1,6 @@
+ApiYard
+Copyright 2026 ApiYard contributors
+
+本项目与 YApi（https://github.com/YMFE/yapi）的接口、数据格式保持兼容。
+YApi 由 YMFE 团队开发，以 Apache License 2.0 发布。
+沿用或改写自 YApi 的代码会在对应文件中注明出处。

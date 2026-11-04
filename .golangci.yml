@@ -1,0 +1,22 @@
+version: "2"
+
+linters:
+  # standard 默认包含 errcheck、govet、ineffassign、staticcheck、unused
+  default: standard
+  enable:
+    - bodyclose
+    - errorlint
+    - gosec
+    - misspell
+    - revive
+  exclusions:
+    rules:
+      # 测试代码里的临时文件读取、回显请求等都是受控输入，gosec 在这里只会产生误报
+      - path: _test\.go
+        linters:
+          - gosec
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

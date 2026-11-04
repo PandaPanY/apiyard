@@ -1,0 +1,482 @@
+[
+  {
+    "step": "未登录时查询状态",
+    "method": "GET",
+    "url": "/api/user/status",
+    "status": 200,
+    "response": {
+      "canRegister": true,
+      "data": null,
+      "errcode": 40011,
+      "errmsg": "请登录...",
+      "ladp": false
+    }
+  },
+  {
+    "step": "管理员登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "登录后查询状态",
+    "method": "GET",
+    "url": "/api/user/status",
+    "status": 200,
+    "response": {
+      "canRegister": true,
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "成功！",
+      "ladp": false
+    }
+  },
+  {
+    "step": "我的个人空间",
+    "method": "GET",
+    "url": "/api/group/get_mygroup",
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "custom_field1": {
+          "enable": false
+        },
+        "group_name": "User-11",
+        "members": [],
+        "type": "private",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "初始分组列表",
+    "method": "GET",
+    "url": "/api/group/list",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<id>",
+          "add_time": "<time>",
+          "custom_field1": {
+            "enable": false
+          },
+          "group_name": "个人空间",
+          "role": "owner",
+          "type": "private",
+          "up_time": "<time>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建分组",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_desc": "兼容测试用分组",
+      "group_name": "后端组",
+      "owner_uids": []
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_desc": "兼容测试用分组",
+        "group_name": "后端组",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "admin@admin.com",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "查询分组",
+    "method": "GET",
+    "url": "/api/group/get?id=13",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "custom_field1": {
+          "enable": false
+        },
+        "group_desc": "兼容测试用分组",
+        "group_name": "后端组",
+        "role": "admin",
+        "type": "public",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改分组",
+    "method": "POST",
+    "url": "/api/group/up",
+    "request": {
+      "group_desc": "描述已修改",
+      "group_name": "后端组（改名）",
+      "id": 13
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改后的分组列表",
+    "method": "GET",
+    "url": "/api/group/list",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<id>",
+          "add_time": "<time>",
+          "custom_field1": {
+            "enable": false
+          },
+          "group_name": "个人空间",
+          "role": "owner",
+          "type": "private",
+          "up_time": "<time>"
+        },
+        {
+          "_id": "<id>",
+          "add_time": "<time>",
+          "custom_field1": null,
+          "group_desc": "描述已修改",
+          "group_name": "后端组（改名）",
+          "type": "public",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "注册普通用户",
+    "method": "POST",
+    "url": "/api/user/reg",
+    "request": {
+      "email": "dev1@apiyard.test",
+      "password": "dev1-pass",
+      "username": "dev1"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev1@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev1"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "注册后自动登录为新用户",
+    "method": "GET",
+    "url": "/api/user/status",
+    "status": 200,
+    "response": {
+      "canRegister": true,
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "email": "dev1@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "up_time": "<time>",
+        "username": "dev1"
+      },
+      "errcode": 0,
+      "errmsg": "成功！",
+      "ladp": false
+    }
+  },
+  {
+    "step": "管理员重新登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "搜索用户",
+    "method": "GET",
+    "url": "/api/user/search?q=dev",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "addTime": "<time>",
+          "email": "dev1@apiyard.test",
+          "role": "member",
+          "uid": "<id>",
+          "upTime": "<time>",
+          "username": "dev1"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "ok"
+    }
+  },
+  {
+    "step": "添加分组成员",
+    "method": "POST",
+    "url": "/api/group/add_member",
+    "request": {
+      "id": 13,
+      "member_uids": [
+        13
+      ],
+      "role": "dev"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_members": [
+          {
+            "email": "dev1@apiyard.test",
+            "role": "dev",
+            "uid": "<id>",
+            "username": "dev1"
+          }
+        ],
+        "exist_members": [],
+        "no_members": [],
+        "result": {
+          "n": 1,
+          "nModified": 1,
+          "ok": 1
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "分组成员列表",
+    "method": "GET",
+    "url": "/api/group/get_member_list?id=13",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<objectid>",
+          "email": "admin@admin.com",
+          "role": "owner",
+          "uid": "<id>",
+          "username": "admin"
+        },
+        {
+          "_id": "<objectid>",
+          "email": "dev1@apiyard.test",
+          "role": "dev",
+          "uid": "<id>",
+          "username": "dev1"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改成员角色",
+    "method": "POST",
+    "url": "/api/group/change_member_role",
+    "request": {
+      "id": 13,
+      "member_uid": 13,
+      "role": "owner"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除分组成员",
+    "method": "POST",
+    "url": "/api/group/del_member",
+    "request": {
+      "id": 13,
+      "member_uid": 13
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "用户列表",
+    "method": "GET",
+    "url": "/api/user/list?limit=20&page=1",
+    "status": 200,
+    "response": {
+      "data": {
+        "count": 2,
+        "list": [
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "email": "dev1@apiyard.test",
+            "role": "member",
+            "study": false,
+            "type": "site",
+            "up_time": "<time>",
+            "username": "dev1"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "email": "admin@admin.com",
+            "role": "admin",
+            "study": false,
+            "type": "site",
+            "up_time": "<time>",
+            "username": "admin"
+          }
+        ],
+        "total": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除分组",
+    "method": "POST",
+    "url": "/api/group/del",
+    "request": {
+      "id": 13
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "退出登录",
+    "method": "GET",
+    "url": "/api/user/logout",
+    "status": 200,
+    "response": {
+      "data": "ok",
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "退出后查询状态",
+    "method": "GET",
+    "url": "/api/user/status",
+    "status": 200,
+    "response": {
+      "canRegister": true,
+      "data": null,
+      "errcode": 40011,
+      "errmsg": "请登录...",
+      "ladp": false
+    }
+  }
+]
