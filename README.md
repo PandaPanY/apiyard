@@ -67,10 +67,14 @@ golangci-lint run
 | 参数 | 环境变量 | 默认值 | 说明 |
 |---|---|---|---|
 | `-addr` | `APIYARD_ADDR` | `:3000` | 监听地址 |
+| `-db` | `APIYARD_DB` | `apiyard.db` | SQLite 数据库文件，不存在时自动创建 |
 | `-web-dir` | `APIYARD_WEB_DIR` | `web/yapi` | 前端静态文件目录 |
-| `-yapi-upstream` | `APIYARD_YAPI_UPSTREAM` | 空 | 开发用：把尚未实现的 `/api`、`/mock` 请求转发给原版 YApi（对照实例见 [`testenv/yapi`](testenv/yapi/README.md)） |
+| `-admin-email` | `APIYARD_ADMIN_EMAIL` | `admin@admin.com` | 首次启动（数据库里还没有用户）时创建的管理员邮箱 |
+| `-admin-password` | `APIYARD_ADMIN_PASSWORD` | 空 | 首次启动时的管理员密码；为空则随机生成，并在日志里打印一次 |
+| `-close-register` | `APIYARD_CLOSE_REGISTER` | `false` | 关闭用户注册 |
+| `-yapi-upstream` | `APIYARD_YAPI_UPSTREAM` | 空 | 开发用：把**全部** `/api`、`/mock` 请求转发给原版 YApi，用于对比行为（对照实例见 [`testenv/yapi`](testenv/yapi/README.md)） |
 
-开发时常用的组合：先建立到对照实例的 SSH 隧道，再运行 `go run ./cmd/apiyard -yapi-upstream http://localhost:13000`。
+本地开发时可以这样运行：`go run ./cmd/apiyard -db apiyard-dev.db -admin-password ymfe.org`。
 
 接口兼容性测试（与原版 YApi 逐字段比对）见 [`docs/testing.md`](docs/testing.md)。
 

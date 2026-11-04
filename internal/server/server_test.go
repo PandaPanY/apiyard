@@ -18,10 +18,16 @@ import (
 
 var discardLogger = slog.New(slog.NewTextHandler(io.Discard, nil))
 
-// newHandler 用给定配置构造处理器，失败时终止测试。
+// newHandler 用给定配置和一个全新的数据库构造处理器，失败时终止测试。
 func newHandler(t *testing.T, cfg config.Config) http.Handler {
 	t.Helper()
-	h, err := New(cfg, discardLogger)
+	cfg.DBPath = filepath.Join(t.TempDir(), "test.db")
+	st, err := openStore(context.Background(), cfg, discardLogger)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = st.Close() })
+	h, err := New(cfg, st, discardLogger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,7 +71,7 @@ func TestUpstreamProxy(t *testing.T) {
 
 func TestInvalidUpstream(t *testing.T) {
 	for _, u := range []string{"localhost:3000", "ftp://host", "http://"} {
-		if _, err := New(config.Config{YAPIUpstream: u}, discardLogger); err == nil {
+		if _, err := New(config.Config{YAPIUpstream: u}, nil, discardLogger); err == nil {
 			t.Errorf("上游地址 %q 应当报错", u)
 		}
 	}

@@ -2,6 +2,23 @@
 
 > 按日期倒序记录，最新的在最上面。每条只写要点。
 
+## 2026-11-04 M1（上）：存储层、登录与分组
+
+- 完成：
+  - `internal/store`：SQLite（modernc，纯 Go）、按 `user_version` 执行的版本化迁移，用户 / 分组 / 成员 / 动态的数据访问；覆盖率 78%。
+  - `internal/auth`：YApi 兼容的密码哈希和 JWT 登录令牌。用对照实例的真实数据做测试向量，**生成的令牌与 YApi 逐字节一致**。
+  - `internal/api`：处理顺序与 YApi 的 createAction 相同（参数校验 → 登录检查 → 业务处理）；实现 18 个接口：用户 8 个（status、login、reg、logout、avatar、search、list、up_study）、分组 10 个。
+  - 首次启动自动创建管理员（不配置密码时随机生成）。
+  - `go test` 自动执行兼容比对：场景 `01-user-and-group` 的 21 次调用与原版 YApi 完全一致；用变异测试确认比对确实有效。
+  - 浏览器实测：登录、退出指引、新建分组、查看分组和成员列表都正常。
+- 问题 / 决定：
+  - 从源码确认登录令牌是用户自己的 passsalt 签名的 JWT，照此实现后迁移来的用户无需重新登录。
+  - 改了 3 处表结构：`custom_field1` 允许 NULL（YApi 修改分组后会变成 null）、ID 从 11 开始、迁移文件移到 `internal/store/migrations`。
+  - `-yapi-upstream` 改为全量转发：ApiYard 的登录令牌原版无法识别，两边无法混用。
+  - 出于安全考虑与原版刻意不同的地方，统一记录在 architecture.md：`add_member` 增加权限检查、动态内容做 HTML 转义、Cookie 增加 SameSite、管理员默认密码随机生成等。
+  - 关注（follow）的 3 个接口依赖项目数据，移到 M2。
+- 下一步：M1（下）——用户剩下的接口（find、update、change_password、del、upload_avatar、project），并补充对应的兼容场景。
+
 ## 2026-11-04 建立仓库
 
 - 完成：创建私有仓库 `PandaPanY/apiyard`，模块路径改为 `github.com/PandaPanY/apiyard`，提交 M0 和 M0.5 的全部成果。

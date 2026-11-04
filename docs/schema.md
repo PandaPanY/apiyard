@@ -1,7 +1,7 @@
 # 数据库表结构
 
 > 状态：M0.5 草案（2026-11-04），已用 SQLite 3.53 校验。M1 落地时作为第一个迁移执行。
-> DDL：[`internal/store/sqlite/migrations/0001_init.sql`](../internal/store/sqlite/migrations/0001_init.sql)
+> DDL：[`internal/store/migrations/0001_init.sql`](../internal/store/migrations/0001_init.sql)
 
 ## 集合与表的对应
 

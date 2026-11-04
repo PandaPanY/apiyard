@@ -12,6 +12,10 @@ internal/compat/ 框架：执行场景、归一化、比对
 tools/compat/    命令行工具
 ```
 
+## 自动运行
+
+`go test ./...` 会自动执行兼容比对（`internal/server/compat_test.go`）：在进程内启动一个使用全新数据库的 ApiYard，执行已实现的场景，并与 golden 文件逐字段比对，**不需要连接对照实例**。每完成一个里程碑，就把对应场景加进 `implementedScenarios`。
+
 ## 常用命令
 
 前提：已建立到对照实例的 SSH 隧道（`ssh -N -L 13000:127.0.0.1:13000 testenv`，`testenv` 是测试服务器的 SSH 别名），对照实例的说明见 [`testenv/yapi`](../testenv/yapi/README.md)。

@@ -32,7 +32,7 @@ CREATE TABLE groups (
     group_name    TEXT    NOT NULL,
     group_desc    TEXT,
     type          TEXT    NOT NULL DEFAULT 'public' CHECK (type IN ('public', 'private')),
-    custom_field1 TEXT    NOT NULL DEFAULT '{"enable":false}' CHECK (json_valid(custom_field1)),
+    custom_field1 TEXT    DEFAULT '{"enable":false}' CHECK (json_valid(custom_field1)), -- 修改分组时不传会变成 null（YApi 行为）
     add_time      INTEGER NOT NULL,
     up_time       INTEGER NOT NULL,
     extra         TEXT    NOT NULL DEFAULT '{}' CHECK (json_valid(extra))
@@ -180,3 +180,8 @@ CREATE TABLE avatars (
     image BLOB    NOT NULL,
     type  TEXT    NOT NULL                   -- MIME 类型，如 image/png
 ) STRICT;
+
+-- 与 YApi 一样从 11 开始编号（sqlite_sequence 在建好 AUTOINCREMENT 表后自动存在）
+INSERT INTO sqlite_sequence (name, seq) VALUES
+    ('users', 10), ('groups', 10), ('projects', 10), ('interface_cats', 10),
+    ('interfaces', 10), ('follows', 10), ('logs', 10);
