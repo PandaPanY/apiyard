@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/PandaPanY/apiyard/internal/store"
@@ -26,6 +27,8 @@ type API struct {
 	opts   Options
 	logger *slog.Logger
 	now    func() time.Time
+	// schemaArraySeq 对应 YApi 导出 Markdown 时的模块级计数器（数组行的 key 为 array-N），整个进程内递增
+	schemaArraySeq atomic.Int64
 }
 
 // New 创建接口层。
@@ -44,6 +47,7 @@ func (a *API) Register(mux *http.ServeMux) {
 	a.registerLog(mux)
 	a.registerInterface(mux)
 	a.registerUnsupported(mux)
+	a.registerExport(mux)
 }
 
 // handlerFunc 处理一次调用；返回的错误统一转换为 YApi 的“服务器出错”响应。

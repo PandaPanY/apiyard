@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -92,7 +93,15 @@ func (r *runner) do(ctx context.Context, st Step, name string) (Exchange, error)
 	ex := Exchange{Step: name, Method: st.Method, URL: templateURL(st), Request: st.Body, Status: resp.StatusCode}
 	var parsed any
 	if decodeJSON(raw, &parsed) != nil {
-		ex.Response = string(raw)
+		text := string(raw)
+		for _, rule := range st.TextReplace {
+			re, err := regexp.Compile(rule[0])
+			if err != nil {
+				return ex, fmt.Errorf("textReplace 正则 %q: %w", rule[0], err)
+			}
+			text = re.ReplaceAllString(text, rule[1])
+		}
+		ex.Response = text
 		return ex, nil
 	}
 	ex.Response = Normalize(parsed)

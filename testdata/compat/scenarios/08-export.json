@@ -1,0 +1,402 @@
+{
+  "description": "M3-2：导出 JSON / Markdown / Swagger。覆盖各种请求体、JSON Schema 转表格、公开接口筛选、按 index 排序、token 访问。HTML 由 markdown-it 渲染，无法逐字一致，不放在这里",
+  "steps": [
+    {
+      "name": "管理员登录",
+      "method": "POST",
+      "path": "/api/user/login",
+      "body": {
+        "email": "admin@admin.com",
+        "password": "ymfe.org"
+      }
+    },
+    {
+      "name": "新建分组",
+      "method": "POST",
+      "path": "/api/group/add",
+      "body": {
+        "group_name": "导出组",
+        "owner_uids": []
+      },
+      "capture": {
+        "gid": "data._id"
+      }
+    },
+    {
+      "name": "新建项目",
+      "method": "POST",
+      "path": "/api/project/add",
+      "body": {
+        "name": "导出项目",
+        "basepath": "/v2",
+        "group_id": "{{gid}}",
+        "desc": "导出测试项目"
+      },
+      "capture": {
+        "pid": "data._id"
+      }
+    },
+    {
+      "name": "默认分类",
+      "method": "GET",
+      "path": "/api/project/get",
+      "query": {
+        "id": "{{pid}}"
+      },
+      "capture": {
+        "cat0": "data.cat.0._id"
+      }
+    },
+    {
+      "name": "新建分类",
+      "method": "POST",
+      "path": "/api/interface/add_cat",
+      "body": {
+        "name": "用户",
+        "project_id": "{{pid}}",
+        "desc": "用户相关"
+      },
+      "capture": {
+        "c1": "data._id"
+      }
+    },
+    {
+      "name": "接口 A：完整的参数和 JSON Schema 响应",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{c1}}",
+        "title": "获取用户",
+        "path": "/users/{id}",
+        "method": "GET",
+        "desc": "<p>按 ID 获取</p>",
+        "markdown": "按 ID 获取",
+        "status": "done",
+        "tag": [
+          "v1"
+        ],
+        "api_opened": true,
+        "req_params": [
+          {
+            "name": "id",
+            "desc": "用户ID",
+            "example": "1"
+          }
+        ],
+        "req_query": [
+          {
+            "name": "fields",
+            "required": "0",
+            "example": "a,b",
+            "desc": "返回字段\n逗号分隔"
+          }
+        ],
+        "req_headers": [
+          {
+            "name": "X-Token",
+            "value": "abc",
+            "required": "1",
+            "desc": "令牌"
+          }
+        ],
+        "res_body_type": "json",
+        "res_body_is_json_schema": true,
+        "res_body": "{\"type\": \"object\", \"title\": \"用户\", \"required\": [\"id\", \"name\"], \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1, \"description\": \"ID\", \"mock\": {\"mock\": \"@id\"}}, \"name\": {\"type\": \"string\", \"title\": \"名称\", \"description\": \"用户名\", \"maxLength\": 20, \"default\": \"tom\"}, \"tags\": {\"type\": \"array\", \"minItems\": 1, \"items\": {\"type\": \"string\", \"format\": \"email\"}}, \"roles\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"code\": {\"type\": \"string\", \"enum\": [\"a\", \"b\"], \"enumDesc\": \"a: 管理\\nb: 普通\"}, \"level\": {\"type\": \"number\", \"maximum\": 9.5, \"default\": 1.5}}}}, \"active\": {\"type\": \"boolean\", \"default\": true}, \"meta\": {\"type\": \"object\", \"description\": \"附加信息\", \"properties\": {\"score\": {\"type\": \"number\", \"maximum\": 100}}}, \"matrix\": {\"type\": \"array\", \"items\": {\"type\": \"array\", \"items\": {\"type\": \"integer\"}}}, \"extra\": {\"properties\": {\"x\": {\"type\": [\"string\", \"null\"]}}}}}"
+      },
+      "capture": {
+        "ia": "data._id"
+      }
+    },
+    {
+      "name": "接口 B：JSON Schema 请求体",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{c1}}",
+        "title": "新建用户",
+        "path": "/users",
+        "method": "POST",
+        "req_body_type": "json",
+        "req_body_is_json_schema": true,
+        "req_body_other": "{\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"age\": {\"type\": \"integer\", \"minimum\": 0}}, \"required\": [\"name\"], \"description\": \"新建用户的请求体\"}",
+        "res_body_type": "json",
+        "res_body": "{\"code\":0}"
+      },
+      "capture": {
+        "ib": "data._id"
+      }
+    },
+    {
+      "name": "接口 C：表单上传",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{c1}}",
+        "title": "上传头像",
+        "path": "/users/{id}/avatar",
+        "method": "PUT",
+        "req_body_type": "form",
+        "req_headers": [],
+        "req_body_form": [
+          {
+            "name": "file",
+            "type": "file",
+            "required": "1",
+            "desc": "头像"
+          },
+          {
+            "name": "note",
+            "type": "text",
+            "required": "0",
+            "example": "x"
+          }
+        ]
+      },
+      "capture": {
+        "ic": "data._id"
+      }
+    },
+    {
+      "name": "接口 D：raw 请求和响应",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat0}}",
+        "title": "心跳",
+        "path": "/ping",
+        "method": "GET",
+        "req_body_type": "raw",
+        "req_body_other": "ping",
+        "res_body_type": "raw",
+        "res_body": "pong"
+      }
+    },
+    {
+      "name": "接口 E：数组根节点的响应 Schema",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat0}}",
+        "title": "删除用户",
+        "path": "/users/{id}",
+        "method": "DELETE",
+        "req_body_type": "json",
+        "req_body_other": "{\"force\":true}",
+        "res_body_type": "json",
+        "res_body_is_json_schema": true,
+        "res_body": "{\"type\": \"array\", \"items\": {\"type\": \"string\"}, \"description\": \"删除结果\"}"
+      }
+    },
+    {
+      "name": "接口 F：什么都没有",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat0}}",
+        "title": "空接口",
+        "path": "/empty",
+        "method": "GET"
+      }
+    },
+    {
+      "name": "调整接口顺序",
+      "method": "POST",
+      "path": "/api/interface/up_index",
+      "body": [
+        {
+          "id": "{{ia}}",
+          "index": 0
+        },
+        {
+          "id": "{{ib}}",
+          "index": 1
+        },
+        {
+          "id": "{{ic}}",
+          "index": 2
+        }
+      ]
+    },
+    {
+      "name": "导出 JSON（全部）",
+      "method": "GET",
+      "path": "/api/plugin/export",
+      "query": {
+        "pid": "{{pid}}",
+        "type": "json",
+        "status": "all",
+        "isWiki": "false"
+      }
+    },
+    {
+      "name": "导出 JSON（公开接口）",
+      "method": "GET",
+      "path": "/api/plugin/export",
+      "query": {
+        "pid": "{{pid}}",
+        "type": "json",
+        "status": "open",
+        "isWiki": "false"
+      }
+    },
+    {
+      "name": "导出 Markdown（全部）",
+      "method": "GET",
+      "path": "/api/plugin/export",
+      "query": {
+        "pid": "{{pid}}",
+        "type": "markdown",
+        "status": "all",
+        "isWiki": "false"
+      },
+      "textReplace": [
+        [
+          "<a id=([^>]*?)[0-9]+> </a>",
+          "<a id=$1<id>> </a>"
+        ]
+      ]
+    },
+    {
+      "name": "导出 Markdown（公开接口）",
+      "method": "GET",
+      "path": "/api/plugin/export",
+      "query": {
+        "pid": "{{pid}}",
+        "type": "markdown",
+        "status": "open",
+        "isWiki": "false"
+      },
+      "textReplace": [
+        [
+          "<a id=([^>]*?)[0-9]+> </a>",
+          "<a id=$1<id>> </a>"
+        ]
+      ]
+    },
+    {
+      "name": "导出 Swagger（全部）",
+      "method": "GET",
+      "path": "/api/plugin/exportSwagger",
+      "query": {
+        "pid": "{{pid}}",
+        "type": "OpenAPIV2",
+        "status": "all",
+        "isWiki": "false"
+      }
+    },
+    {
+      "name": "导出 Swagger（公开接口）",
+      "method": "GET",
+      "path": "/api/plugin/exportSwagger",
+      "query": {
+        "pid": "{{pid}}",
+        "type": "OpenAPIV2",
+        "status": "open",
+        "isWiki": "false"
+      }
+    },
+    {
+      "name": "导出 Swagger 类型不对",
+      "method": "GET",
+      "path": "/api/plugin/exportSwagger",
+      "query": {
+        "pid": "{{pid}}",
+        "type": "OpenAPIV3"
+      },
+      "errcode": 400
+    },
+    {
+      "name": "导出不存在的项目（JSON）",
+      "method": "GET",
+      "path": "/api/plugin/export",
+      "query": {
+        "pid": "99999",
+        "type": "json",
+        "status": "all"
+      },
+      "errcode": 502
+    },
+    {
+      "name": "获取 token",
+      "method": "GET",
+      "path": "/api/project/token",
+      "query": {
+        "project_id": "{{pid}}"
+      },
+      "capture": {
+        "tok": "data"
+      },
+      "volatile": [
+        "data"
+      ]
+    },
+    {
+      "name": "退出登录",
+      "method": "GET",
+      "path": "/api/user/logout"
+    },
+    {
+      "name": "未登录不能导出",
+      "method": "GET",
+      "path": "/api/plugin/export",
+      "query": {
+        "pid": "{{pid}}",
+        "type": "json",
+        "status": "all"
+      },
+      "errcode": 40011
+    },
+    {
+      "name": "用 token 导出 JSON（pid 被 token 覆盖）",
+      "method": "GET",
+      "path": "/api/plugin/export",
+      "query": {
+        "pid": "99999",
+        "type": "json",
+        "status": "all",
+        "token": "{{tok}}"
+      }
+    },
+    {
+      "name": "用 token 导出 Swagger",
+      "method": "GET",
+      "path": "/api/plugin/exportSwagger",
+      "query": {
+        "type": "OpenAPIV2",
+        "status": "all",
+        "token": "{{tok}}"
+      }
+    },
+    {
+      "name": "管理员再次登录",
+      "method": "POST",
+      "path": "/api/user/login",
+      "body": {
+        "email": "admin@admin.com",
+        "password": "ymfe.org"
+      }
+    },
+    {
+      "name": "删除项目",
+      "method": "POST",
+      "path": "/api/project/del",
+      "body": {
+        "id": "{{pid}}"
+      }
+    },
+    {
+      "name": "清理分组",
+      "method": "POST",
+      "path": "/api/group/del",
+      "body": {
+        "id": "{{gid}}"
+      }
+    }
+  ]
+}

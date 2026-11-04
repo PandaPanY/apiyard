@@ -111,6 +111,7 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 开放 API token 越权 | 通过 token 访问时，新建、修改接口和新建分类完全不检查权限，任何项目的 token 都能改其他项目的接口和分类 | token 只能操作所属项目；对其他项目按"没有权限"处理（各接口原有的错误码） | 越权 |
 | 伪造的开放 API token | 能解密但项目 token 不存在时，只写了 42014 就继续执行，把请求当成 token 里 uid 对应的用户；默认 passsalt 下等于可以伪造任意用户 | 返回 42014 `token 无效` | 身份伪造 |
 | 用户已删除的 token | 当前用户为空，部分接口能用、部分接口出错 | 返回 42014 `token 无效` | 健壮性 |
+| `/api/plugin/export`、`exportSwagger` | 不检查任何权限，任何登录用户都能导出任意项目 | 私有项目要求查看权限，否则 406；通过 token 访问时只能导出 token 所属项目 | 信息泄露 |
 
 ### 正常使用中也能看到的差异
 
@@ -126,6 +127,7 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | `/api/interface/schema2json` | json-schema-faker | 自己实现的生成器（`internal/schemafake`），覆盖常用关键字；结果本来就是随机的 | 不依赖 Node |
 | `save` 的 `dataSync=good` 合并 | 合并后的 JSON Schema 保留原有键顺序 | 键按字母顺序输出，内容相同 | Go 的 map 不保序；只影响文本格式 |
 | `/api/project/swagger_url` | 服务端去请求用户给的任意 URL | 暂不提供，返回 402 和提示；“从 URL 导入”在 M3 做导入功能时再决定是否提供（加地址限制） | SSRF |
+| HTML 导出 | markdown-it 渲染，左侧是 markdown-it-table-of-contents 生成的目录 | goldmark 渲染，目录按"分类 → 接口"生成；样式表沿用原版，页眉页脚文字不同 | HTML 渲染器无法逐字一致；JSON、Markdown、Swagger 导出与原版一致 |
 
 ## YApi 兼容要点
 
@@ -176,6 +178,8 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 复制项目 | 不建默认分类；分类按参数 `cat` 的顺序新建（index 都是 0），接口按标题排序复制并保留原 index；`is_json5` 取模型默认值 true | 实测 |
 | 开放 API token | 只对 15 个白名单接口和 `/api/open/*` 生效；`project_id` 被强制改成 token 所属项目（参数校验之前）。新格式 token 代表生成它的用户，按其角色判断读权限；旧格式（原始 token）代表 uid 999999 的 system 普通会员，读不了私有项目，但写接口不检查角色。解不开也找不到的 token 被忽略 | `controllers/base.js` + 实测 |
 | token 访问的特殊情况 | `add_cat` 只读请求体，token 不会补上 `project_id`；`project/get` 只给 token 不给 `id` 时，`cat` 为空数组、`role` 为 false；`interface/get` 的接口不属于 token 项目时返回 400 `token有误` | 实测 |
+| 导出 | 分类按 index 排序，分类内按 index、标题排序，没有接口的分类不导出；`status=open` 只导出公开接口。JSON 导出中分类去掉了 `_id` 等字段，接口却保留完整字段（原版删的是 Mongoose 文档对象上的属性，没有生效）。项目不存在、请求体或响应体不是合法 JSON（Swagger）时返回 502 `下载出错` | `exts/yapi-plugin-export-*` + 实测 |
+| Markdown 导出 | 字符串拼接，可以逐字复现：JSON Schema 转成 HTML 表格，`<p key=N>` 的 N 把值为 undefined 的字段也算在内；数组行的 key 是 `array-N`，N 来自进程内一直递增的计数器 | `common/markdown.js`、`common/schema-transformTo-table.js` |
 
 ### 数据集合（M3 迁移范围）
 

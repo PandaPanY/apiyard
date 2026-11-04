@@ -67,6 +67,7 @@ go run ./tools/compat check -target http://localhost:3000 -run user
 | `errcode` | 期望的业务错误码，默认 0；不符时场景立即失败 |
 | `volatile` | 响应中每次都不同、又无法按字段名统一处理的值（点分路径），比对前替换为 `<volatile>`。例如 `/api/project/token` 直接把随机 token 放在 `data` 里 |
 | `unordered` | 顺序不确定的数组（点分路径），比对前按元素内容排序，只比较有哪些元素。例如 YApi 的动态列表在同一秒内的顺序不固定 |
+| `textReplace` | 只用于不是 JSON 的响应（如 Markdown 导出），按正则替换每次不同的片段，每项是 `[正则, 替换文本]`。不是 JSON 的响应逐字比较 |
 
 ## 归一化规则
 

@@ -2,6 +2,21 @@
 
 > 按日期倒序记录，最新的在最上面。每条只写要点。
 
+## 2026-11-04 M3-2：导出
+
+- 完成：
+  - `/api/plugin/export`（JSON / Markdown / HTML）和 `/api/plugin/exportSwagger`（Swagger 2.0），支持 token 访问。
+  - Markdown 导出逐字复现原版（包括 JSON Schema 转表格的各种细节）；Swagger 导出字段顺序与原版一致，请求体、响应体的 Schema 原样嵌入，保持键的顺序。
+  - 新场景 `08-export`（28 次调用），场景 01–08 共 258 次调用与原版一致；变异测试确认 Markdown 逐字比对和 Swagger 比对都有效。
+  - 兼容框架新增 `textReplace`：不是 JSON 的响应逐字比较，按正则替换掉锚点里每次不同的 ID。
+  - 浏览器实测：数据管理页四种导出的链接格式与后端一致，下载正常。
+- 问题 / 决定：
+  - HTML 由 markdown-it 渲染，无法逐字一致，改用 goldmark（新增依赖），保留原版样式表和页面结构。
+  - 安全修正：原版导出不检查任何权限，ApiYard 对私有项目要求查看权限。
+  - 原版 JSON 导出想去掉接口的 `_id` 等字段，但删的是 Mongoose 文档对象上的属性，没有生效；ApiYard 照原样输出完整字段，因为 yapi-to-typescript 等工具读的就是这个格式。
+  - 本机访问 sum.golang.org 不通，下载依赖时改用 `GOSUMDB=sum.golang.google.cn`。
+- 下一步：M3-3 导入。
+
 ## 2026-11-04 M3-1：开放 API 鉴权
 
 - 完成：

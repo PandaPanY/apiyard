@@ -38,6 +38,9 @@ type Step struct {
 	// Unordered 列出顺序不确定的数组（点分路径），比对前按元素内容排序，只比较有哪些元素。
 	// 例如 YApi 的动态按秒级时间排序，同一秒内的多条动态每次查询顺序都可能不同。
 	Unordered []string `json:"unordered,omitempty"`
+	// TextReplace 只用于不是 JSON 的响应（如 Markdown 导出）：按正则把每次运行都不同的片段替换掉，
+	// 每项是 [正则, 替换文本]，替换文本可以用 $1 引用分组。例如把锚点里拼接的分类 ID 换成 <id>。
+	TextReplace [][2]string `json:"textReplace,omitempty"`
 }
 
 // LoadScenarios 按文件名顺序读取 dir 下的全部场景；场景之间可能有状态依赖，顺序有意义。

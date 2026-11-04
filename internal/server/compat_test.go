@@ -22,6 +22,7 @@ var implementedScenarios = map[string]bool{
 	"05-interface":      true,
 	"06-misc":           true,
 	"07-open-api":       true,
+	"08-export":         true,
 }
 
 // TestCompatWithYApi 在进程内启动一个全新的 ApiYard，按顺序执行已实现的兼容场景，

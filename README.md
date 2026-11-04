@@ -43,6 +43,7 @@ ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成�
 - 语言：Go（标准库 `net/http`）
 - 存储：SQLite（`modernc.org/sqlite`，纯 Go 实现，不需要 CGO），后续支持 PostgreSQL / MySQL
 - 前端：第一阶段沿用 YApi 原有前端（React），之后逐步替换
+- 其他依赖：`coder/websocket`（编辑冲突检测）、`yuin/goldmark`（导出 HTML 时渲染 Markdown），都是纯 Go 实现
 
 ## 快速开始
 
