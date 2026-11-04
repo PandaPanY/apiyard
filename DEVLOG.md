@@ -2,6 +2,21 @@
 
 > 按日期倒序记录，最新的在最上面。每条只写要点。
 
+## 2026-11-04 M2-3：分类与接口
+
+- 完成：
+  - 分类与接口 16 个接口：`add`、`save`、`up`、`get`、`list`、`list_cat`、`list_menu`、`del`、`add_cat`、`up_cat`、`del_cat`、`getCatMenu`、`up_index`、`up_cat_index`、`schema2json`，以及 WebSocket `solve_conflict`（编辑冲突检测，依赖 `coder/websocket`）。
+  - `project/copy`（连同分类、接口、成员一起复制）；`user/project` 的接口类型。
+  - `internal/schemafake`：JSON Schema 生成示例数据，替代 json-schema-faker。
+  - 新场景 `05-interface`（50 次调用），自检稳定；场景 01–05 共 176 次调用与原版完全一致，变异测试确认比对有效。
+  - 浏览器实测：新建接口、编辑保存（进入编辑页占用、离开后释放）、动态里的“改动详情”、复制项目都正常。
+- 问题 / 决定：
+  - 原版新建 form 接口时不传 `req_headers` 会出错，场景里补上；ApiYard 按空数组处理。
+  - 参数解析补齐 ajv 的行为：请求体可以是数组（`up_index`），同名查询参数得到数组（前端按多个状态筛选），字符串字段接受布尔，新增 boolean 规则。
+  - 与原版的刻意差异新增 11 处，多为权限和数据一致性修正（分类归属、删除权限、排序权限、复制源项目权限、编辑冲突释放等），见 architecture.md 的差异表。
+  - `nModified` 忽略 `up_time`，否则同一秒内和跨秒保存的结果不同。
+- 下一步：M2-4（`log/list_by_update`、4 个占位接口、`project/download`），完成后 M2 收尾。
+
 ## 2026-11-04 M2-2：项目成员
 
 - 完成：

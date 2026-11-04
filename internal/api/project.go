@@ -11,6 +11,7 @@ import (
 	"html"
 	"net/http"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -39,6 +40,12 @@ func (a *API) registerProject(mux *http.ServeMux) {
 	a.handle(mux, "GET /api/project/update_token", a.projectUpdateToken, schema(projectID))
 	a.handle(mux, "GET /api/project/check_project_name", a.projectCheckName)
 	a.handle(mux, "GET /api/project/search", a.projectSearch)
+	a.handle(mux, "POST /api/project/copy", a.projectCopy, schema(
+		name, field{name: "preName", kind: "string", min: 1}, str("basepath"),
+		field{name: "group_id", kind: "number", required: true}, field{name: "_id", kind: "number"},
+		field{name: "cat", kind: "array"}, str("pre_script"), str("after_script"), field{name: "env", kind: "array"},
+		str("group_name"), str("desc"), str("color"), str("icon"),
+		field{name: "project_type", kind: "string", enum: []string{"private", "public"}}))
 }
 
 // ---- 文档格式 ----
@@ -713,3 +720,97 @@ func (a *API) projectSearch(c *call) error {
 }
 
 func strPtr(s string) *string { return &s }
+
+// projectCopy 复制项目：新建项目，按参数 cat 的顺序新建分类并复制其中的接口，再复制源项目的成员。
+// 与 YApi 不同：要求对源项目有查看权限，且只复制属于源项目的分类下的接口；全部操作在一个事务中完成。
+func (a *API) projectCopy(c *call) error {
+	ctx := c.r.Context()
+	groupID, _ := c.int("group_id")
+	if ok, err := a.canGroup(ctx, c.user, groupID, actionEdit); err != nil {
+		return err
+	} else if !ok {
+		return c.fail(405, "没有权限")
+	}
+	sourceID, _ := c.int("_id")
+	source, err := a.store.ProjectByID(ctx, sourceID)
+	if errors.Is(err, store.ErrNotFound) {
+		return c.fail(402, "Cannot read property 'members' of null")
+	}
+	if err != nil {
+		return err
+	}
+	if ok, err := a.canProject(ctx, c.user, sourceID, actionView); err != nil {
+		return err
+	} else if !ok {
+		return c.fail(405, "没有权限")
+	}
+	catParams, ok := c.params["cat"].([]any)
+	if !ok {
+		return c.fail(402, "Cannot read property 'length' of undefined")
+	}
+	cats := make([]store.CopyCat, 0, len(catParams))
+	for _, item := range catParams {
+		m, _ := item.(map[string]any)
+		name, _, _ := castString(m["name"])
+		if name == "" {
+			return c.fail(402, "interface_cat validation failed: name: Path `name` is required.")
+		}
+		sourceCat, _ := toInt(m["_id"])
+		cat := store.CopyCat{SourceID: sourceCat, Name: name}
+		if desc, present, _ := castString(m["desc"]); present {
+			cat.Desc = &desc
+		}
+		cats = append(cats, cat)
+	}
+
+	envItems, ok := c.params["env"].([]any)
+	if !ok {
+		envItems = []any{map[string]any{"name": "local", "domain": "http://127.0.0.1"}}
+	}
+	env, err := normalizeEnv(envItems)
+	if err != nil {
+		return err
+	}
+	projectType, _ := c.str("project_type")
+	if projectType == "" {
+		projectType = "private"
+	}
+	basepath, _ := c.str("basepath") // YApi 复制时不整理 basepath
+	name, _ := c.str("name")
+	now := store.Now()
+	p := &store.Project{
+		UID: c.user.ID, GroupID: groupID, Name: name, Basepath: &basepath, Desc: c.optionalStr("desc"),
+		ProjectType: projectType, SwitchNotice: true, Icon: c.optionalStr("icon"), Color: c.optionalStr("color"),
+		Env: env, Tag: "[]", PreScript: c.optionalStr("pre_script"), AfterScript: c.optionalStr("after_script"),
+		IsJSON5: true, AddTime: now, UpTime: now,
+	}
+
+	members, err := a.store.ProjectMembers(ctx, sourceID)
+	if err != nil {
+		return err
+	}
+	// 非管理员复制时，如果不是源项目成员，自动成为新项目的组长
+	if c.user.Role != "admin" && !slices.ContainsFunc(members, func(m store.ProjectMember) bool { return m.UID == c.user.ID }) {
+		members = append(members, store.ProjectMember{EmailNotice: true, Member: store.Member{
+			UID: c.user.ID, Role: "owner", Username: &c.user.Username, Email: &c.user.Email}})
+	}
+	for i := range members {
+		members[i].SubID = "" // 新项目的成员子文档使用新的 _id
+	}
+	if err := a.store.CopyProject(ctx, p, source.ID, cats, members, c.user.ID, now); err != nil {
+		return err
+	}
+
+	preName, ok := c.str("preName")
+	if !ok {
+		preName = "undefined"
+	}
+	a.projectLog(ctx, c.user, p.ID, fmt.Sprintf(`复制了项目 %s 为 <a href="/project/%d">%s</a>`,
+		html.EscapeString(preName), p.ID, html.EscapeString(name)))
+
+	// 与新建项目一样，YApi 返回的是加入成员之前的保存结果
+	doc := projectBaseDoc(p)
+	doc["members"] = []any{}
+	doc["__v"] = 0
+	return c.ok(doc)
+}

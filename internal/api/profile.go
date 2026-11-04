@@ -204,9 +204,20 @@ func (a *API) userProject(c *call) error {
 		return c.reply(map[string]any{"errcode": 422, "errmsg": msg, "data": result})
 	}
 	if typ == "interface" {
-		// 接口要到 M2-3 才能创建，目前只会查不到。YApi 查不到接口时的响应如下
-		result["interface"] = nil
-		return notFound("Cannot read property 'project_id' of null")
+		it, err := a.store.InterfaceByID(ctx, id)
+		if errors.Is(err, store.ErrNotFound) {
+			result["interface"] = nil
+			return notFound("Cannot read property 'project_id' of null")
+		}
+		if err != nil {
+			return err
+		}
+		// 与 YApi 不同：私有项目的接口要求有查看权限，否则任何登录用户都能借此读到接口定义
+		if denied, err := a.privateDenied(ctx, c.user, it.ProjectID, actionView); err != nil || denied {
+			return c.sendDenied(err)
+		}
+		result["interface"] = interfaceDoc(it)
+		typ, id = "project", it.ProjectID
 	}
 	if typ == "project" {
 		p, err := a.store.ProjectByID(ctx, id)

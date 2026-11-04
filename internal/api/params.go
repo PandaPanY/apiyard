@@ -17,41 +17,52 @@ import (
 const maxBodySize = 2 << 20
 
 // readParams 合并查询参数和请求体，请求体中的同名字段优先，与 YApi 的 Object.assign(query, body) 一致。
-func readParams(r *http.Request) (map[string]any, error) {
-	params := map[string]any{}
+// 同名查询参数出现多次时与 Koa 一样得到数组。请求体是 JSON 数组时（如 up_index）原样放在 body 中返回。
+func readParams(r *http.Request) (params map[string]any, body any, err error) {
+	params = map[string]any{}
 	for k, v := range r.URL.Query() {
-		params[k] = v[0]
+		if len(v) == 1 {
+			params[k] = v[0]
+			continue
+		}
+		list := make([]any, len(v))
+		for i, s := range v {
+			list[i] = s
+		}
+		params[k] = list
 	}
 	if r.Body == nil {
-		return params, nil
+		return params, nil, nil
 	}
 
 	data, err := io.ReadAll(io.LimitReader(r.Body, maxBodySize))
 	if err != nil || len(bytes.TrimSpace(data)) == 0 {
-		return params, err
+		return params, nil, err
 	}
 	mediaType, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	switch mediaType {
 	case "application/x-www-form-urlencoded":
 		r.Body = io.NopCloser(bytes.NewReader(data))
 		if err := r.ParseForm(); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		for k, v := range r.PostForm {
 			params[k] = v[0]
 		}
+		return params, nil, nil
 	default:
-		var body map[string]any
 		dec := json.NewDecoder(bytes.NewReader(data))
 		dec.UseNumber()
 		if err := dec.Decode(&body); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
-		for k, v := range body {
-			params[k] = v
+		if obj, ok := body.(map[string]any); ok {
+			for k, v := range obj {
+				params[k] = v
+			}
 		}
+		return params, body, nil
 	}
-	return params, nil
 }
 
 // toInt 按 YApi（ajv coerceTypes）的规则把参数转换为整数：数字或数字字符串都可以。
@@ -106,7 +117,7 @@ func (c *call) trimmed(key string) string {
 // field 是一条参数校验规则，对应 YApi schemaMap 中的一个字段。
 type field struct {
 	name     string
-	kind     string // number / string / array / object
+	kind     string // number / string / boolean / array / object
 	required bool
 	min      int      // 字符串最小长度或数组最少项数
 	enum     []string // 字符串的可选值
@@ -147,13 +158,17 @@ func checkField(f field, v any) (any, string) {
 		}
 		return n, ""
 	case "string":
-		s, ok := v.(string)
-		if !ok {
-			if num, isNum := v.(json.Number); isNum {
-				s = num.String()
-			} else {
-				return nil, "应当是 string 类型"
-			}
+		// ajv 的 coerceTypes 会把数字和布尔转为字符串
+		var s string
+		switch x := v.(type) {
+		case string:
+			s = x
+		case json.Number:
+			s = x.String()
+		case bool:
+			s = strconv.FormatBool(x)
+		default:
+			return nil, "应当是 string 类型"
 		}
 		if len([]rune(s)) < f.min {
 			return nil, fmt.Sprintf("不应少于 %d 个字符", f.min)
@@ -171,6 +186,21 @@ func checkField(f field, v any) (any, string) {
 			return nil, fmt.Sprintf("不应少于 %d 个项", f.min)
 		}
 		return items, ""
+	case "boolean":
+		// ajv 的 coerceTypes 接受 "true"/"false"、1/0
+		switch x := v.(type) {
+		case bool:
+			return x, ""
+		case string:
+			if x == "true" || x == "false" {
+				return x == "true", ""
+			}
+		case json.Number:
+			if x == "1" || x == "0" {
+				return x == "1", ""
+			}
+		}
+		return nil, "应当是 boolean 类型"
 	case "object":
 		if _, ok := v.(map[string]any); !ok {
 			return nil, "应当是 object 类型"

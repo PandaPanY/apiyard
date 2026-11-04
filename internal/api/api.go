@@ -42,6 +42,7 @@ func (a *API) Register(mux *http.ServeMux) {
 	a.registerProjectMember(mux)
 	a.registerFollow(mux)
 	a.registerLog(mux)
+	a.registerInterface(mux)
 }
 
 // handlerFunc 处理一次调用；返回的错误统一转换为 YApi 的“服务器出错”响应。
@@ -86,10 +87,11 @@ func (a *API) serve(c *call, rt route, h handlerFunc) error {
 	}
 	c.user = user
 
-	params, err := readParams(c.r)
+	params, body, err := readParams(c.r)
 	if err != nil {
 		return c.fail(400, "请求体不是合法的 JSON")
 	}
+	c.body = body
 	if rt.schema != nil {
 		var msg string
 		if params, msg = validate(params, rt.schema); msg != "" {
@@ -110,6 +112,7 @@ type call struct {
 	w       http.ResponseWriter
 	r       *http.Request
 	params  map[string]any
+	body    any         // 解析后的 JSON 请求体，用于请求体本身是数组的接口
 	user    *store.User // 未登录时为 nil
 	replied bool
 }

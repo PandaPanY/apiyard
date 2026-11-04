@@ -1,0 +1,2173 @@
+[
+  {
+    "step": "管理员登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "找到 dev2",
+    "method": "GET",
+    "url": "/api/user/search?q=dev2",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "addTime": "<time>",
+          "email": "dev2@apiyard.test",
+          "role": "member",
+          "uid": "<id>",
+          "upTime": "<time>",
+          "username": "dev2"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "ok"
+    }
+  },
+  {
+    "step": "新建分组",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_name": "接口组",
+      "owner_uids": []
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_name": "接口组",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "admin@admin.com",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 加入分组",
+    "method": "POST",
+    "url": "/api/group/add_member",
+    "request": {
+      "id": "{{gid}}",
+      "member_uids": [
+        "{{dev2_uid}}"
+      ],
+      "role": "dev"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_members": [
+          {
+            "email": "dev2@apiyard.test",
+            "role": "dev",
+            "uid": "<id>",
+            "username": "dev2"
+          }
+        ],
+        "exist_members": [],
+        "no_members": [],
+        "result": {
+          "n": 1,
+          "nModified": 1,
+          "ok": 1
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建项目",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "basepath": "/api",
+      "group_id": "{{gid}}",
+      "name": "接口项目"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/api",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "接口项目",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "获取项目（拿到默认分类）",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/api",
+        "cat": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "公共分类",
+            "index": 0,
+            "name": "公共分类",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ],
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "接口项目",
+        "project_type": "private",
+        "role": "admin",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建分类",
+    "method": "POST",
+    "url": "/api/interface/add_cat",
+    "request": {
+      "desc": "用户相关",
+      "name": "用户",
+      "project_id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "desc": "用户相关",
+        "index": 0,
+        "name": "用户",
+        "project_id": "<id>",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建分类缺少名称",
+    "method": "POST",
+    "url": "/api/interface/add_cat",
+    "request": {
+      "project_id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "名称不能为空"
+    }
+  },
+  {
+    "step": "新建接口（冒号路径参数）",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{c1}}",
+      "method": "get",
+      "path": "/users/:id",
+      "project_id": "{{pid}}",
+      "req_query": [
+        {
+          "desc": "返回字段",
+          "name": "fields"
+        }
+      ],
+      "title": "获取用户"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/users/:id",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/:id"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [
+          {
+            "_id": "<objectid>",
+            "desc": "",
+            "name": "id"
+          }
+        ],
+        "req_query": [
+          {
+            "_id": "<objectid>",
+            "desc": "返回字段",
+            "name": "fields",
+            "required": "1"
+          }
+        ],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "获取用户",
+        "type": "var",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口（表单上传）",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{c1}}",
+      "method": "POST",
+      "path": "/users/{id}/avatar",
+      "project_id": "{{pid}}",
+      "req_body_form": [
+        {
+          "desc": "图片",
+          "name": "file",
+          "type": "file"
+        }
+      ],
+      "req_body_type": "form",
+      "req_headers": [],
+      "title": "上传头像"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users/{id}/avatar",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/{id}/avatar"
+        },
+        "req_body_form": [
+          {
+            "_id": "<objectid>",
+            "desc": "图片",
+            "name": "file",
+            "required": "1",
+            "type": "file"
+          }
+        ],
+        "req_body_is_json_schema": false,
+        "req_body_type": "form",
+        "req_headers": [
+          {
+            "_id": "<objectid>",
+            "name": "Content-Type",
+            "required": "1",
+            "value": "multipart/form-data"
+          }
+        ],
+        "req_params": [
+          {
+            "_id": "<objectid>",
+            "desc": "",
+            "name": "id"
+          }
+        ],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "上传头像",
+        "type": "var",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口（路径带查询串、JSON 请求体、tag）",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat0}}",
+      "method": "GET",
+      "path": "/users/search?page=1&size=10",
+      "project_id": "{{pid}}",
+      "req_body_other": "{\"keyword\":\"a\"}",
+      "req_body_type": "json",
+      "res_body": "{\"total\":0}",
+      "tag": [
+        "v1"
+      ],
+      "title": "搜索用户"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/users/search?page=1&size=10",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [
+            {
+              "_id": "<objectid>",
+              "name": "page",
+              "value": "1"
+            },
+            {
+              "_id": "<objectid>",
+              "name": "size",
+              "value": "10"
+            }
+          ],
+          "path": "/users/search"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_body_other": "{\"keyword\":\"a\"}",
+        "req_body_type": "json",
+        "req_headers": [
+          {
+            "_id": "<objectid>",
+            "name": "Content-Type",
+            "required": "1",
+            "value": "application/json"
+          }
+        ],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"total\":0}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [
+          "v1"
+        ],
+        "title": "搜索用户",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "重复的接口",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{c1}}",
+      "method": "GET",
+      "path": "/users/:id",
+      "project_id": "{{pid}}",
+      "title": "重复"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 40022,
+      "errmsg": "已存在的接口:/users/:id[GET]"
+    }
+  },
+  {
+    "step": "路径格式错误",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{c1}}",
+      "method": "GET",
+      "path": "users",
+      "project_id": "{{pid}}",
+      "title": "错误"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "path第一位必需为 /, 只允许由 字母数字-/_:.! 组成"
+    }
+  },
+  {
+    "step": "获取接口",
+    "method": "GET",
+    "url": "/api/interface/get?id={{i1}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/users/:id",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/:id"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [
+          {
+            "_id": "<objectid>",
+            "desc": "",
+            "name": "id"
+          }
+        ],
+        "req_query": [
+          {
+            "_id": "<objectid>",
+            "desc": "返回字段",
+            "name": "fields",
+            "required": "1"
+          }
+        ],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "获取用户",
+        "type": "var",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "接口列表",
+    "method": "GET",
+    "url": "/api/interface/list?limit=10&page=1&project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "count": 3,
+        "list": [
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/users/:id",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "获取用户",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "POST",
+            "path": "/users/{id}/avatar",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "上传头像",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/users/search?page=1&size=10",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [
+              "v1"
+            ],
+            "title": "搜索用户",
+            "uid": "<id>"
+          }
+        ],
+        "total": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "按状态筛选",
+    "method": "GET",
+    "url": "/api/interface/list?project_id={{pid}}&status=done",
+    "status": 200,
+    "response": {
+      "data": {
+        "count": 0,
+        "list": [],
+        "total": 0
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "分类下的接口",
+    "method": "GET",
+    "url": "/api/interface/list_cat?catid={{c1}}&limit=10&page=1",
+    "status": 200,
+    "response": {
+      "data": {
+        "count": 2,
+        "list": [
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "GET",
+            "path": "/users/:id",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "获取用户",
+            "uid": "<id>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "api_opened": false,
+            "catid": "<id>",
+            "edit_uid": "<id>",
+            "method": "POST",
+            "path": "/users/{id}/avatar",
+            "project_id": "<id>",
+            "status": "undone",
+            "tag": [],
+            "title": "上传头像",
+            "uid": "<id>"
+          }
+        ],
+        "total": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "接口菜单",
+    "method": "GET",
+    "url": "/api/interface/list_menu?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "公共分类",
+          "index": 0,
+          "list": [
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/users/search?page=1&size=10",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [
+                "v1"
+              ],
+              "title": "搜索用户",
+              "uid": "<id>",
+              "up_time": "<time>"
+            }
+          ],
+          "name": "公共分类",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "用户相关",
+          "index": 0,
+          "list": [
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/users/:id",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "获取用户",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "POST",
+              "path": "/users/{id}/avatar",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "上传头像",
+              "uid": "<id>",
+              "up_time": "<time>"
+            }
+          ],
+          "name": "用户",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "分类列表",
+    "method": "GET",
+    "url": "/api/interface/getCatMenu?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "公共分类",
+          "index": 0,
+          "name": "公共分类",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "用户相关",
+          "index": 0,
+          "name": "用户",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改接口（写入动态）",
+    "method": "POST",
+    "url": "/api/interface/up",
+    "request": {
+      "catid": "{{c1}}",
+      "id": "{{i1}}",
+      "message": "改名\n并完成",
+      "status": "done",
+      "title": "获取用户详情"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "相同内容再改一次（不写动态）",
+    "method": "POST",
+    "url": "/api/interface/up",
+    "request": {
+      "catid": "{{c1}}",
+      "id": "{{i1}}",
+      "status": "done",
+      "title": "获取用户详情"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 0,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "只改描述（不写动态）",
+    "method": "POST",
+    "url": "/api/interface/up",
+    "request": {
+      "catid": "{{c1}}",
+      "desc": "<p>按 ID 查询</p>",
+      "id": "{{i1}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "改成已存在的路径",
+    "method": "POST",
+    "url": "/api/interface/up",
+    "request": {
+      "catid": "{{c1}}",
+      "id": "{{i1}}",
+      "method": "POST",
+      "path": "/users/{id}/avatar"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "已存在的接口:/users/{id}/avatar[POST]"
+    }
+  },
+  {
+    "step": "修改不存在的接口",
+    "method": "POST",
+    "url": "/api/interface/up",
+    "request": {
+      "id": 99999,
+      "title": "x"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "不存在的接口"
+    }
+  },
+  {
+    "step": "修改后的接口",
+    "method": "GET",
+    "url": "/api/interface/get?id={{i1}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "desc": "<p>按 ID 查询</p>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/users/:id",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/:id"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [
+          {
+            "_id": "<objectid>",
+            "desc": "",
+            "name": "id"
+          }
+        ],
+        "req_query": [
+          {
+            "_id": "<objectid>",
+            "desc": "返回字段",
+            "name": "fields",
+            "required": "1"
+          }
+        ],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "done",
+        "tag": [],
+        "title": "获取用户详情",
+        "type": "var",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "调整接口顺序",
+    "method": "POST",
+    "url": "/api/interface/up_index",
+    "request": [
+      {
+        "id": "{{i2}}",
+        "index": 0
+      },
+      {
+        "id": "{{i1}}",
+        "index": 1
+      }
+    ],
+    "status": 200,
+    "response": {
+      "data": "成功！",
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "调整分类顺序",
+    "method": "POST",
+    "url": "/api/interface/up_cat_index",
+    "request": [
+      {
+        "id": "{{c1}}",
+        "index": 0
+      },
+      {
+        "id": "{{cat0}}",
+        "index": 1
+      }
+    ],
+    "status": 200,
+    "response": {
+      "data": "成功！",
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改分类",
+    "method": "POST",
+    "url": "/api/interface/up_cat",
+    "request": {
+      "catid": "{{c1}}",
+      "desc": "改名后的分类",
+      "name": "用户中心"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "调整顺序后的分类列表",
+    "method": "GET",
+    "url": "/api/interface/getCatMenu?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "改名后的分类",
+          "index": 0,
+          "name": "用户中心",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "公共分类",
+          "index": 1,
+          "name": "公共分类",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "调整顺序后的菜单",
+    "method": "GET",
+    "url": "/api/interface/list_menu?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "改名后的分类",
+          "index": 0,
+          "list": [
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "POST",
+              "path": "/users/{id}/avatar",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "上传头像",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 1,
+              "method": "GET",
+              "path": "/users/:id",
+              "project_id": "<id>",
+              "status": "done",
+              "tag": [],
+              "title": "获取用户详情",
+              "uid": "<id>",
+              "up_time": "<time>"
+            }
+          ],
+          "name": "用户中心",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "公共分类",
+          "index": 1,
+          "list": [
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/users/search?page=1&size=10",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [
+                "v1"
+              ],
+              "title": "搜索用户",
+              "uid": "<id>",
+              "up_time": "<time>"
+            }
+          ],
+          "name": "公共分类",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "save 已存在的接口（更新）",
+    "method": "POST",
+    "url": "/api/interface/save",
+    "request": {
+      "catid": "{{c1}}",
+      "method": "POST",
+      "path": "/users/{id}/avatar",
+      "project_id": "{{pid}}",
+      "req_body_form": [
+        {
+          "name": "file",
+          "type": "file"
+        }
+      ],
+      "req_body_type": "form",
+      "req_headers": [
+        {
+          "name": "X-Trace",
+          "value": "1"
+        }
+      ],
+      "title": "上传头像V2"
+    },
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<id>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "save 新接口（新建）",
+    "method": "POST",
+    "url": "/api/interface/save",
+    "request": {
+      "catid": "{{cat0}}",
+      "method": "GET",
+      "path": "/ping",
+      "project_id": "{{pid}}",
+      "title": "健康检查"
+    },
+    "status": 200,
+    "response": {
+      "data": [],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "schema2json",
+    "method": "POST",
+    "url": "/api/interface/schema2json",
+    "request": {
+      "schema": {
+        "properties": {
+          "status": {
+            "enum": [
+              "ok"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      }
+    },
+    "status": 200,
+    "response": {
+      "status": "ok"
+    }
+  },
+  {
+    "step": "新建接口时自动加上的项目 tag",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/api",
+        "cat": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "改名后的分类",
+            "index": 0,
+            "name": "用户中心",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "公共分类",
+            "index": 1,
+            "name": "公共分类",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ],
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "接口项目",
+        "project_type": "private",
+        "role": "admin",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [
+          {
+            "_id": "<objectid>",
+            "desc": "v1",
+            "name": "v1"
+          }
+        ],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "复制项目",
+    "method": "POST",
+    "url": "/api/project/copy",
+    "request": {
+      "_id": "{{pid}}",
+      "basepath": "/api-copy",
+      "cat": "{{cats}}",
+      "env": "{{env}}",
+      "group_id": "{{gid}}",
+      "name": "接口项目副本",
+      "preName": "接口项目",
+      "project_type": "private"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/api-copy",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": true,
+        "is_mock_open": false,
+        "members": [],
+        "name": "接口项目副本",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "副本的接口菜单",
+    "method": "GET",
+    "url": "/api/interface/list_menu?project_id={{pid2}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "改名后的分类",
+          "index": 0,
+          "list": [
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "POST",
+              "path": "/users/{id}/avatar",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "上传头像V2",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 1,
+              "method": "GET",
+              "path": "/users/:id",
+              "project_id": "<id>",
+              "status": "done",
+              "tag": [],
+              "title": "获取用户详情",
+              "uid": "<id>",
+              "up_time": "<time>"
+            }
+          ],
+          "name": "用户中心",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "公共分类",
+          "index": 0,
+          "list": [
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/ping",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "健康检查",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/users/search?page=1&size=10",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [
+                "v1"
+              ],
+              "title": "搜索用户",
+              "uid": "<id>",
+              "up_time": "<time>"
+            }
+          ],
+          "name": "公共分类",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "dev2@apiyard.test",
+      "password": "dev2-pass"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev2@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev2"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "dev2 新建接口（自动成为项目开发者）",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat0}}",
+      "method": "GET",
+      "path": "/dev2",
+      "project_id": "{{pid}}",
+      "title": "dev2 的接口"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/dev2",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/dev2"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "dev2 的接口",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 加入了项目成员",
+    "method": "GET",
+    "url": "/api/project/get_member_list?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<objectid>",
+          "email": "dev2@apiyard.test",
+          "email_notice": true,
+          "role": "dev",
+          "uid": "<id>",
+          "username": "dev2"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 不能删除别人的接口",
+    "method": "POST",
+    "url": "/api/interface/del",
+    "request": {
+      "id": "{{i1}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "没有权限"
+    }
+  },
+  {
+    "step": "dev2 删除自己的接口",
+    "method": "POST",
+    "url": "/api/interface/del",
+    "request": {
+      "id": "{{i4}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 按接口查角色",
+    "method": "GET",
+    "url": "/api/user/project?id={{i3}}&type=interface",
+    "status": 200,
+    "response": {
+      "data": {
+        "group": {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "custom_field1": {
+            "enable": false
+          },
+          "group_name": "接口组",
+          "members": [
+            {
+              "_id": "<objectid>",
+              "email": "admin@admin.com",
+              "role": "owner",
+              "uid": "<id>",
+              "username": "admin"
+            },
+            {
+              "_id": "<objectid>",
+              "email": "dev2@apiyard.test",
+              "role": "dev",
+              "uid": "<id>",
+              "username": "dev2"
+            }
+          ],
+          "role": "member",
+          "type": "public",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        "interface": {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "api_opened": false,
+          "catid": "<id>",
+          "edit_uid": "<id>",
+          "index": 0,
+          "method": "GET",
+          "path": "/users/search?page=1&size=10",
+          "project_id": "<id>",
+          "query_path": {
+            "params": [
+              {
+                "_id": "<objectid>",
+                "name": "page",
+                "value": "1"
+              },
+              {
+                "_id": "<objectid>",
+                "name": "size",
+                "value": "10"
+              }
+            ],
+            "path": "/users/search"
+          },
+          "req_body_form": [],
+          "req_body_is_json_schema": false,
+          "req_body_other": "{\"keyword\":\"a\"}",
+          "req_body_type": "json",
+          "req_headers": [
+            {
+              "_id": "<objectid>",
+              "name": "Content-Type",
+              "required": "1",
+              "value": "application/json"
+            }
+          ],
+          "req_params": [],
+          "req_query": [],
+          "res_body": "{\"total\":0}",
+          "res_body_is_json_schema": false,
+          "res_body_type": "json",
+          "status": "undone",
+          "tag": [
+            "v1"
+          ],
+          "title": "搜索用户",
+          "type": "static",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        "project": {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "basepath": "/api",
+          "env": [
+            {
+              "_id": "<objectid>",
+              "domain": "http://127.0.0.1",
+              "global": [],
+              "header": [],
+              "name": "local"
+            }
+          ],
+          "group_id": "<id>",
+          "is_json5": false,
+          "is_mock_open": false,
+          "members": [
+            {
+              "_id": "<objectid>",
+              "email": "dev2@apiyard.test",
+              "email_notice": true,
+              "role": "dev",
+              "uid": "<id>",
+              "username": "dev2"
+            }
+          ],
+          "name": "接口项目",
+          "project_type": "private",
+          "role": "member",
+          "strice": false,
+          "switch_notice": true,
+          "tag": [
+            {
+              "_id": "<objectid>",
+              "desc": "v1",
+              "name": "v1"
+            }
+          ],
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员再次登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "删除接口",
+    "method": "POST",
+    "url": "/api/interface/del",
+    "request": {
+      "id": "{{i2}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除分类（连同接口）",
+    "method": "POST",
+    "url": "/api/interface/del_cat",
+    "request": {
+      "catid": "{{c1}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除后的菜单",
+    "method": "GET",
+    "url": "/api/interface/list_menu?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "desc": "公共分类",
+          "index": 1,
+          "list": [
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/users/search?page=1&size=10",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [
+                "v1"
+              ],
+              "title": "搜索用户",
+              "uid": "<id>",
+              "up_time": "<time>"
+            },
+            {
+              "_id": "<id>",
+              "add_time": "<time>",
+              "catid": "<id>",
+              "edit_uid": "<id>",
+              "index": 0,
+              "method": "GET",
+              "path": "/ping",
+              "project_id": "<id>",
+              "status": "undone",
+              "tag": [],
+              "title": "健康检查",
+              "uid": "<id>",
+              "up_time": "<time>"
+            }
+          ],
+          "name": "公共分类",
+          "project_id": "<id>",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "项目动态",
+    "method": "GET",
+    "url": "/api/log/list?limit=30&page=1&type=project&typeid={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> \n                    更新了分类 <a href=\"/project/<id>/interface/api/cat_<id>\">用户</a> \n                    下的接口 <a href=\"/project/<id>/interface/api/<id>\">获取用户</a><p>改名<br>并完成</p>",
+            "data": {
+              "cat_id": "<id>",
+              "current": {
+                "__v": 0,
+                "_id": "<id>",
+                "add_time": "<time>",
+                "api_opened": false,
+                "catid": "<id>",
+                "edit_uid": "<id>",
+                "index": 0,
+                "method": "GET",
+                "path": "/users/:id",
+                "project_id": "<id>",
+                "query_path": {
+                  "params": [],
+                  "path": "/users/:id"
+                },
+                "req_body_form": [],
+                "req_body_is_json_schema": false,
+                "req_headers": [],
+                "req_params": [
+                  {
+                    "_id": "<objectid>",
+                    "desc": "",
+                    "name": "id"
+                  }
+                ],
+                "req_query": [
+                  {
+                    "_id": "<objectid>",
+                    "desc": "返回字段",
+                    "name": "fields",
+                    "required": "1"
+                  }
+                ],
+                "res_body_is_json_schema": false,
+                "res_body_type": "json",
+                "status": "done",
+                "tag": [],
+                "title": "获取用户详情",
+                "type": "var",
+                "uid": "<id>",
+                "up_time": "<time>"
+              },
+              "interface_id": "<id>",
+              "old": {
+                "__v": 0,
+                "_id": "<id>",
+                "add_time": "<time>",
+                "api_opened": false,
+                "catid": "<id>",
+                "edit_uid": "<id>",
+                "index": 0,
+                "method": "GET",
+                "path": "/users/:id",
+                "project_id": "<id>",
+                "query_path": {
+                  "params": [],
+                  "path": "/users/:id"
+                },
+                "req_body_form": [],
+                "req_body_is_json_schema": false,
+                "req_headers": [],
+                "req_params": [
+                  {
+                    "_id": "<objectid>",
+                    "desc": "",
+                    "name": "id"
+                  }
+                ],
+                "req_query": [
+                  {
+                    "_id": "<objectid>",
+                    "desc": "返回字段",
+                    "name": "fields",
+                    "required": "1"
+                  }
+                ],
+                "res_body_is_json_schema": false,
+                "res_body_type": "json",
+                "status": "undone",
+                "tag": [],
+                "title": "获取用户",
+                "type": "var",
+                "uid": "<id>",
+                "up_time": "<time>"
+              }
+            },
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> \n                    更新了分类 <a href=\"/project/<id>/interface/api/cat_<id>\">用户中心</a> \n                    下的接口 <a href=\"/project/<id>/interface/api/<id>\">上传头像</a><p></p>",
+            "data": {
+              "cat_id": "<id>",
+              "current": {
+                "__v": 0,
+                "_id": "<id>",
+                "add_time": "<time>",
+                "api_opened": false,
+                "catid": "<id>",
+                "edit_uid": "<id>",
+                "index": 0,
+                "method": "POST",
+                "path": "/users/{id}/avatar",
+                "project_id": "<id>",
+                "query_path": {
+                  "params": [],
+                  "path": "/users/{id}/avatar"
+                },
+                "req_body_form": [
+                  {
+                    "_id": "<objectid>",
+                    "name": "file",
+                    "required": "1",
+                    "type": "file"
+                  }
+                ],
+                "req_body_is_json_schema": false,
+                "req_body_type": "form",
+                "req_headers": [
+                  {
+                    "_id": "<objectid>",
+                    "name": "Content-Type",
+                    "required": "1",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "_id": "<objectid>",
+                    "name": "X-Trace",
+                    "required": "1",
+                    "value": "1"
+                  }
+                ],
+                "req_params": [
+                  {
+                    "_id": "<objectid>",
+                    "desc": "",
+                    "name": "id"
+                  }
+                ],
+                "req_query": [],
+                "res_body_is_json_schema": false,
+                "res_body_type": "json",
+                "status": "undone",
+                "tag": [],
+                "title": "上传头像V2",
+                "type": "var",
+                "uid": "<id>",
+                "up_time": "<time>"
+              },
+              "interface_id": "<id>",
+              "old": {
+                "__v": 0,
+                "_id": "<id>",
+                "add_time": "<time>",
+                "api_opened": false,
+                "catid": "<id>",
+                "edit_uid": "<id>",
+                "index": 0,
+                "method": "POST",
+                "path": "/users/{id}/avatar",
+                "project_id": "<id>",
+                "query_path": {
+                  "params": [],
+                  "path": "/users/{id}/avatar"
+                },
+                "req_body_form": [
+                  {
+                    "_id": "<objectid>",
+                    "desc": "图片",
+                    "name": "file",
+                    "required": "1",
+                    "type": "file"
+                  }
+                ],
+                "req_body_is_json_schema": false,
+                "req_body_type": "form",
+                "req_headers": [
+                  {
+                    "_id": "<objectid>",
+                    "name": "Content-Type",
+                    "required": "1",
+                    "value": "multipart/form-data"
+                  }
+                ],
+                "req_params": [
+                  {
+                    "_id": "<objectid>",
+                    "desc": "",
+                    "name": "id"
+                  }
+                ],
+                "req_query": [],
+                "res_body_is_json_schema": false,
+                "res_body_type": "json",
+                "status": "undone",
+                "tag": [],
+                "title": "上传头像",
+                "type": "var",
+                "uid": "<id>",
+                "up_time": "<time>"
+              }
+            },
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 为分类 <a href=\"/project/<id>/interface/api/cat_<id>\">公共分类</a> 添加了接口 <a href=\"/project/<id>/interface/api/<id>\">健康检查</a> ",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 为分类 <a href=\"/project/<id>/interface/api/cat_<id>\">公共分类</a> 添加了接口 <a href=\"/project/<id>/interface/api/<id>\">搜索用户</a> ",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 为分类 <a href=\"/project/<id>/interface/api/cat_<id>\">用户</a> 添加了接口 <a href=\"/project/<id>/interface/api/<id>\">上传头像</a> ",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 为分类 <a href=\"/project/<id>/interface/api/cat_<id>\">用户</a> 添加了接口 <a href=\"/project/<id>/interface/api/<id>\">获取用户</a> ",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 删除了分类 \"用户中心\" 及该分类下的接口",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 删除了分类 <a href=\"/project/<id>/interface/api/cat_<id>\">用户中心</a> 下的接口 \"上传头像V2\"",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 更新了分类 <a href=\"/project/<id>/interface/api/cat_<id>\">用户</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 添加了分类  <a href=\"/project/<id>/interface/api/cat_<id>\">用户</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 添加了项目 <a href=\"/project/<id>\">接口项目</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">dev2</a> 为分类 <a href=\"/project/<id>/interface/api/cat_<id>\">公共分类</a> 添加了接口 <a href=\"/project/<id>/interface/api/<id>\">dev2 的接口</a> ",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "dev2"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">dev2</a> 删除了分类 <a href=\"/project/<id>/interface/api/cat_<id>\">公共分类</a> 下的接口 \"dev2 的接口\"",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "dev2"
+          }
+        ],
+        "total": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除副本",
+    "method": "POST",
+    "url": "/api/project/del",
+    "request": {
+      "id": "{{pid2}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除项目",
+    "method": "POST",
+    "url": "/api/project/del",
+    "request": {
+      "id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "清理分组",
+    "method": "POST",
+    "url": "/api/group/del",
+    "request": {
+      "id": "{{gid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  }
+]

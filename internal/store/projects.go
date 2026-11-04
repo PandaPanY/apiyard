@@ -52,20 +52,48 @@ func scanProject(row interface{ Scan(...any) error }) (*Project, error) {
 	return &p, nil
 }
 
+func insertProject(ctx context.Context, tx *sql.Tx, p *Project) error {
+	res, err := tx.ExecContext(ctx,
+		`INSERT INTO projects (uid, group_id, name, basepath, description, project_type, switch_notice, icon, color,
+		                       env, tag, pre_script, after_script, project_mock_script, is_mock_open, strice, is_json5,
+		                       add_time, up_time)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		p.UID, p.GroupID, p.Name, nullString(p.Basepath), nullString(p.Desc), p.ProjectType, boolInt(p.SwitchNotice),
+		nullString(p.Icon), nullString(p.Color), p.Env, p.Tag, nullString(p.PreScript), nullString(p.AfterScript),
+		nullString(p.ProjectMockScript), boolInt(p.IsMockOpen), boolInt(p.Strice), boolInt(p.IsJSON5), p.AddTime, p.UpTime)
+	if err != nil {
+		return err
+	}
+	p.ID, err = res.LastInsertId()
+	return err
+}
+
+// insertProjectMembers 按顺序把成员加到项目末尾，回填 SubID。
+func insertProjectMembers(ctx context.Context, tx *sql.Tx, projectID int64, members []ProjectMember) error {
+	var next int
+	if err := tx.QueryRowContext(ctx,
+		"SELECT coalesce(max(position) + 1, 0) FROM project_members WHERE project_id = ?", projectID).Scan(&next); err != nil {
+		return err
+	}
+	for i := range members {
+		if members[i].SubID == "" {
+			members[i].SubID = NewObjectID()
+		}
+		if _, err := tx.ExecContext(ctx,
+			`INSERT INTO project_members (project_id, uid, role, username, email, email_notice, sub_id, position)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+			projectID, members[i].UID, members[i].Role, nullString(members[i].Username), nullString(members[i].Email),
+			boolInt(members[i].EmailNotice), members[i].SubID, next+i); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // CreateProject 新建项目，同时建好默认分类 defaultCat；owner 不为 nil 时把它加为项目组长。回填各自的 ID。
 func (s *Store) CreateProject(ctx context.Context, p *Project, defaultCat *Cat, owner *Member) error {
 	return s.withTx(ctx, func(tx *sql.Tx) error {
-		res, err := tx.ExecContext(ctx,
-			`INSERT INTO projects (uid, group_id, name, basepath, description, project_type, switch_notice, icon, color,
-			                       env, tag, is_mock_open, strice, is_json5, add_time, up_time)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			p.UID, p.GroupID, p.Name, nullString(p.Basepath), nullString(p.Desc), p.ProjectType, boolInt(p.SwitchNotice),
-			nullString(p.Icon), nullString(p.Color), p.Env, p.Tag, boolInt(p.IsMockOpen), boolInt(p.Strice), boolInt(p.IsJSON5),
-			p.AddTime, p.UpTime)
-		if err != nil {
-			return err
-		}
-		if p.ID, err = res.LastInsertId(); err != nil {
+		if err := insertProject(ctx, tx, p); err != nil {
 			return err
 		}
 		defaultCat.ProjectID = p.ID
@@ -75,12 +103,50 @@ func (s *Store) CreateProject(ctx context.Context, p *Project, defaultCat *Cat, 
 		if owner == nil {
 			return nil
 		}
-		owner.SubID = NewObjectID()
-		_, err = tx.ExecContext(ctx,
-			`INSERT INTO project_members (project_id, uid, role, username, email, email_notice, sub_id, position)
-			 VALUES (?, ?, ?, ?, ?, 1, ?, 0)`,
-			p.ID, owner.UID, owner.Role, nullString(owner.Username), nullString(owner.Email), owner.SubID)
-		return err
+		members := []ProjectMember{{Member: *owner, EmailNotice: true}}
+		if err := insertProjectMembers(ctx, tx, p.ID, members); err != nil {
+			return err
+		}
+		owner.SubID = members[0].SubID
+		return nil
+	})
+}
+
+// CopyCat 是复制项目时要新建的分类：按 Name、Desc 新建，并复制源项目中 SourceID 分类下的接口。
+type CopyCat struct {
+	SourceID int64
+	Name     string
+	Desc     *string
+}
+
+// CopyProject 新建项目 p，按顺序新建 cats 中的分类并复制源项目 sourceID 对应分类下的接口（按标题排序，
+// 与 YApi 的 listByInterStatus 一致），再加入 members。复制出的接口归 uid 所有，创建和更新时间为 now。
+// 只复制属于源项目的分类，避免借复制读取其他项目的接口。
+func (s *Store) CopyProject(ctx context.Context, p *Project, sourceID int64, cats []CopyCat, members []ProjectMember, uid, now int64) error {
+	return s.withTx(ctx, func(tx *sql.Tx) error {
+		if err := insertProject(ctx, tx, p); err != nil {
+			return err
+		}
+		for _, src := range cats {
+			cat := &Cat{UID: uid, ProjectID: p.ID, Name: src.Name, Desc: src.Desc, AddTime: now, UpTime: now}
+			if err := insertCat(ctx, tx, cat); err != nil {
+				return err
+			}
+			if _, err := tx.ExecContext(ctx,
+				`INSERT INTO interfaces (uid, edit_uid, project_id, catid, title, path, method, status, type, api_opened,
+				   position, description, markdown, query_path, req_query, req_headers, req_params, req_body_form,
+				   req_body_type, req_body_is_json_schema, req_body_other, res_body_type, res_body_is_json_schema, res_body,
+				   custom_field_value, tag, add_time, up_time, extra)
+				 SELECT ?, edit_uid, ?, ?, title, path, method, status, type, api_opened,
+				   position, description, markdown, query_path, req_query, req_headers, req_params, req_body_form,
+				   req_body_type, req_body_is_json_schema, req_body_other, res_body_type, res_body_is_json_schema, res_body,
+				   custom_field_value, tag, ?, ?, extra
+				   FROM interfaces WHERE catid = ? AND project_id = ? ORDER BY title, id`,
+				uid, p.ID, cat.ID, now, now, src.SourceID, sourceID); err != nil {
+				return err
+			}
+		}
+		return insertProjectMembers(ctx, tx, p.ID, members)
 	})
 }
 
@@ -195,26 +261,23 @@ func (s *Store) ProjectMemberOf(ctx context.Context, projectID, uid int64) (*Pro
 func (s *Store) AddProjectMembers(ctx context.Context, projectID int64, members []Member) (bool, error) {
 	var exists bool
 	err := s.withTx(ctx, func(tx *sql.Tx) error {
-		var n, next int
+		var n int
 		if err := tx.QueryRowContext(ctx, "SELECT count(*) FROM projects WHERE id = ?", projectID).Scan(&n); err != nil {
 			return err
 		}
 		if exists = n > 0; !exists {
 			return nil
 		}
-		if err := tx.QueryRowContext(ctx,
-			"SELECT coalesce(max(position) + 1, 0) FROM project_members WHERE project_id = ?", projectID).Scan(&next); err != nil {
+		list := make([]ProjectMember, len(members))
+		for i, m := range members {
+			m.SubID = ""
+			list[i] = ProjectMember{Member: m, EmailNotice: true}
+		}
+		if err := insertProjectMembers(ctx, tx, projectID, list); err != nil {
 			return err
 		}
 		for i := range members {
-			members[i].SubID = NewObjectID()
-			if _, err := tx.ExecContext(ctx,
-				`INSERT INTO project_members (project_id, uid, role, username, email, email_notice, sub_id, position)
-				 VALUES (?, ?, ?, ?, ?, 1, ?, ?)`,
-				projectID, members[i].UID, members[i].Role, nullString(members[i].Username), nullString(members[i].Email),
-				members[i].SubID, next+i); err != nil {
-				return err
-			}
+			members[i].SubID = list[i].SubID
 		}
 		return nil
 	})

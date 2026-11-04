@@ -1,0 +1,155 @@
+{
+  "description": "M2-3：分类与接口的增删改查、排序、save、schema2json、复制项目，以及普通成员新建接口时自动加入项目。依赖场景 03 注册的 dev2",
+  "steps": [
+    {
+      "name": "管理员登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    {
+      "name": "找到 dev2", "method": "GET", "path": "/api/user/search", "query": { "q": "dev2" },
+      "capture": { "dev2_uid": "data.0.uid" }
+    },
+    {
+      "name": "新建分组", "method": "POST", "path": "/api/group/add",
+      "body": { "group_name": "接口组", "owner_uids": [] },
+      "capture": { "gid": "data._id" }
+    },
+    {
+      "name": "dev2 加入分组", "method": "POST", "path": "/api/group/add_member",
+      "body": { "id": "{{gid}}", "member_uids": ["{{dev2_uid}}"], "role": "dev" }
+    },
+    {
+      "name": "新建项目", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "接口项目", "basepath": "/api", "group_id": "{{gid}}" },
+      "capture": { "pid": "data._id" }
+    },
+    {
+      "name": "获取项目（拿到默认分类）", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" },
+      "capture": { "cat0": "data.cat.0._id", "env": "data.env" }
+    },
+    {
+      "name": "新建分类", "method": "POST", "path": "/api/interface/add_cat",
+      "body": { "name": "用户", "project_id": "{{pid}}", "desc": "用户相关" },
+      "capture": { "c1": "data._id" }
+    },
+    {
+      "name": "新建分类缺少名称", "method": "POST", "path": "/api/interface/add_cat",
+      "body": { "project_id": "{{pid}}" }, "errcode": 400
+    },
+    {
+      "name": "新建接口（冒号路径参数）", "method": "POST", "path": "/api/interface/add",
+      "body": { "project_id": "{{pid}}", "catid": "{{c1}}", "title": "获取用户", "path": "/users/:id", "method": "get",
+        "req_query": [{ "name": "fields", "desc": "返回字段" }] },
+      "capture": { "i1": "data._id" }
+    },
+    {
+      "name": "新建接口（表单上传）", "method": "POST", "path": "/api/interface/add",
+      "body": { "project_id": "{{pid}}", "catid": "{{c1}}", "title": "上传头像", "path": "/users/{id}/avatar", "method": "POST",
+        "req_body_type": "form", "req_body_form": [{ "name": "file", "type": "file", "desc": "图片" }], "req_headers": [] },
+      "capture": { "i2": "data._id" }
+    },
+    {
+      "name": "新建接口（路径带查询串、JSON 请求体、tag）", "method": "POST", "path": "/api/interface/add",
+      "body": { "project_id": "{{pid}}", "catid": "{{cat0}}", "title": "搜索用户", "path": "/users/search?page=1&size=10", "method": "GET",
+        "req_body_type": "json", "req_body_other": "{\"keyword\":\"a\"}", "res_body": "{\"total\":0}", "tag": ["v1"] },
+      "capture": { "i3": "data._id" }
+    },
+    {
+      "name": "重复的接口", "method": "POST", "path": "/api/interface/add",
+      "body": { "project_id": "{{pid}}", "catid": "{{c1}}", "title": "重复", "path": "/users/:id", "method": "GET" }, "errcode": 40022
+    },
+    {
+      "name": "路径格式错误", "method": "POST", "path": "/api/interface/add",
+      "body": { "project_id": "{{pid}}", "catid": "{{c1}}", "title": "错误", "path": "users", "method": "GET" }, "errcode": 400
+    },
+    { "name": "获取接口", "method": "GET", "path": "/api/interface/get", "query": { "id": "{{i1}}" } },
+    { "name": "接口列表", "method": "GET", "path": "/api/interface/list", "query": { "project_id": "{{pid}}", "page": "1", "limit": "10" } },
+    { "name": "按状态筛选", "method": "GET", "path": "/api/interface/list", "query": { "project_id": "{{pid}}", "status": "done" } },
+    { "name": "分类下的接口", "method": "GET", "path": "/api/interface/list_cat", "query": { "catid": "{{c1}}", "page": "1", "limit": "10" } },
+    { "name": "接口菜单", "method": "GET", "path": "/api/interface/list_menu", "query": { "project_id": "{{pid}}" } },
+    { "name": "分类列表", "method": "GET", "path": "/api/interface/getCatMenu", "query": { "project_id": "{{pid}}" } },
+    {
+      "name": "修改接口（写入动态）", "method": "POST", "path": "/api/interface/up",
+      "body": { "id": "{{i1}}", "catid": "{{c1}}", "title": "获取用户详情", "status": "done", "message": "改名\n并完成" }
+    },
+    {
+      "name": "相同内容再改一次（不写动态）", "method": "POST", "path": "/api/interface/up",
+      "body": { "id": "{{i1}}", "catid": "{{c1}}", "title": "获取用户详情", "status": "done" }
+    },
+    {
+      "name": "只改描述（不写动态）", "method": "POST", "path": "/api/interface/up",
+      "body": { "id": "{{i1}}", "catid": "{{c1}}", "desc": "<p>按 ID 查询</p>" }
+    },
+    {
+      "name": "改成已存在的路径", "method": "POST", "path": "/api/interface/up",
+      "body": { "id": "{{i1}}", "catid": "{{c1}}", "path": "/users/{id}/avatar", "method": "POST" }, "errcode": 401
+    },
+    { "name": "修改不存在的接口", "method": "POST", "path": "/api/interface/up", "body": { "id": 99999, "title": "x" }, "errcode": 400 },
+    { "name": "修改后的接口", "method": "GET", "path": "/api/interface/get", "query": { "id": "{{i1}}" } },
+    {
+      "name": "调整接口顺序", "method": "POST", "path": "/api/interface/up_index",
+      "body": [{ "id": "{{i2}}", "index": 0 }, { "id": "{{i1}}", "index": 1 }]
+    },
+    {
+      "name": "调整分类顺序", "method": "POST", "path": "/api/interface/up_cat_index",
+      "body": [{ "id": "{{c1}}", "index": 0 }, { "id": "{{cat0}}", "index": 1 }]
+    },
+    {
+      "name": "修改分类", "method": "POST", "path": "/api/interface/up_cat",
+      "body": { "catid": "{{c1}}", "name": "用户中心", "desc": "改名后的分类" }
+    },
+    {
+      "name": "调整顺序后的分类列表", "method": "GET", "path": "/api/interface/getCatMenu", "query": { "project_id": "{{pid}}" },
+      "capture": { "cats": "data" }
+    },
+    { "name": "调整顺序后的菜单", "method": "GET", "path": "/api/interface/list_menu", "query": { "project_id": "{{pid}}" } },
+    {
+      "name": "save 已存在的接口（更新）", "method": "POST", "path": "/api/interface/save",
+      "body": { "project_id": "{{pid}}", "catid": "{{c1}}", "title": "上传头像V2", "path": "/users/{id}/avatar", "method": "POST",
+        "req_body_type": "form", "req_body_form": [{ "name": "file", "type": "file" }], "req_headers": [{ "name": "X-Trace", "value": "1" }] }
+    },
+    {
+      "name": "save 新接口（新建）", "method": "POST", "path": "/api/interface/save",
+      "body": { "project_id": "{{pid}}", "catid": "{{cat0}}", "title": "健康检查", "path": "/ping", "method": "GET" }
+    },
+    {
+      "name": "schema2json", "method": "POST", "path": "/api/interface/schema2json",
+      "body": { "schema": { "type": "object", "required": ["status"], "properties": { "status": { "type": "string", "enum": ["ok"] } } } }
+    },
+    { "name": "新建接口时自动加上的项目 tag", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" } },
+    {
+      "name": "复制项目", "method": "POST", "path": "/api/project/copy",
+      "body": { "_id": "{{pid}}", "preName": "接口项目", "name": "接口项目副本", "basepath": "/api-copy", "group_id": "{{gid}}",
+        "project_type": "private", "cat": "{{cats}}", "env": "{{env}}" },
+      "capture": { "pid2": "data._id" }
+    },
+    { "name": "副本的接口菜单", "method": "GET", "path": "/api/interface/list_menu", "query": { "project_id": "{{pid2}}" } },
+    {
+      "name": "dev2 登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "dev2@apiyard.test", "password": "dev2-pass" }
+    },
+    {
+      "name": "dev2 新建接口（自动成为项目开发者）", "method": "POST", "path": "/api/interface/add",
+      "body": { "project_id": "{{pid}}", "catid": "{{cat0}}", "title": "dev2 的接口", "path": "/dev2", "method": "GET" },
+      "capture": { "i4": "data._id" }
+    },
+    { "name": "dev2 加入了项目成员", "method": "GET", "path": "/api/project/get_member_list", "query": { "id": "{{pid}}" } },
+    { "name": "dev2 不能删除别人的接口", "method": "POST", "path": "/api/interface/del", "body": { "id": "{{i1}}" }, "errcode": 400 },
+    { "name": "dev2 删除自己的接口", "method": "POST", "path": "/api/interface/del", "body": { "id": "{{i4}}" } },
+    { "name": "dev2 按接口查角色", "method": "GET", "path": "/api/user/project", "query": { "id": "{{i3}}", "type": "interface" } },
+    {
+      "name": "管理员再次登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    { "name": "删除接口", "method": "POST", "path": "/api/interface/del", "body": { "id": "{{i2}}" } },
+    { "name": "删除分类（连同接口）", "method": "POST", "path": "/api/interface/del_cat", "body": { "catid": "{{c1}}" } },
+    { "name": "删除后的菜单", "method": "GET", "path": "/api/interface/list_menu", "query": { "project_id": "{{pid}}" } },
+    {
+      "name": "项目动态", "method": "GET", "path": "/api/log/list",
+      "query": { "typeid": "{{pid}}", "type": "project", "page": "1", "limit": "30" }, "unordered": ["data.list"]
+    },
+    { "name": "删除副本", "method": "POST", "path": "/api/project/del", "body": { "id": "{{pid2}}" } },
+    { "name": "删除项目", "method": "POST", "path": "/api/project/del", "body": { "id": "{{pid}}" } },
+    { "name": "清理分组", "method": "POST", "path": "/api/group/del", "body": { "id": "{{gid}}" } }
+  ]
+}

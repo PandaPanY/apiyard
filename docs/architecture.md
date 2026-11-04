@@ -95,6 +95,17 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 动态列表的顺序 | 只按秒级时间排序，同一秒内的顺序每次都可能不同 | 时间相同时按 ID 倒序 | 结果稳定 |
 | `/api/project/change_member_email_notice` | 不检查权限，任何登录用户都能改别人的邮件通知设置 | 只允许本人，或组长、管理员 | 越权 |
 | `/api/project/get_member_list` | 不检查权限，任何登录用户都能看私有项目的成员 | 私有项目要求有查看权限，否则 406（与 `project/get` 一致） | 信息泄露 |
+| 接口所属分类 | 不检查分类是否存在、是否属于该项目；`interface/up` 还能借 `project_id` 把接口移到别的项目 | 分类必须属于该项目，否则 400；忽略 `project_id` | 越权、数据一致 |
+| `/api/interface/del`、`del_cat` | 创建者可以直接删除 | 创建者也要仍有编辑权限（被移出项目后不能再删） | 越权 |
+| `/api/interface/up_index`、`up_cat_index` | 不检查权限 | 只改有编辑权限的项目中的接口、分类，其余忽略，响应不变 | 越权 |
+| `/api/user/project` 的接口类型 | 不检查权限，能读到私有项目的接口定义 | 私有项目要求查看权限，否则 406 | 信息泄露 |
+| `/api/project/copy` | 不检查源项目的权限；参数 `cat` 可以指向任意项目的分类 | 要求对源项目有查看权限，只复制属于源项目的分类下的接口；整个复制在一个事务里完成 | 信息泄露、数据一致 |
+| `/api/interface/solve_conflict` | 不检查权限；被挡住的连接关闭时也会清除编辑者，第三个人就能同时进入编辑 | 要求编辑权限；只有占用成功的连接关闭时才清除；进程重启时清除全部编辑状态 | 修正 bug |
+| `/api/interface/up` 的 `nModified` | `up_time` 变了也算修改，同一秒内重复保存是 0，否则是 1 | 忽略 `up_time`，内容没变就是 0 | 结果稳定 |
+| 修改说明 `message` | 原样拼进动态的 HTML | 转义后再把换行换成 `<br>` | 存储型 XSS |
+| form 请求体缺少 `req_headers` | 抛异常 | 按空数组处理 | 健壮性 |
+| `/api/interface/schema2json` | json-schema-faker | 自己实现的生成器（`internal/schemafake`），覆盖常用关键字；结果本来就是随机的 | 不依赖 Node |
+| `save` 的 `dataSync=good` 合并 | 合并后的 JSON Schema 保留原有键顺序 | 键按字母顺序输出，内容相同 | Go 的 map 不保序；只影响文本格式 |
 
 ## YApi 兼容要点
 
@@ -137,6 +148,12 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 服务器异常 | 统一返回 `errcode 40011`、`errmsg "服务器出错..."`，与"未登录"共用同一个错误码 | 实测 |
 | 未登录时 | `/api/user/status` 返回 `errcode 40011`，并附带 `ladp`、`canRegister` 字段（`ladp` 是原版拼写） | 实测 |
 | 初始化 | 首次运行创建管理员 `adminAccount`，密码 `ymfe.org`，并写入 `init.lock` | `server/install.js` |
+| 接口路径 | `path` 原样保存（含查询串），查重也按原样比较；`query_path` 存拆开的路径和参数；`:name`、`{name}` 自动加入 `req_params` | `controllers/interface.js` + 实测 |
+| 接口列表的字段 | `list`、`list_cat` 的 select 写成 `"up_time, index, tag"`，逗号让 `up_time`、`index` 失效，所以分页结果里没有这两个字段；`limit=all` 时按标题排序且 `total` 为 null | `models/interface.js` + 实测 |
+| 修改接口写动态的条件 | 只有 `common/diff-view.js` 比较的字段（路径、名称、方法、分类、状态、tag、各类参数、请求体、响应体）有变化才写；只改备注不写。动态内容里有固定的换行和 20 个空格的缩进 | 实测 |
+| `/api/interface/save` | 响应只是按路径查到的 `[{_id, res_body}]`，新建时是 `[]`，不反映修改或新建是否成功 | 实测 |
+| `/api/interface/getCatMenu` | 私有项目要求编辑权限（访客看不到）；项目不存在时异常没有被处理，Koa 返回 404 | 源码 |
+| 复制项目 | 不建默认分类；分类按参数 `cat` 的顺序新建（index 都是 0），接口按标题排序复制并保留原 index；`is_json5` 取模型默认值 true | 实测 |
 
 ### 数据集合（M3 迁移范围）
 

@@ -52,6 +52,10 @@ func Open(ctx context.Context, file string) (*Store, error) {
 		_ = db.Close()
 		return nil, err
 	}
+	if err := s.resetInterfaceEditors(ctx); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
 	return s, nil
 }
 
