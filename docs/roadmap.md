@@ -113,7 +113,7 @@ v0.2：M7 MCP Server        v0.3 及以后：延后功能，按用户反馈排�
 |---|---|---|---|
 | M3-1 | 开放 API 鉴权：白名单接口支持 `token` 参数（新旧两种 token），token 只能操作所属项目 | `07-open-api` | ✅ |
 | M3-2 | 导出：`/api/plugin/export`（JSON / Markdown / HTML）、`/api/plugin/exportSwagger` | `08-export` | ✅ |
-| M3-3 | 导入：`/api/open/import_data`（Swagger 2 / OpenAPI 3 的 JSON，三种同步模式）；界面导入（Swagger、Postman、HAR、YApi JSON）实测 | `09-import` | |
+| M3-3 | 导入：`/api/open/import_data`（Swagger 2 / OpenAPI 3 的 JSON，三种同步模式）；界面导入（Swagger、Postman、HAR、YApi JSON）实测 | `09-import` | ✅ |
 | M3-4 | 生态实测：yapi-to-typescript、Yapi-MCP、easy-yapi | — | |
 
 | # | 任务 |

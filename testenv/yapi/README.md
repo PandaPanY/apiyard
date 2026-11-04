@@ -42,3 +42,15 @@ ssh testenv "cd /data/apiyard-testenv/yapi && docker compose down"
 # 彻底重置（删除所有数据）
 ssh testenv "cd /data/apiyard-testenv/yapi && docker compose down -v"
 ```
+
+## 生成 Swagger 导入的标准答案
+
+原版 1.12 的服务端 Swagger 导入在 Node 里加载就出错（swagger-client 依赖浏览器的 `File`），没法通过接口录制。
+`run-oracle.js` 给 Node 补上 `File` 后直接运行原版的 `run.js`，输出转换结果，用作 `internal/openapi` 的对照答案：
+
+```bash
+scp testenv/yapi/run-oracle.js testenv:/data/tmp/
+ssh testenv "sudo docker cp /data/tmp/run-oracle.js apiyard-yapi:/tmp/run-oracle.js"
+# 对 testdata/import 下的每个文档生成 *.yapi.json
+ssh testenv "sudo docker exec -i -w /app/vendors apiyard-yapi node /tmp/run-oracle.js"   < testdata/import/swagger2.json > testdata/import/swagger2.yapi.json
+```

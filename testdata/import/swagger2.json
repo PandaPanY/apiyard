@@ -1,0 +1,220 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "宠物商店",
+    "version": "1.0"
+  },
+  "basePath": "/petstore",
+  "tags": [
+    {
+      "name": "pet",
+      "description": "宠物"
+    },
+    {
+      "name": "store",
+      "description": "商店"
+    },
+    {
+      "name": "unused",
+      "description": "没有接口的标签"
+    }
+  ],
+  "parameters": {
+    "limitParam": {
+      "name": "limit",
+      "in": "query",
+      "description": "数量上限",
+      "required": false,
+      "type": "integer"
+    }
+  },
+  "definitions": {
+    "Pet": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string",
+          "description": "名字"
+        },
+        "category": {
+          "$ref": "#/definitions/Category"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tag"
+          }
+        }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/pet": {
+      "post": {
+        "tags": [
+          "pet"
+        ],
+        "summary": "新增宠物",
+        "description": "添加一只宠物",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "参数错误"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "v1",
+          "pet"
+        ],
+        "summary": "宠物列表",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/limitParam"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Trace",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Pet"
+              }
+            }
+          },
+          "400": {
+            "description": "错误"
+          }
+        }
+      }
+    },
+    "/pet/{petId}/uploadImage/": {
+      "parameters": [
+        {
+          "name": "petId",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "post": {
+        "tags": [
+          "pet"
+        ],
+        "summary": "上传图片",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "宠物 ID"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "type": "file",
+            "description": "图片"
+          },
+          {
+            "name": "note",
+            "in": "formData",
+            "type": "string",
+            "example": "备注"
+          }
+        ],
+        "responses": {
+          "default": "原始字符串响应"
+        }
+      }
+    },
+    "store/inventory": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "operationId": "getInventory",
+        "produces": [
+          "text/plain"
+        ],
+        "responses": {
+          "200": {
+            "description": "库存数量"
+          }
+        }
+      }
+    },
+    "/legacy": {
+      "delete": {
+        "summary": "无标签接口",
+        "parameters": [
+          {
+            "name": "force",
+            "type": "boolean"
+          }
+        ],
+        "responses": {}
+      }
+    }
+  }
+}

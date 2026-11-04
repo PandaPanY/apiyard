@@ -1,0 +1,239 @@
+[
+  {
+    "step": "管理员登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "新建分组",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_name": "导入组",
+      "owner_uids": []
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_name": "导入组",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "admin@admin.com",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建项目",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "group_id": "{{gid}}",
+      "name": "导入项目"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "导入项目",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "获取 token",
+    "method": "GET",
+    "url": "/api/project/token?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": "<volatile>",
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "退出登录",
+    "method": "GET",
+    "url": "/api/user/logout",
+    "status": 200,
+    "response": {
+      "data": "ok",
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "不存在的导入方式",
+    "method": "POST",
+    "url": "/api/open/import_data",
+    "request": {
+      "json": "{}",
+      "token": "{{tok}}",
+      "type": "postman"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 40022,
+      "errmsg": "不存在的导入方式"
+    }
+  },
+  {
+    "step": "json 为空",
+    "method": "POST",
+    "url": "/api/open/import_data",
+    "request": {
+      "token": "{{tok}}",
+      "type": "swagger"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 40022,
+      "errmsg": "json 或者 url 参数，不能都为空"
+    }
+  },
+  {
+    "step": "json 格式有误",
+    "method": "POST",
+    "url": "/api/open/import_data",
+    "request": {
+      "json": "{bad",
+      "token": "{{tok}}",
+      "type": "swagger"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 40022,
+      "errmsg": "<volatile>"
+    }
+  },
+  {
+    "step": "缺少 token",
+    "method": "POST",
+    "url": "/api/open/import_data",
+    "request": {
+      "json": "{\"swagger\":\"2.0\"}",
+      "type": "swagger"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "请求参数 data 应当有必需属性 token"
+    }
+  },
+  {
+    "step": "管理员再次登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "删除项目",
+    "method": "POST",
+    "url": "/api/project/del",
+    "request": {
+      "id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "清理分组",
+    "method": "POST",
+    "url": "/api/group/del",
+    "request": {
+      "id": "{{gid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  }
+]

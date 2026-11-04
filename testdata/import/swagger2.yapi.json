@@ -1,0 +1,137 @@
+{
+  "apis": [
+    {
+      "method": "POST",
+      "title": "新增宠物",
+      "desc": "添加一只宠物",
+      "catname": "pet",
+      "tag": [
+        "pet"
+      ],
+      "path": "/pet",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "json",
+      "res_body_type": "raw",
+      "res_body_is_json_schema": true,
+      "req_body_is_json_schema": true,
+      "res_body": "参数错误",
+      "req_body_other": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"name\"\n  ],\n  \"properties\": {\n    \"id\": {\n      \"type\": \"integer\",\n      \"format\": \"int64\"\n    },\n    \"name\": {\n      \"type\": \"string\",\n      \"description\": \"名字\"\n    },\n    \"category\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"integer\"\n        },\n        \"name\": {\n          \"type\": \"string\"\n        }\n      },\n      \"$$ref\": \"#/definitions/Category\"\n    },\n    \"tags\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"name\": {\n            \"type\": \"string\"\n          }\n        },\n        \"$$ref\": \"#/definitions/Tag\"\n      }\n    }\n  },\n  \"$$ref\": \"#/definitions/Pet\"\n}"
+    },
+    {
+      "method": "GET",
+      "title": "宠物列表",
+      "catname": "pet",
+      "tag": [
+        "v1",
+        "pet"
+      ],
+      "path": "/pet",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [
+        {
+          "name": "X-Trace",
+          "required": "0"
+        }
+      ],
+      "req_query": [
+        {
+          "name": "limit",
+          "desc": "数量上限",
+          "required": "0"
+        },
+        {
+          "name": "status",
+          "required": "1"
+        }
+      ],
+      "req_body_type": "raw",
+      "res_body_type": "json",
+      "res_body_is_json_schema": true,
+      "res_body": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n      \"name\"\n    ],\n    \"properties\": {\n      \"id\": {\n        \"type\": \"integer\",\n        \"format\": \"int64\"\n      },\n      \"name\": {\n        \"type\": \"string\",\n        \"description\": \"名字\"\n      },\n      \"category\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"integer\"\n          },\n          \"name\": {\n            \"type\": \"string\"\n          }\n        },\n        \"$$ref\": \"#/definitions/Category\"\n      },\n      \"tags\": {\n        \"type\": \"array\",\n        \"items\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"name\": {\n              \"type\": \"string\"\n            }\n          },\n          \"$$ref\": \"#/definitions/Tag\"\n        }\n      }\n    },\n    \"$$ref\": \"#/definitions/Pet\"\n  }\n}"
+    },
+    {
+      "method": "POST",
+      "title": "上传图片",
+      "catname": "pet",
+      "tag": [
+        "pet"
+      ],
+      "path": "/pet/{petId}/uploadImage",
+      "req_params": [
+        {
+          "name": "petId",
+          "desc": "宠物 ID",
+          "required": "1"
+        }
+      ],
+      "req_body_form": [
+        {
+          "name": "file",
+          "desc": "图片",
+          "required": "0",
+          "type": "file"
+        },
+        {
+          "name": "note",
+          "required": "0",
+          "type": "text",
+          "example": "备注"
+        }
+      ],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "form",
+      "res_body_type": "raw",
+      "res_body": "原始字符串响应"
+    },
+    {
+      "method": "GET",
+      "title": "store/inventory",
+      "catname": "store",
+      "tag": [
+        "store"
+      ],
+      "path": "/store/inventory",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "raw",
+      "res_body_type": "raw",
+      "res_body": "库存数量"
+    },
+    {
+      "method": "DELETE",
+      "title": "无标签接口",
+      "catname": null,
+      "path": "/legacy",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [
+        {
+          "name": "force",
+          "required": "0"
+        }
+      ],
+      "req_body_type": "raw",
+      "res_body_type": "raw",
+      "res_body": ""
+    }
+  ],
+  "cats": [
+    {
+      "name": "pet",
+      "desc": "宠物"
+    },
+    {
+      "name": "store",
+      "desc": "商店"
+    }
+  ],
+  "basePath": "/petstore"
+}

@@ -282,8 +282,13 @@ func TestMergeResBodySchema(t *testing.T) {
 			t.Errorf("合并结果缺少 %s:\n%s", want, s)
 		}
 	}
-	if got := mergeResBodySchema(&old, "not json"); got != "not json" {
-		t.Errorf("新内容不是 JSON 时应原样保留: %v", got)
+	// 与原版一致：新内容不是 JSON 时按字符串序列化
+	if got := mergeResBodySchema(&old, "not json"); got != `"not json"` {
+		t.Errorf("新内容不是 JSON 时的结果不对: %v", got)
+	}
+	// 键的顺序与原版相同：先是原有的键，再是新增的键
+	if got := mergeResBodySchema(&old, `{"type":"object","properties":{"b":{"type":"number"},"a":{"type":"string"}}}`).(string); strings.Index(got, `"type"`) > strings.Index(got, `"title"`) || strings.Index(got, `"b"`) > strings.Index(got, `"a"`) {
+		t.Errorf("键的顺序不对: %s", got)
 	}
 }
 

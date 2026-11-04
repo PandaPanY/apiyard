@@ -2,6 +2,20 @@
 
 > 按日期倒序记录，最新的在最上面。每条只写要点。
 
+## 2026-11-04 M3-3：导入
+
+- 完成：
+  - `/api/open/import_data`：Swagger 2 / OpenAPI 3 的 JSON 导入，普通、智能合并、完全覆盖三种模式；流程按原版 HandleImportData，在进程内调用已有的接口处理函数（原版是带着 token 向自己发 HTTP 请求）。
+  - `internal/openapi`：Swagger / OpenAPI 转 YApi 接口，包括 swagger-client 的引用展开（`$$ref` 标记、循环引用、`allOf` 合并、路径级参数）。
+  - `internal/jsjson`：把导出用的"保持键顺序的 JSON"抽成公共包；`save` 的 `dataSync=good` 合并因此也保持原版的键顺序，差异表中删去这一条。
+  - 新场景 `09-import`（12 次调用，参数检查部分）；场景 01–09 共 270 次调用与原版一致。
+  - 浏览器实测：数据管理页四种导入（Swagger、Postman、HAR、YApi JSON）和"完全覆盖"的确认流程都正常。
+- 问题 / 决定：
+  - 发现原版 1.12 的服务端导入根本不能用：swagger-client 依赖浏览器的 `File`，在 Node 里加载就报错，`import_data` 总是返回 40011。成功导入的流程无法录制，改用"在容器里给 Node 补上 File 后直接运行原版 run.js"生成标准答案（`testdata/import/*.yapi.json`），Go 的转换结果逐字段对照；变异测试确认对照有效。
+  - 原版的界面导入（浏览器里解析）不受影响，ApiYard 已有的接口足以支撑，`interUpload` 不需要实现。
+  - 通过 URL 导入不做（用户决定）。
+- 下一步：M3-4 生态实测（yapi-to-typescript、Yapi-MCP、easy-yapi）。
+
 ## 2026-11-04 M3-2：导出
 
 - 完成：

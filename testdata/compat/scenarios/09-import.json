@@ -1,0 +1,127 @@
+{
+  "description": "M3-3：开放 API 导入的参数检查。原版 1.12 的服务端 Swagger 转换在 Node 里加载就出错（依赖浏览器的 File），成功导入的流程无法录制，改由 internal/openapi 的对照测试（与原版 run.js 的输出比较）和 internal/api 的导入测试覆盖",
+  "steps": [
+    {
+      "name": "管理员登录",
+      "method": "POST",
+      "path": "/api/user/login",
+      "body": {
+        "email": "admin@admin.com",
+        "password": "ymfe.org"
+      }
+    },
+    {
+      "name": "新建分组",
+      "method": "POST",
+      "path": "/api/group/add",
+      "body": {
+        "group_name": "导入组",
+        "owner_uids": []
+      },
+      "capture": {
+        "gid": "data._id"
+      }
+    },
+    {
+      "name": "新建项目",
+      "method": "POST",
+      "path": "/api/project/add",
+      "body": {
+        "name": "导入项目",
+        "group_id": "{{gid}}"
+      },
+      "capture": {
+        "pid": "data._id"
+      }
+    },
+    {
+      "name": "获取 token",
+      "method": "GET",
+      "path": "/api/project/token",
+      "query": {
+        "project_id": "{{pid}}"
+      },
+      "capture": {
+        "tok": "data"
+      },
+      "volatile": [
+        "data"
+      ]
+    },
+    {
+      "name": "退出登录",
+      "method": "GET",
+      "path": "/api/user/logout"
+    },
+    {
+      "name": "不存在的导入方式",
+      "method": "POST",
+      "path": "/api/open/import_data",
+      "body": {
+        "type": "postman",
+        "token": "{{tok}}",
+        "json": "{}"
+      },
+      "errcode": 40022
+    },
+    {
+      "name": "json 为空",
+      "method": "POST",
+      "path": "/api/open/import_data",
+      "body": {
+        "type": "swagger",
+        "token": "{{tok}}"
+      },
+      "errcode": 40022
+    },
+    {
+      "name": "json 格式有误",
+      "method": "POST",
+      "path": "/api/open/import_data",
+      "body": {
+        "type": "swagger",
+        "token": "{{tok}}",
+        "json": "{bad"
+      },
+      "errcode": 40022,
+      "volatile": [
+        "errmsg"
+      ]
+    },
+    {
+      "name": "缺少 token",
+      "method": "POST",
+      "path": "/api/open/import_data",
+      "body": {
+        "type": "swagger",
+        "json": "{\"swagger\":\"2.0\"}"
+      },
+      "errcode": 400
+    },
+    {
+      "name": "管理员再次登录",
+      "method": "POST",
+      "path": "/api/user/login",
+      "body": {
+        "email": "admin@admin.com",
+        "password": "ymfe.org"
+      }
+    },
+    {
+      "name": "删除项目",
+      "method": "POST",
+      "path": "/api/project/del",
+      "body": {
+        "id": "{{pid}}"
+      }
+    },
+    {
+      "name": "清理分组",
+      "method": "POST",
+      "path": "/api/group/del",
+      "body": {
+        "id": "{{gid}}"
+      }
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync/atomic"
 
+	"github.com/PandaPanY/apiyard/internal/jsjson"
 	"github.com/PandaPanY/apiyard/internal/store"
 )
 
@@ -76,8 +77,8 @@ func (r *rec) assign(src *rec) {
 
 // jsField 读取 JSON 对象的字段，不存在时返回 undefined。
 func jsField(o any, key string) any {
-	if obj, ok := o.(*jsObject); ok {
-		if v, ok := obj.get(key); ok {
+	if obj, ok := o.(*jsjson.Object); ok {
+		if v, ok := obj.Get(key); ok {
 			return v
 		}
 	}
@@ -108,7 +109,7 @@ func templateString(v any) string {
 	if isUndefined(v) {
 		return "undefined"
 	}
-	return jsString(v)
+	return jsjson.String(v)
 }
 
 // ---- schema-transformTo-table.js ----
@@ -118,32 +119,29 @@ type schemaTable struct {
 }
 
 // checkJSONSchema：没有 type 但有 properties 时补上 type: object（复制一份，不修改原对象）。
-func checkJSONSchema(v any) *jsObject {
-	src, _ := v.(*jsObject)
-	out := &jsObject{vals: map[string]any{}}
-	if arr, ok := v.([]any); ok { // Object.assign({}, 数组) 得到以下标为键的对象
-		for i, item := range arr {
-			k := strconv.Itoa(i)
-			out.keys, out.vals[k] = append(out.keys, k), item
+func checkJSONSchema(v any) *jsjson.Object {
+	var out *jsjson.Object
+	switch x := v.(type) {
+	case *jsjson.Object:
+		out = x.Clone()
+	case []any: // Object.assign({}, 数组) 得到以下标为键的对象
+		out = jsjson.NewObject()
+		for i, item := range x {
+			out.Set(strconv.Itoa(i), item)
 		}
 		return out
+	default:
+		out = jsjson.NewObject()
 	}
-	if src != nil {
-		out.keys = append(out.keys, src.keys...)
-		for k, val := range src.vals {
-			out.vals[k] = val
-		}
-	}
-	props := jsField(out, "properties")
-	if isUndefined(jsField(out, "type")) && isJSObjectLike(props) {
-		out.keys, out.vals["type"] = append(out.keys, "type"), "object"
+	if isUndefined(jsField(out, "type")) && isJSObjectLike(jsField(out, "properties")) {
+		out.Set("type", "object")
 	}
 	return out
 }
 
 func isJSObjectLike(v any) bool {
 	switch v.(type) {
-	case *jsObject, []any:
+	case *jsjson.Object, []any:
 		return true
 	}
 	return false
@@ -154,13 +152,13 @@ func concatDesc(title, desc any) string {
 		if isUndefined(v) || v == nil {
 			return ""
 		}
-		return jsString(v)
+		return jsjson.String(v)
 	}
 	return strings.TrimSpace(part(title) + "\n" + part(desc))
 }
 
 // mockOf 对应 data.mock && data.mock.mock。
-func mockOf(data *jsObject) any {
+func mockOf(data *jsjson.Object) any {
 	m := jsField(data, "mock")
 	if !truthy(m) {
 		return m
@@ -168,7 +166,7 @@ func mockOf(data *jsObject) any {
 	return jsField(m, "mock")
 }
 
-func (t *schemaTable) mapping(data *jsObject, index string) any {
+func (t *schemaTable) mapping(data *jsjson.Object, index string) any {
 	typ, _ := jsField(data, "type").(string)
 	desc := concatDesc(jsField(data, "title"), jsField(data, "description"))
 	switch typ {
@@ -191,10 +189,10 @@ func (t *schemaTable) mapping(data *jsObject, index string) any {
 	}
 }
 
-func (t *schemaTable) schemaArray(data *jsObject, index string) *rec {
+func (t *schemaTable) schemaArray(data *jsjson.Object, index string) *rec {
 	rawItems := jsField(data, "items")
 	if !truthy(rawItems) {
-		rawItems = &jsObject{keys: []string{"type"}, vals: map[string]any{"type": "string"}}
+		rawItems = jsjson.NewObject("type", "string")
 	}
 	items := checkJSONSchema(rawItems)
 	optionForm := t.mapping(items, index)
@@ -214,15 +212,15 @@ func (t *schemaTable) schemaArray(data *jsObject, index string) *rec {
 	return item
 }
 
-func (t *schemaTable) schemaObject(data *jsObject, key string) []*rec {
-	props, _ := jsField(data, "properties").(*jsObject)
+func (t *schemaTable) schemaObject(data *jsjson.Object, key string) []*rec {
+	props, _ := jsField(data, "properties").(*jsjson.Object)
 	required := jsField(data, "required")
 	result := []*rec{}
 	if props == nil {
 		return result
 	}
-	for index, name := range props.orderedKeys() {
-		value := props.vals[name]
+	for index, name := range props.Keys() {
+		value, _ := props.Get(name)
 		copied := checkJSONSchema(value)
 		childKey := key + "-" + strconv.Itoa(index)
 		optionForm := t.schema(copied, childKey)
@@ -258,7 +256,7 @@ func containsName(required any, name string) bool {
 }
 
 // schema 对应 Schema(data, key)：非对象类型包一层 {type, key, desc, default, sub, children}。
-func (t *schemaTable) schema(data *jsObject, key string) any {
+func (t *schemaTable) schema(data *jsjson.Object, key string) any {
 	result := t.mapping(data, key)
 	if jsField(data, "type") == "object" {
 		return result
@@ -319,7 +317,7 @@ func handleSubObject(sub any) string {
 		if !known {
 			name = "undefined"
 		}
-		fmt.Fprintf(&b, `<p key=%d><span style="font-weight: '700'">%s: </span><span>%s</span></p>`, index, name, jsString(v))
+		fmt.Fprintf(&b, `<p key=%d><span style="font-weight: '700'">%s: </span><span>%s</span></p>`, index, name, jsjson.String(v))
 	}
 	return b.String()
 }
@@ -341,12 +339,12 @@ func tableCol(col *rec, level int) string {
 				if sub, ok := col.get("sub").(*rec); ok {
 					itemType = ""
 					if v := sub.get("itemType"); truthy(v) {
-						itemType = jsString(v)
+						itemType = jsjson.String(v)
 					}
 				}
 				text = "<span>" + itemType + " []</span>"
 			} else {
-				text = "<span>" + jsString(value) + "</span>"
+				text = "<span>" + jsjson.String(value) + "</span>"
 			}
 		case "required":
 			text = "非必须"
@@ -354,16 +352,16 @@ func tableCol(col *rec, level int) string {
 				text = "必须"
 			}
 		case "desc":
-			text = `<span style="white-space: pre-wrap">` + jsString(value) + "</span>"
+			text = `<span style="white-space: pre-wrap">` + jsjson.String(value) + "</span>"
 		case "name":
 			branch := ""
 			if level > 0 {
 				branch = "├─"
 			}
 			text = fmt.Sprintf(`<span style="padding-left: %dpx"><span style="color: #8c8a8a">%s</span> %s</span>`,
-				20*level, branch, jsString(value))
+				20*level, branch, jsjson.String(value))
 		default:
-			text = jsString(value)
+			text = jsjson.String(value)
 		}
 		fmt.Fprintf(&b, "<td key=%d>%s</td>", index, text)
 	}
@@ -383,9 +381,9 @@ func tableBody(rows []*rec, level int) string {
 
 // schemaTableHTML 对应 createSchemaTable：body 不是合法 JSON 时按空对象处理。
 func (t *schemaTable) schemaTableHTML(body string) (string, error) {
-	parsed, err := parseJSOrdered(body)
+	parsed, err := jsjson.Parse(body)
 	if err != nil {
-		parsed = &jsObject{vals: map[string]any{}}
+		parsed = jsjson.NewObject()
 	}
 	rows, err := t.transform(parsed)
 	if err != nil {

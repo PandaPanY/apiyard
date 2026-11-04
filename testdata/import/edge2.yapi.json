@@ -1,0 +1,50 @@
+{
+  "apis": [
+    {
+      "method": "POST",
+      "title": "合并",
+      "catname": null,
+      "path": "/merge",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [
+        {
+          "name": "dup",
+          "desc": "操作级",
+          "required": "0"
+        },
+        {
+          "name": "o1",
+          "required": "0"
+        },
+        {
+          "name": "p1",
+          "required": "0"
+        }
+      ],
+      "req_body_type": "json",
+      "res_body_type": "json",
+      "res_body": "{\n  \"type\": \"object\",\n  \"description\": \"A的描述\",\n  \"required\": [\n    \"a\"\n  ],\n  \"properties\": {\n    \"a\": {\n      \"type\": \"string\"\n    },\n    \"shared\": {\n      \"type\": \"string\",\n      \"description\": \"来自A\"\n    }\n  },\n  \"$$ref\": \"#/definitions/Alias\"\n}",
+      "res_body_is_json_schema": true,
+      "req_body_other": "{\n  \"type\": \"object\",\n  \"description\": \"AB 自己的描述\",\n  \"required\": [\n    \"a\",\n    \"b\",\n    \"c\"\n  ],\n  \"properties\": {\n    \"a\": {\n      \"type\": \"string\"\n    },\n    \"shared\": {\n      \"type\": \"integer\",\n      \"description\": \"来自A\"\n    },\n    \"b\": {\n      \"type\": \"integer\"\n    },\n    \"c\": {\n      \"type\": \"boolean\"\n    }\n  },\n  \"$$ref\": \"#/definitions/AB\"\n}",
+      "req_body_is_json_schema": true
+    },
+    {
+      "method": "GET",
+      "title": "兄弟属性",
+      "catname": null,
+      "path": "/sibling",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "raw",
+      "res_body_type": "json",
+      "res_body_is_json_schema": true,
+      "res_body": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"x\": {\n      \"type\": \"object\",\n      \"description\": \"A的描述\",\n      \"required\": [\n        \"a\"\n      ],\n      \"properties\": {\n        \"a\": {\n          \"type\": \"string\"\n        },\n        \"shared\": {\n          \"type\": \"string\",\n          \"description\": \"来自A\"\n        }\n      },\n      \"$$ref\": \"#/definitions/A\"\n    }\n  },\n  \"$$ref\": \"#/definitions/WithSibling\"\n}"
+    }
+  ],
+  "cats": [],
+  "basePath": ""
+}

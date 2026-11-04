@@ -92,21 +92,6 @@ func TestSchemaTableEdgeCases(t *testing.T) {
 	}
 }
 
-func TestJSNumber(t *testing.T) {
-	cases := map[float64]string{
-		0: "0", 1: "1", -1.5: "-1.5", 100: "100", 0.1: "0.1", 1e21: "1e+21", 1.5e-7: "1.5e-7", 9.9e-7: "9.9e-7",
-		123456789012345680000: "123456789012345680000", 0.000001: "0.000001",
-	}
-	for in, want := range cases {
-		if got := jsNumber(in); got != want {
-			t.Errorf("jsNumber(%v) = %s, 期望 %s", in, got, want)
-		}
-	}
-	if got := jsString([]any{"a", nil, json.Number("2"), true}); got != "a,,2,true" {
-		t.Errorf("数组转字符串: %s", got)
-	}
-}
-
 func TestExportNeedsLogin(t *testing.T) {
 	e := newEnv(t, Options{})
 	resp, err := http.Get(e.srv.URL + "/api/plugin/export?type=json&pid=11")

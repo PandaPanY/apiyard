@@ -1,0 +1,139 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "边界情况",
+    "version": "1"
+  },
+  "definitions": {
+    "Node": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Node"
+          }
+        }
+      }
+    },
+    "Base": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "Derived": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Base"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "extra": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "a/b": {
+      "type": "string",
+      "description": "带斜杠的名字"
+    }
+  },
+  "parameters": {
+    "idParam": {
+      "name": "id",
+      "in": "path",
+      "required": true,
+      "type": "string"
+    }
+  },
+  "responses": {
+    "NotFound": {
+      "description": "找不到",
+      "schema": {
+        "$ref": "#/definitions/Base"
+      }
+    }
+  },
+  "paths": {
+    "/tree": {
+      "post": {
+        "summary": "树",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Node"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/derived/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/idParam"
+        }
+      ],
+      "put": {
+        "summary": "派生",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "b",
+            "schema": {
+              "$ref": "#/definitions/Derived"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/a~1b"
+            }
+          }
+        }
+      }
+    },
+    "/missing": {
+      "get": {
+        "summary": "缺失引用",
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/Nope"
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "根路径"
+          }
+        }
+      }
+    }
+  }
+}

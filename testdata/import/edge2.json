@@ -1,0 +1,136 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "边界情况2",
+    "version": "1"
+  },
+  "definitions": {
+    "A": {
+      "type": "object",
+      "description": "A的描述",
+      "required": [
+        "a"
+      ],
+      "properties": {
+        "a": {
+          "type": "string"
+        },
+        "shared": {
+          "type": "string",
+          "description": "来自A"
+        }
+      }
+    },
+    "B": {
+      "type": "object",
+      "required": [
+        "b"
+      ],
+      "properties": {
+        "b": {
+          "type": "integer"
+        },
+        "shared": {
+          "type": "integer"
+        }
+      }
+    },
+    "AB": {
+      "description": "AB 自己的描述",
+      "allOf": [
+        {
+          "$ref": "#/definitions/A"
+        },
+        {
+          "$ref": "#/definitions/B"
+        },
+        {
+          "required": [
+            "c"
+          ],
+          "properties": {
+            "c": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "Alias": {
+      "$ref": "#/definitions/A"
+    },
+    "WithSibling": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "$ref": "#/definitions/A",
+          "description": "引用旁边的描述"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/merge": {
+      "parameters": [
+        {
+          "name": "p1",
+          "in": "query",
+          "type": "string"
+        },
+        {
+          "name": "dup",
+          "in": "query",
+          "type": "string",
+          "description": "路径级"
+        }
+      ],
+      "post": {
+        "summary": "合并",
+        "parameters": [
+          {
+            "name": "dup",
+            "in": "query",
+            "type": "string",
+            "description": "操作级"
+          },
+          {
+            "name": "o1",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/AB"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/Alias"
+            }
+          }
+        }
+      }
+    },
+    "/sibling": {
+      "get": {
+        "summary": "兄弟属性",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/WithSibling"
+            }
+          }
+        }
+      }
+    }
+  }
+}

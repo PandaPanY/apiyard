@@ -20,7 +20,8 @@ internal/yapitoken/     开放 API 的 token 编解码                         (
 internal/schemafake/    按 JSON Schema 生成示例数据（schema2json，Mock 复用）(M2)
 internal/web/           托管预构建前端，注入前端补丁层（D6）             (M0.5)
 internal/compat/        兼容测试框架：执行场景、归一化、比对 golden      (M0.5)
-internal/openapi/       OpenAPI 3 / Swagger 2 导入导出                   (M3)
+internal/openapi/       Swagger 2 / OpenAPI 3 转换为 YApi 接口（导入）   (M3)
+internal/jsjson/        按 JS 规则解析和输出 JSON（保持键顺序），导入导出共用 (M3)
 internal/migrate/       从 YApi 的 MongoDB 导入数据                       (M4)
 internal/mock/          Mock 数据生成与 Mock 路由                         (M5)
 internal/mcp/           MCP Server                                       (M7)
@@ -28,7 +29,7 @@ web/yapi/               预构建前端（由 tools/fetch-yapi-web 下载，不�
 tools/                  compat（录制 / 比对兼容场景）、fetch-yapi-web（下载前端）
 ```
 
-依赖方向：`server → api/web`，`api → auth/store/yapitoken/schemafake`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
+依赖方向：`server → api/web`，`api → auth/store/yapitoken/schemafake/openapi/jsjson`，`openapi → jsjson`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
 
 ## 关键决策
 
@@ -112,6 +113,7 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 伪造的开放 API token | 能解密但项目 token 不存在时，只写了 42014 就继续执行，把请求当成 token 里 uid 对应的用户；默认 passsalt 下等于可以伪造任意用户 | 返回 42014 `token 无效` | 身份伪造 |
 | 用户已删除的 token | 当前用户为空，部分接口能用、部分接口出错 | 返回 42014 `token 无效` | 健壮性 |
 | `/api/plugin/export`、`exportSwagger` | 不检查任何权限，任何登录用户都能导出任意项目 | 私有项目要求查看权限，否则 406；通过 token 访问时只能导出 token 所属项目 | 信息泄露 |
+| `/api/open/import_data` 的 token | token 无效时继续执行，拿这个 token 调用其他接口，再逐个失败 | 直接返回 40011 | 健壮性 |
 
 ### 正常使用中也能看到的差异
 
@@ -125,9 +127,9 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 动态列表的顺序 | 只按秒级时间排序，同一秒内的顺序每次都可能不同 | 时间相同时按 ID 倒序 | 结果稳定 |
 | `/api/interface/up` 的 `nModified` | `up_time` 变了也算修改，同一秒内重复保存是 0，否则是 1 | 忽略 `up_time`，内容没变就是 0 | 结果稳定 |
 | `/api/interface/schema2json` | json-schema-faker | 自己实现的生成器（`internal/schemafake`），覆盖常用关键字；结果本来就是随机的 | 不依赖 Node |
-| `save` 的 `dataSync=good` 合并 | 合并后的 JSON Schema 保留原有键顺序 | 键按字母顺序输出，内容相同 | Go 的 map 不保序；只影响文本格式 |
 | `/api/project/swagger_url` | 服务端去请求用户给的任意 URL | 暂不提供，返回 402 和提示；“从 URL 导入”在 M3 做导入功能时再决定是否提供（加地址限制） | SSRF |
 | HTML 导出 | markdown-it 渲染，左侧是 markdown-it-table-of-contents 生成的目录 | goldmark 渲染，目录按"分类 → 接口"生成；样式表沿用原版，页眉页脚文字不同 | HTML 渲染器无法逐字一致；JSON、Markdown、Swagger 导出与原版一致 |
+| `/api/open/import_data` | 1.12 的服务端 Swagger 转换在 Node 里加载就出错（swagger-client 依赖浏览器的 File），总是返回 40011，接口实际不可用 | 按代码本意实现，转换结果与原版 run.js 一致；不支持 `url` 参数和以 http 开头的 `json` | 修正 bug；URL 导入有 SSRF 风险 |
 
 ## YApi 兼容要点
 
@@ -180,6 +182,8 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | token 访问的特殊情况 | `add_cat` 只读请求体，token 不会补上 `project_id`；`project/get` 只给 token 不给 `id` 时，`cat` 为空数组、`role` 为 false；`interface/get` 的接口不属于 token 项目时返回 400 `token有误` | 实测 |
 | 导出 | 分类按 index 排序，分类内按 index、标题排序，没有接口的分类不导出；`status=open` 只导出公开接口。JSON 导出中分类去掉了 `_id` 等字段，接口却保留完整字段（原版删的是 Mongoose 文档对象上的属性，没有生效）。项目不存在、请求体或响应体不是合法 JSON（Swagger）时返回 502 `下载出错` | `exts/yapi-plugin-export-*` + 实测 |
 | Markdown 导出 | 字符串拼接，可以逐字复现：JSON Schema 转成 HTML 表格，`<p key=N>` 的 N 把值为 undefined 的字段也算在内；数组行的 key 是 `array-N`，N 来自进程内一直递增的计数器 | `common/markdown.js`、`common/schema-transformTo-table.js` |
+| 数据导入 | 界面导入在**浏览器里解析**文件（Swagger、Postman、HAR、YApi JSON），再按"按名称复用或新建分类 → 有 basePath 时修改项目 → 逐个 `interface/add`（普通模式）或 `interface/save`（智能合并 good、完全覆盖 merge）"写入；`interUpload` 不会被请求。开放 API 的 `import_data` 在服务端走同样的流程，没有标签的接口放进第一个分类；参数 `merge` 默认 normal，旧参数名 `dataSync` 会被参数校验去掉，不起作用 | `common/HandleImportData.js` + 实测 |
+| Swagger 转换 | 由 swagger-client 展开 `$ref`，展开后的对象末尾加 `"$$ref": "原引用"`；循环引用的内层不展开；`allOf` 深度合并；路径级参数追加到操作参数后面。版本号形如 `v1` 的 tag 不作为分类 | `exts/yapi-plugin-import-swagger/run.js` + 容器内运行原版代码对照 |
 
 ### 数据集合（M3 迁移范围）
 

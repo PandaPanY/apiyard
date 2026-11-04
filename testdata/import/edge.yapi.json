@@ -1,0 +1,70 @@
+{
+  "apis": [
+    {
+      "method": "POST",
+      "title": "树",
+      "catname": null,
+      "path": "/tree",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "json",
+      "res_body_type": "json",
+      "res_body": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"integer\"\n    }\n  },\n  \"$$ref\": \"#/definitions/Base\"\n}",
+      "res_body_is_json_schema": true,
+      "req_body_other": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"value\": {\n      \"type\": \"string\"\n    },\n    \"children\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"$ref\": \"#/definitions/Node\"\n      }\n    }\n  },\n  \"$$ref\": \"#/definitions/Node\"\n}",
+      "req_body_is_json_schema": true
+    },
+    {
+      "method": "PUT",
+      "title": "派生",
+      "catname": null,
+      "path": "/derived/{id}",
+      "req_params": [
+        {
+          "name": "id",
+          "required": "1"
+        }
+      ],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "json",
+      "res_body_type": "json",
+      "req_body_is_json_schema": true,
+      "res_body": "{\n  \"type\": \"string\",\n  \"description\": \"带斜杠的名字\",\n  \"$$ref\": \"#/definitions/a~1b\"\n}",
+      "res_body_is_json_schema": true,
+      "req_body_other": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"integer\"\n    },\n    \"extra\": {\n      \"type\": \"string\"\n    }\n  },\n  \"$$ref\": \"#/definitions/Derived\"\n}"
+    },
+    {
+      "method": "GET",
+      "title": "缺失引用",
+      "catname": null,
+      "path": "/missing",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "raw",
+      "res_body_type": "json",
+      "res_body": "{\n  \"$ref\": \"#/definitions/Nope\"\n}",
+      "res_body_is_json_schema": true
+    },
+    {
+      "method": "GET",
+      "title": "/",
+      "catname": null,
+      "path": "/",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "raw",
+      "res_body_type": "raw",
+      "res_body": "根路径"
+    }
+  ],
+  "cats": [],
+  "basePath": ""
+}

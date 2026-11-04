@@ -170,6 +170,8 @@ func checkField(f field, v any) (any, string) {
 			s = x.String()
 		case bool:
 			s = strconv.FormatBool(x)
+		case int64: // 开放 API 的 token 写入的 project_id
+			s = strconv.FormatInt(x, 10)
 		default:
 			return nil, "应当是 string 类型"
 		}

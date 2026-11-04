@@ -1,0 +1,68 @@
+{
+  "apis": [
+    {
+      "method": "POST",
+      "title": "创建用户",
+      "catname": "users",
+      "tag": [
+        "users"
+      ],
+      "path": "/users",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "json",
+      "res_body_type": "json",
+      "res_body": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"email\": {\n      \"type\": \"string\",\n      \"format\": \"email\"\n    }\n  },\n  \"$$ref\": \"#/components/schemas/User\"\n}",
+      "res_body_is_json_schema": true,
+      "req_body_other": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"email\": {\n      \"type\": \"string\",\n      \"format\": \"email\"\n    }\n  },\n  \"$$ref\": \"#/components/schemas/User\"\n}",
+      "req_body_is_json_schema": true
+    },
+    {
+      "method": "GET",
+      "title": "用户列表",
+      "catname": "users",
+      "tag": [
+        "users"
+      ],
+      "path": "/users",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "raw",
+      "res_body_type": "json",
+      "res_body": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"id\": {\n        \"type\": \"string\"\n      },\n      \"email\": {\n        \"type\": \"string\",\n        \"format\": \"email\"\n      }\n    },\n    \"$$ref\": \"#/components/schemas/User\"\n  }\n}",
+      "res_body_is_json_schema": true
+    },
+    {
+      "method": "GET",
+      "title": "健康检查",
+      "catname": "ops",
+      "tag": [
+        "ops"
+      ],
+      "path": "/health",
+      "req_params": [],
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [],
+      "req_body_type": "raw",
+      "res_body_type": "json",
+      "res_body": "{\n  \"type\": \"string\"\n}",
+      "res_body_is_json_schema": true
+    }
+  ],
+  "cats": [
+    {
+      "name": "users",
+      "desc": "users"
+    },
+    {
+      "name": "ops",
+      "desc": "ops"
+    }
+  ],
+  "basePath": ""
+}
