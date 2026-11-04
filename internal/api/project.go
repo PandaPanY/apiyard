@@ -292,6 +292,16 @@ func (a *API) projectGet(c *call) error {
 			return c.fail(406, "没有权限")
 		}
 	}
+	doc := projectBaseDoc(p)
+	if p.Env == "[]" {
+		doc["env"] = []map[string]any{{"name": "local", "domain": "http://127.0.0.1"}}
+	}
+	// YApi 查分类和角色时用的是 params.id；只给 project_id（开放 API 的用法）时 id 为空，
+	// 结果分类总是空数组、角色是 false。周边工具按这个结果编写，这里保持一致。
+	if !ok {
+		doc["cat"], doc["role"] = []any{}, false
+		return c.ok(doc)
+	}
 	cats, err := a.store.CatsByProject(ctx, id)
 	if err != nil {
 		return err
@@ -300,16 +310,11 @@ func (a *API) projectGet(c *call) error {
 	if err != nil {
 		return err
 	}
-
-	doc := projectBaseDoc(p)
 	catDocs := make([]map[string]any, 0, len(cats))
 	for _, cat := range cats {
 		catDocs = append(catDocs, catDoc(cat))
 	}
 	doc["cat"] = catDocs
-	if p.Env == "[]" {
-		doc["env"] = []map[string]any{{"name": "local", "domain": "http://127.0.0.1"}}
-	}
 	doc["role"] = role
 	return c.ok(doc)
 }

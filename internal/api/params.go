@@ -17,7 +17,8 @@ import (
 const maxBodySize = 2 << 20
 
 // readParams 合并查询参数和请求体，请求体中的同名字段优先，与 YApi 的 Object.assign(query, body) 一致。
-// 同名查询参数出现多次时与 Koa 一样得到数组。请求体是 JSON 数组时（如 up_index）原样放在 body 中返回。
+// 同名查询参数出现多次时与 Koa 一样得到数组。body 是解析后的请求体本身（对象、数组或表单字段），
+// 供只读请求体的接口使用（如 up_index 的数组、add_cat 只认请求体里的字段）。
 func readParams(r *http.Request) (params map[string]any, body any, err error) {
 	params = map[string]any{}
 	for k, v := range r.URL.Query() {
@@ -46,10 +47,12 @@ func readParams(r *http.Request) (params map[string]any, body any, err error) {
 		if err := r.ParseForm(); err != nil {
 			return nil, nil, err
 		}
+		form := map[string]any{}
 		for k, v := range r.PostForm {
 			params[k] = v[0]
+			form[k] = v[0]
 		}
-		return params, nil, nil
+		return params, form, nil
 	default:
 		dec := json.NewDecoder(bytes.NewReader(data))
 		dec.UseNumber()

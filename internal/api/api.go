@@ -93,6 +93,10 @@ func (a *API) serve(c *call, rt route, h handlerFunc) error {
 		return c.fail(400, "请求体不是合法的 JSON")
 	}
 	c.body = body
+	// 与 YApi 的 base.init 一致：先处理开放 API 的 token，再做参数校验
+	if ok, err := a.applyToken(c, params); !ok || err != nil {
+		return err
+	}
 	if rt.schema != nil {
 		var msg string
 		if params, msg = validate(params, rt.schema); msg != "" {
@@ -116,6 +120,17 @@ type call struct {
 	body    any         // 解析后的 JSON 请求体，用于请求体本身是数组的接口
 	user    *store.User // 未登录时为 nil
 	replied bool
+}
+
+// bodyOnly 返回一个只看请求体字段的副本，对应 YApi 中直接读取 ctx.request.body 的接口（不合并查询参数，
+// 也不受开放 API token 覆盖 project_id 的影响）。
+func (c *call) bodyOnly() *call {
+	cp := *c
+	cp.params, _ = c.body.(map[string]any)
+	if cp.params == nil {
+		cp.params = map[string]any{}
+	}
+	return &cp
 }
 
 // ok 返回成功响应，与 YApi 的 resReturn(data) 相同。

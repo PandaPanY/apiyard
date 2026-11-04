@@ -163,7 +163,7 @@ func (a *API) interfaceAdd(c *call) error {
 
 func (a *API) addInterface(ctx context.Context, u *store.User, p map[string]any) (outcome, error) {
 	projectID, _ := toInt(p["project_id"])
-	if ok, err := a.canProject(ctx, u, projectID, actionEdit); err != nil || !ok {
+	if ok, err := a.canWrite(ctx, u, projectID, actionEdit); err != nil || !ok {
 		return failure(40033, "没有权限"), err
 	}
 	method, _ := p["method"].(string)
@@ -210,8 +210,8 @@ func (a *API) addInterface(ctx context.Context, u *store.User, p map[string]any)
 		return outcome{}, err
 	}
 
-	// 新建接口的人如果还不是项目成员，自动成为开发者
-	if u.Role != "admin" {
+	// 新建接口的人如果还不是项目成员，自动成为开发者（旧格式 token 的 system 用户除外）
+	if u.Role != "admin" && u.ID != legacyTokenUID {
 		if _, err := a.store.ProjectMemberOf(ctx, projectID, u.ID); errors.Is(err, store.ErrNotFound) {
 			m := store.Member{UID: u.ID, Role: "dev", Username: &u.Username, Email: &u.Email}
 			if _, err := a.store.AddProjectMembers(ctx, projectID, []store.Member{m}); err != nil {
@@ -240,7 +240,7 @@ func (a *API) interfaceSave(c *call) error {
 	ctx := c.r.Context()
 	p := c.params
 	projectID, _ := toInt(p["project_id"])
-	if ok, err := a.canProject(ctx, c.user, projectID, actionEdit); err != nil {
+	if ok, err := a.canWrite(ctx, c.user, projectID, actionEdit); err != nil {
 		return err
 	} else if !ok {
 		return c.fail(40033, "没有权限")
@@ -318,7 +318,7 @@ func (a *API) updateInterface(ctx context.Context, u *store.User, p map[string]a
 	if err != nil {
 		return outcome{}, err
 	}
-	if ok, err := a.canProject(ctx, u, old.ProjectID, actionEdit); err != nil || !ok {
+	if ok, err := a.canWrite(ctx, u, old.ProjectID, actionEdit); err != nil || !ok {
 		return failure(400, "没有权限"), err
 	}
 
@@ -405,11 +405,20 @@ func (a *API) interfaceGet(c *call) error {
 		return c.fail(400, "接口id不能为空")
 	}
 	it, err := a.store.InterfaceByID(ctx, id)
-	if errors.Is(err, store.ErrNotFound) {
-		return c.fail(490, "不存在的")
-	}
-	if err != nil {
+	if err != nil && !errors.Is(err, store.ErrNotFound) {
 		return err
+	}
+	// 与 YApi 的顺序一致：先核对 token 所属项目（接口不存在时原版在这里抛异常），再判断接口是否存在
+	if scope, ok := tokenScope(ctx); ok {
+		if it == nil {
+			return c.fail(402, "Cannot read property 'project_id' of null")
+		}
+		if it.ProjectID != scope {
+			return c.fail(400, "token有误")
+		}
+	}
+	if it == nil {
+		return c.fail(490, "不存在的")
 	}
 	if denied, err := a.privateDenied(ctx, c.user, it.ProjectID, actionView); err != nil || denied {
 		return c.sendDenied(err)
@@ -627,13 +636,15 @@ func (a *API) interfaceDel(c *call) error {
 
 // ---- 分类 ----
 
+// interfaceAddCat 新建分类。与 YApi 一样只读请求体，所以通过 token 访问时也必须在请求体里给出 project_id。
 func (a *API) interfaceAddCat(c *call) error {
 	ctx := c.r.Context()
+	c = c.bodyOnly()
 	projectID, _ := c.int("project_id")
 	if projectID == 0 {
 		return c.fail(400, "项目id不能为空")
 	}
-	if ok, err := a.canProject(ctx, c.user, projectID, actionEdit); err != nil {
+	if ok, err := a.canWrite(ctx, c.user, projectID, actionEdit); err != nil {
 		return err
 	} else if !ok {
 		return c.fail(400, "没有权限")

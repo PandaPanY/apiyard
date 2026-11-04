@@ -107,13 +107,22 @@ v0.2：M7 MCP Server        v0.3 及以后：延后功能，按用户反馈排�
 
 **目标**：现有的 YApi 周边工具直接改个地址就能接入。
 
+和 M2 一样按依赖拆成四部分，每部分有自己的兼容场景：
+
+| 部分 | 内容 | 兼容场景 | 进度 |
+|---|---|---|---|
+| M3-1 | 开放 API 鉴权：白名单接口支持 `token` 参数（新旧两种 token），token 只能操作所属项目 | `07-open-api` | ✅ |
+| M3-2 | 导出：`/api/plugin/export`（JSON / Markdown / HTML）、`/api/plugin/exportSwagger` | `08-export` | |
+| M3-3 | 导入：`/api/open/import_data`（Swagger 2 / OpenAPI 3 的 JSON，三种同步模式）；界面导入（Swagger、Postman、HAR、YApi JSON）实测 | `09-import` | |
+| M3-4 | 生态实测：yapi-to-typescript、Yapi-MCP、easy-yapi | — | |
+
 | # | 任务 |
 |---|---|
-| 1 | token 编解码：`EVP_BytesToKey(MD5)` + AES-192-CBC，兼容原始项目 token（此时 uid 视为 999999） |
-| 2 | 开放 API 鉴权：15 个白名单接口支持 `token` 参数 |
-| 3 | `/api/open/import_data`：通过 Swagger JSON 或 URL 导入，支持普通、智能合并、完全覆盖三种模式 |
+| 1 | token 编解码：`EVP_BytesToKey(MD5)` + AES-192-CBC，兼容原始项目 token（此时 uid 视为 999999）。✅ M2-1 已提前完成 |
+| 2 | 开放 API 鉴权：白名单接口支持 `token` 参数 |
+| 3 | `/api/open/import_data`：通过 Swagger JSON 导入，支持普通、智能合并、完全覆盖三种模式。**不支持通过 URL 导入**（服务端代取任意 URL 有 SSRF 风险，2026-11-04 决定先不做） |
 | 4 | 导出：`/api/plugin/export`（JSON / HTML / Markdown）、`/api/plugin/exportSwagger` |
-| 5 | 导入：`/api/interface/interUpload`（界面上的导入功能，支持 Swagger 2、OpenAPI 3、Postman、HAR） |
+| 5 | 界面导入：YApi 的导入在**浏览器里解析**文件，再调用 `add_cat`、`project/up`、`interface/add`、`interface/save` 逐条写入；`/api/interface/interUpload` 只是上传组件上声明的地址，实际不会被请求。所以这部分只需实测，不需要新接口 |
 | 6 | 生态实测：yapi-to-typescript 生成代码、Yapi-MCP 读写接口、easy-yapi 上传文档 |
 
 **验收标准**：

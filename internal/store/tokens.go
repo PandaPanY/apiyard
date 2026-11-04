@@ -23,3 +23,13 @@ func (s *Store) SetProjectToken(ctx context.Context, projectID int64, token stri
 		projectID, token)
 	return err
 }
+
+// ProjectIDByToken 按原始 token 查找项目；找不到时返回 ErrNotFound。
+func (s *Store) ProjectIDByToken(ctx context.Context, token string) (int64, error) {
+	var id int64
+	err := s.db.QueryRowContext(ctx, "SELECT project_id FROM tokens WHERE token = ?", token).Scan(&id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return 0, ErrNotFound
+	}
+	return id, err
+}

@@ -112,6 +112,10 @@ func (a *API) canManageGroup(ctx context.Context, u *store.User, groupID int64) 
 // projectRole 返回当前用户在项目中的角色，对应 YApi getProjectRole(id, 'project')：
 // 管理员 → admin；项目创建者 → owner；项目成员按其角色；都不是时看所在分组的角色。项目不存在时返回空字符串。
 func (a *API) projectRole(ctx context.Context, u *store.User, projectID int64) (string, error) {
+	// 与 YApi 不同：通过 token 访问时，对 token 所属项目以外的项目没有任何权限
+	if scope, ok := tokenScope(ctx); ok && scope != projectID {
+		return "", nil
+	}
 	if u.Role == "admin" {
 		return "admin", nil
 	}

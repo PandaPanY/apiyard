@@ -108,6 +108,9 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | form 请求体缺少 `req_headers` | 抛异常 | 按空数组处理 | 健壮性 |
 | `/api/log/list`（项目动态）、`list_by_update` | 不检查权限，能读到私有项目的动态和改动内容 | 私有项目要求查看权限，否则 406 | 信息泄露 |
 | `/api/user/login_by_ldap` | 没配置 LDAP 时返回 401 和一条 JS 异常信息 | 返回 401 和“暂不支持 LDAP 登录” | 提示更清楚 |
+| 开放 API token 越权 | 通过 token 访问时，新建、修改接口和新建分类完全不检查权限，任何项目的 token 都能改其他项目的接口和分类 | token 只能操作所属项目；对其他项目按"没有权限"处理（各接口原有的错误码） | 越权 |
+| 伪造的开放 API token | 能解密但项目 token 不存在时，只写了 42014 就继续执行，把请求当成 token 里 uid 对应的用户；默认 passsalt 下等于可以伪造任意用户 | 返回 42014 `token 无效` | 身份伪造 |
+| 用户已删除的 token | 当前用户为空，部分接口能用、部分接口出错 | 返回 42014 `token 无效` | 健壮性 |
 
 ### 正常使用中也能看到的差异
 
@@ -171,6 +174,8 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | `/api/interface/save` | 响应只是按路径查到的 `[{_id, res_body}]`，新建时是 `[]`，不反映修改或新建是否成功 | 实测 |
 | `/api/interface/getCatMenu` | 私有项目要求编辑权限（访客看不到）；项目不存在时异常没有被处理，Koa 返回 404 | 源码 |
 | 复制项目 | 不建默认分类；分类按参数 `cat` 的顺序新建（index 都是 0），接口按标题排序复制并保留原 index；`is_json5` 取模型默认值 true | 实测 |
+| 开放 API token | 只对 15 个白名单接口和 `/api/open/*` 生效；`project_id` 被强制改成 token 所属项目（参数校验之前）。新格式 token 代表生成它的用户，按其角色判断读权限；旧格式（原始 token）代表 uid 999999 的 system 普通会员，读不了私有项目，但写接口不检查角色。解不开也找不到的 token 被忽略 | `controllers/base.js` + 实测 |
+| token 访问的特殊情况 | `add_cat` 只读请求体，token 不会补上 `project_id`；`project/get` 只给 token 不给 `id` 时，`cat` 为空数组、`role` 为 false；`interface/get` 的接口不属于 token 项目时返回 400 `token有误` | 实测 |
 
 ### 数据集合（M3 迁移范围）
 
