@@ -18,6 +18,7 @@ type Config struct {
 	AdminEmail    string // 首次启动时创建的管理员邮箱
 	AdminPassword string // 首次启动时的管理员密码；为空则随机生成并打印到日志
 	CloseRegister bool   // 关闭用户注册
+	TokenSalt     string // 开放 API token 的加密口令，对应 YApi 配置文件里的 passsalt
 	YAPIUpstream  string // 开发用：把全部 /api、/mock 请求转发到这个原版 YApi，为空则不转发
 }
 
@@ -32,6 +33,8 @@ func Load(args []string) (Config, error) {
 		"首次启动时创建的管理员邮箱（环境变量 APIYARD_ADMIN_EMAIL）")
 	fs.StringVar(&cfg.AdminPassword, "admin-password", envOr("APIYARD_ADMIN_PASSWORD", ""),
 		"首次启动时的管理员密码，为空则随机生成（环境变量 APIYARD_ADMIN_PASSWORD）")
+	fs.StringVar(&cfg.TokenSalt, "token-salt", envOr("APIYARD_TOKEN_SALT", "abcde"),
+		"开放 API token 的加密口令，从 YApi 迁移时填原配置文件里的 passsalt（环境变量 APIYARD_TOKEN_SALT）")
 	fs.BoolVar(&cfg.CloseRegister, "close-register", envBool("APIYARD_CLOSE_REGISTER"), "关闭用户注册（环境变量 APIYARD_CLOSE_REGISTER）")
 	fs.StringVar(&cfg.YAPIUpstream, "yapi-upstream", envOr("APIYARD_YAPI_UPSTREAM", ""),
 		"开发用：把全部 /api、/mock 请求转发到原版 YApi，如 http://localhost:13000（环境变量 APIYARD_YAPI_UPSTREAM）")

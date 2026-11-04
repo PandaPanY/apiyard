@@ -197,17 +197,41 @@ func (a *API) userProject(c *call) error {
 	id, _ := c.int("id")
 	typ, _ := c.str("type")
 
-	switch typ {
-	case "interface":
-		// 项目和接口要到 M2 才能创建，目前只会查不到。YApi 查不到接口时的响应如下
-		return c.reply(map[string]any{"errcode": 422, "errmsg": "Cannot read property 'project_id' of null",
-			"data": map[string]any{"interface": nil}})
-	case "project":
-		return c.reply(map[string]any{"errcode": 422, "errmsg": "Cannot read property 'toObject' of null", "data": map[string]any{}})
-	case "group":
+	// YApi 依次处理 interface → project → group，前一步的结果决定下一步的 id；
+	// 用 checkAuth(..., 'site') 判断开发者，但 'site' 不是有效动作，结果总是 false，所以角色只会是 owner 或 member
+	result := map[string]any{}
+	notFound := func(msg string) error {
+		return c.reply(map[string]any{"errcode": 422, "errmsg": msg, "data": result})
+	}
+	if typ == "interface" {
+		// 接口要到 M2-3 才能创建，目前只会查不到。YApi 查不到接口时的响应如下
+		result["interface"] = nil
+		return notFound("Cannot read property 'project_id' of null")
+	}
+	if typ == "project" {
+		p, err := a.store.ProjectByID(ctx, id)
+		if errors.Is(err, store.ErrNotFound) {
+			return notFound("Cannot read property 'toObject' of null")
+		}
+		if err != nil {
+			return err
+		}
+		doc, err := a.projectFullDoc(ctx, p)
+		if err != nil {
+			return err
+		}
+		manage, err := a.canProject(ctx, c.user, id, actionDanger)
+		if err != nil {
+			return err
+		}
+		doc["role"] = ownerOrMember(manage)
+		result["project"] = doc
+		typ, id = "group", p.GroupID
+	}
+	if typ == "group" {
 		g, err := a.store.GroupByID(ctx, id)
 		if errors.Is(err, store.ErrNotFound) {
-			return c.reply(map[string]any{"errcode": 422, "errmsg": "Cannot read property 'toObject' of null", "data": map[string]any{}})
+			return notFound("Cannot read property 'toObject' of null")
 		}
 		if err != nil {
 			return err
@@ -216,18 +240,19 @@ func (a *API) userProject(c *call) error {
 		if err != nil {
 			return err
 		}
-		// YApi 用 checkAuth(..., 'site') 判断开发者，但 'site' 不是有效动作，结果总是 false，
-		// 所以这里只会出现 owner 或 member
 		manage, err := a.canManageGroup(ctx, c.user, id)
 		if err != nil {
 			return err
 		}
-		doc["role"] = "member"
-		if manage {
-			doc["role"] = "owner"
-		}
-		return c.ok(map[string]any{"group": doc})
-	default:
-		return c.ok(map[string]any{})
+		doc["role"] = ownerOrMember(manage)
+		result["group"] = doc
 	}
+	return c.ok(result)
+}
+
+func ownerOrMember(owner bool) string {
+	if owner {
+		return "owner"
+	}
+	return "member"
 }

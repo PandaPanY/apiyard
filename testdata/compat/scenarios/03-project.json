@@ -1,0 +1,108 @@
+{
+  "description": "M2-1：项目的增删改查、环境 / tag / 图标设置、token、关注、搜索、动态，以及普通成员的项目权限",
+  "steps": [
+    {
+      "name": "管理员登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    {
+      "name": "注册普通用户 dev2", "method": "POST", "path": "/api/user/reg",
+      "body": { "email": "dev2@apiyard.test", "password": "dev2-pass", "username": "dev2" },
+      "capture": { "dev_uid": "data.uid" }
+    },
+    {
+      "name": "管理员重新登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    {
+      "name": "新建分组", "method": "POST", "path": "/api/group/add",
+      "body": { "group_name": "项目组", "owner_uids": [] },
+      "capture": { "gid": "data._id" }
+    },
+    {
+      "name": "dev2 加入分组成为开发者", "method": "POST", "path": "/api/group/add_member",
+      "body": { "id": "{{gid}}", "member_uids": ["{{dev_uid}}"], "role": "dev" }
+    },
+    { "name": "检查项目名（可用）", "method": "GET", "path": "/api/project/check_project_name", "query": { "name": "订单服务", "group_id": "{{gid}}" } },
+    { "name": "检查项目名（为空）", "method": "GET", "path": "/api/project/check_project_name", "query": { "group_id": "{{gid}}" }, "errcode": 401 },
+    {
+      "name": "新建项目（basepath 自动补全斜杠）", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "订单服务", "basepath": "orders/", "group_id": "{{gid}}", "project_type": "private", "icon": "code-o", "color": "blue", "desc": "订单相关接口" },
+      "capture": { "pid": "data._id" }
+    },
+    {
+      "name": "新建同名项目", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "订单服务", "group_id": "{{gid}}" }, "errcode": 401
+    },
+    {
+      "name": "basepath 格式错误", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "格式错误", "basepath": "/a b", "group_id": "{{gid}}" }, "errcode": 401
+    },
+    { "name": "检查项目名（已存在）", "method": "GET", "path": "/api/project/check_project_name", "query": { "name": "订单服务", "group_id": "{{gid}}" }, "errcode": 401 },
+    { "name": "获取项目", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" } },
+    { "name": "获取不存在的项目", "method": "GET", "path": "/api/project/get", "query": { "id": "99999" }, "errcode": 40011 },
+    { "name": "分组的项目列表", "method": "GET", "path": "/api/project/list", "query": { "group_id": "{{gid}}" } },
+    {
+      "name": "修改项目", "method": "POST", "path": "/api/project/up",
+      "body": { "id": "{{pid}}", "name": "订单服务V2", "basepath": "/v2/orders", "desc": "修改后的描述", "group_id": "{{gid}}", "project_type": "public", "switch_notice": false }
+    },
+    {
+      "name": "修改环境", "method": "POST", "path": "/api/project/up_env",
+      "body": { "id": "{{pid}}", "env": [
+        { "name": "local", "domain": "http://127.0.0.1", "header": [], "global": [] },
+        { "name": "test", "domain": "http://test.example.com", "header": [{ "name": "X-Token", "value": "t" }], "global": [{ "name": "k", "value": "v" }] }
+      ] }
+    },
+    {
+      "name": "环境名重复", "method": "POST", "path": "/api/project/up_env",
+      "body": { "id": "{{pid}}", "env": [{ "name": "a", "domain": "http://a" }, { "name": "a", "domain": "http://b" }] }, "errcode": 405
+    },
+    { "name": "获取环境", "method": "GET", "path": "/api/project/get_env", "query": { "project_id": "{{pid}}" } },
+    {
+      "name": "修改 tag", "method": "POST", "path": "/api/project/up_tag",
+      "body": { "id": "{{pid}}", "tag": [{ "name": "v1", "desc": "第一版" }] }
+    },
+    {
+      "name": "修改图标颜色", "method": "POST", "path": "/api/project/upset",
+      "body": { "id": "{{pid}}", "icon": "star-o", "color": "red" }
+    },
+    { "name": "修改后的项目", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" } },
+    { "name": "获取 token", "method": "GET", "path": "/api/project/token", "query": { "project_id": "{{pid}}" }, "volatile": ["data"] },
+    { "name": "更新 token", "method": "GET", "path": "/api/project/update_token", "query": { "project_id": "{{pid}}" } },
+    { "name": "关注项目", "method": "POST", "path": "/api/follow/add", "body": { "projectid": "{{pid}}" } },
+    { "name": "重复关注", "method": "POST", "path": "/api/follow/add", "body": { "projectid": "{{pid}}" }, "errcode": 401 },
+    { "name": "关注列表", "method": "GET", "path": "/api/follow/list" },
+    { "name": "关注后的项目列表", "method": "GET", "path": "/api/project/list", "query": { "group_id": "{{gid}}" } },
+    { "name": "搜索", "method": "GET", "path": "/api/project/search", "query": { "q": "订单" } },
+    { "name": "项目动态", "method": "GET", "path": "/api/log/list", "query": { "typeid": "{{pid}}", "type": "project", "page": "1", "limit": "10" }, "unordered": ["data.list"] },
+    { "name": "分组动态", "method": "GET", "path": "/api/log/list", "query": { "typeid": "{{gid}}", "type": "group", "page": "1", "limit": "10" }, "unordered": ["data.list"] },
+    { "name": "管理员在项目中的角色", "method": "GET", "path": "/api/user/project", "query": { "id": "{{pid}}", "type": "project" } },
+    {
+      "name": "dev2 登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "dev2@apiyard.test", "password": "dev2-pass" }
+    },
+    {
+      "name": "dev2 新建项目（自动成为组长）", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "库存服务", "basepath": "/stock", "group_id": "{{gid}}" },
+      "capture": { "pid2": "data._id" }
+    },
+    { "name": "dev2 查看他人项目", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" } },
+    {
+      "name": "dev2 不能修改他人项目", "method": "POST", "path": "/api/project/up",
+      "body": { "id": "{{pid}}", "name": "x" }, "errcode": 405
+    },
+    { "name": "dev2 不能删除他人项目", "method": "POST", "path": "/api/project/del", "body": { "id": "{{pid}}" }, "errcode": 405 },
+    { "name": "dev2 看到的项目列表", "method": "GET", "path": "/api/project/list", "query": { "group_id": "{{gid}}" } },
+    { "name": "dev2 在自己项目中的角色", "method": "GET", "path": "/api/user/project", "query": { "id": "{{pid2}}", "type": "project" } },
+    {
+      "name": "管理员再次登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    { "name": "取消关注", "method": "POST", "path": "/api/follow/del", "body": { "projectid": "{{pid}}" } },
+    { "name": "取消未关注的项目", "method": "POST", "path": "/api/follow/del", "body": { "projectid": "{{pid}}" }, "errcode": 401 },
+    { "name": "删除 dev2 的项目", "method": "POST", "path": "/api/project/del", "body": { "id": "{{pid2}}" } },
+    { "name": "删除项目", "method": "POST", "path": "/api/project/del", "body": { "id": "{{pid}}" } },
+    { "name": "删除后获取项目", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" }, "errcode": 40011 },
+    { "name": "清理分组", "method": "POST", "path": "/api/group/del", "body": { "id": "{{gid}}" } }
+  ]
+}

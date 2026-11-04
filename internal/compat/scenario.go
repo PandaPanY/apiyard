@@ -32,6 +32,12 @@ type Step struct {
 	Repeat int `json:"repeat,omitempty"`
 	// Errcode 是期望的 YApi 业务错误码，默认 0 表示成功。
 	Errcode int `json:"errcode,omitempty"`
+	// Volatile 列出响应中每次运行都不同、又无法按字段名统一处理的值（点分路径），比对前替换为 "<volatile>"。
+	// 例如 /api/project/token 直接把随机生成的 token 字符串放在 data 里。
+	Volatile []string `json:"volatile,omitempty"`
+	// Unordered 列出顺序不确定的数组（点分路径），比对前按元素内容排序，只比较有哪些元素。
+	// 例如 YApi 的动态按秒级时间排序，同一秒内的多条动态每次查询顺序都可能不同。
+	Unordered []string `json:"unordered,omitempty"`
 }
 
 // LoadScenarios 按文件名顺序读取 dir 下的全部场景；场景之间可能有状态依赖，顺序有意义。

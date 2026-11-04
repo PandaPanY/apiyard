@@ -2,6 +2,20 @@
 
 > 按日期倒序记录，最新的在最上面。每条只写要点。
 
+## 2026-11-04 M2-1：项目、关注与动态
+
+- 完成：
+  - M2 按依赖拆成四部分（见 roadmap.md）。本次完成 M2-1：项目 13 个接口、关注 3 个、`log/list`，以及 `user/project` 的项目类型。
+  - `internal/yapitoken`：开放 API token 的编解码（EVP_BytesToKey + AES-192-CBC），用对照实例的真实 token 做测试，**与 YApi 逐字节一致**。原计划在 M3 做，因为 `project/token` 需要而提前。
+  - 新场景 `03-project`（45 次调用）；场景 01–03 共 98 次调用与原版完全一致，变异测试确认比对有效。
+  - 浏览器实测：新建项目、项目页、设置页、token、环境配置正常。
+- 问题 / 决定：
+  - 自检又发现两类变化值：驼峰 ID 字段（`groupId`）和动态内容链接里的 ID，已补充归一化规则；YApi 的动态在同一秒内顺序不固定，兼容框架新增 `unordered`，随机 token 用新增的 `volatile` 处理。
+  - 前端补丁原来用 requestAnimationFrame 批处理，页面不渲染时 rAF 暂停会导致入口再也藏不住。改为在 MutationObserver 回调里直接处理。
+  - 安全修正：`project/token` 增加权限检查（原版任何登录用户都能拿到任意项目的 token），`update_token` 要求组长并修正漏传 uid 的 bug。
+  - 新增配置 `-token-salt`（对应 YApi 的 passsalt）。
+- 下一步：M2-2 项目成员与复制项目。
+
 ## 2026-11-04 M1（下）：个人中心与用户管理（M1 完成）
 
 - 完成：

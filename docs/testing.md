@@ -65,6 +65,8 @@ go run ./tools/compat check -target http://localhost:3000 -run user
 | `{{变量}}` | 在 `path`、`query`、`body` 中引用变量；整个字符串只有一个变量时保留原类型（数字仍是数字） |
 | `repeat` | 重复执行该步骤，变量 `{{i}}` 依次为 1..N |
 | `errcode` | 期望的业务错误码，默认 0；不符时场景立即失败 |
+| `volatile` | 响应中每次都不同、又无法按字段名统一处理的值（点分路径），比对前替换为 `<volatile>`。例如 `/api/project/token` 直接把随机 token 放在 `data` 里 |
+| `unordered` | 顺序不确定的数组（点分路径），比对前按元素内容排序，只比较有哪些元素。例如 YApi 的动态列表在同一秒内的顺序不固定 |
 
 ## 归一化规则
 
@@ -75,7 +77,8 @@ go run ./tools/compat check -target http://localhost:3000 -run user
 | `add_time`、`up_time`、`addTime`、`upTime` | `<time>` | 时间戳 |
 | `token` | `<token>` | 随机生成 |
 | 24 位十六进制字符串 | `<objectid>` | MongoDB 自动生成的 ObjectId |
-| `_id`、`id`、`uid`、`catid`、`*_id`、`*_uid`、`*_ids`、`*_uids` 中的数字 | `<id>` | YApi 每次启动都会随机选自增步长，ID 无法复现 |
+| `_id`、`id`、`uid`、`catid`、`typeid`、`projectid`、`*_id`、`*_uid`、`*_ids`、`*_uids`、`*Id` 中的数字 | `<id>` | YApi 每次启动都会随机选自增步长，ID 无法复现 |
+| 含 `<a ` 的字符串里，`profile/`、`group/`、`project/`、`api/`、`cat_` 后面的数字 | `<id>` | 动态内容的链接里带着 ID |
 
 ID 之间的引用关系由场景本身保证：后续步骤用捕获的 ID 继续调用，引用错了会得到错误的数据或错误码。
 

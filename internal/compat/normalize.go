@@ -19,6 +19,9 @@ var volatileKeys = map[string]string{
 // objectIDPattern 匹配 MongoDB 自动生成的 ObjectId（如日志、环境配置的 _id），它们是随机的。
 var objectIDPattern = regexp.MustCompile(`^[0-9a-f]{24}$`)
 
+// linkIDPattern 匹配动态内容里链接路径中的 ID，如 /group/56、/user/profile/11、/interface/api/cat_17。
+var linkIDPattern = regexp.MustCompile(`(profile/|group/|project/|api/|cat_)\d+`)
+
 // isIDKey 判断字段是否保存自增 ID。
 // YApi 每次进程启动都会给每个集合随机选 1~10 的自增步长，同样的操作得到的 ID 每次不同，
 // 所以只比对“这里是一个 ID”；ID 之间的引用关系由场景本身保证：后续步骤用捕获的 ID 继续调用，
@@ -28,8 +31,9 @@ func isIDKey(k string) bool {
 	case "_id", "id", "uid", "catid", "typeid", "projectid": // projectid 是关注列表里的原字段名
 		return true
 	}
+	// 搜索接口用驼峰写法（groupId、projectId）
 	return strings.HasSuffix(k, "_id") || strings.HasSuffix(k, "_uid") ||
-		strings.HasSuffix(k, "_ids") || strings.HasSuffix(k, "_uids")
+		strings.HasSuffix(k, "_ids") || strings.HasSuffix(k, "_uids") || strings.HasSuffix(k, "Id")
 }
 
 // Normalize 返回 v 的副本，其中易变的值已替换为占位符。
@@ -59,6 +63,10 @@ func Normalize(v any) any {
 	case string:
 		if objectIDPattern.MatchString(x) {
 			return "<objectid>"
+		}
+		// 只处理含链接的 HTML 片段（操作动态），避免误改接口路径这类普通字符串
+		if strings.Contains(x, "<a ") {
+			return linkIDPattern.ReplaceAllString(x, "${1}<id>")
 		}
 		return x
 	default:

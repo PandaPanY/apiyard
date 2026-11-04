@@ -96,6 +96,16 @@ func (r *runner) do(ctx context.Context, st Step, name string) (Exchange, error)
 		return ex, nil
 	}
 	ex.Response = Normalize(parsed)
+	for _, path := range st.Volatile {
+		if err := replaceAt(ex.Response, path, "<volatile>"); err != nil {
+			return ex, fmt.Errorf("volatile 路径 %s: %w", path, err)
+		}
+	}
+	for _, path := range st.Unordered {
+		if err := sortArrayAt(ex.Response, path); err != nil {
+			return ex, fmt.Errorf("unordered 路径 %s: %w", path, err)
+		}
+	}
 
 	if err := checkErrcode(parsed, st.Errcode); err != nil {
 		return ex, err

@@ -47,21 +47,12 @@
     });
   }
 
-  // 前端是单页应用，页面切换时 DOM 会重建，所以持续监听变化；同一帧内的多次变化只处理一次
-  var scheduled = false;
-  function scheduleHide() {
-    if (scheduled) {
-      return;
-    }
-    scheduled = true;
-    window.requestAnimationFrame(function () {
-      scheduled = false;
-      hideEntries();
-    });
-  }
-
+  // 前端是单页应用，页面切换时 DOM 会重建，所以持续监听变化。
+  // 直接在回调里处理：MutationObserver 本身会把同一轮的多次变化合并成一次回调，且在绘制前执行；
+  // 不用 requestAnimationFrame，因为页面在后台或不渲染时 rAF 会暂停，入口就藏不住。
+  // 修改 style 不会触发 childList 变化，所以不会循环触发。
   document.addEventListener('DOMContentLoaded', function () {
     hideEntries();
-    new MutationObserver(scheduleHide).observe(document.body, { childList: true, subtree: true });
+    new MutationObserver(hideEntries).observe(document.body, { childList: true, subtree: true });
   });
 })();

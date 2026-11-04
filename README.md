@@ -72,6 +72,7 @@ golangci-lint run
 | `-admin-email` | `APIYARD_ADMIN_EMAIL` | `admin@admin.com` | 首次启动（数据库里还没有用户）时创建的管理员邮箱 |
 | `-admin-password` | `APIYARD_ADMIN_PASSWORD` | 空 | 首次启动时的管理员密码；为空则随机生成，并在日志里打印一次 |
 | `-close-register` | `APIYARD_CLOSE_REGISTER` | `false` | 关闭用户注册 |
+| `-token-salt` | `APIYARD_TOKEN_SALT` | `abcde` | 开放 API token 的加密口令；从 YApi 迁移时填原配置文件里的 `passsalt`，已有的 token 才能继续使用 |
 | `-yapi-upstream` | `APIYARD_YAPI_UPSTREAM` | 空 | 开发用：把**全部** `/api`、`/mock` 请求转发给原版 YApi，用于对比行为（对照实例见 [`testenv/yapi`](testenv/yapi/README.md)） |
 
 本地开发时可以这样运行：`go run ./cmd/apiyard -db apiyard-dev.db -admin-password ymfe.org`。

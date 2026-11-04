@@ -1,0 +1,1482 @@
+[
+  {
+    "step": "管理员登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "注册普通用户 dev2",
+    "method": "POST",
+    "url": "/api/user/reg",
+    "request": {
+      "email": "dev2@apiyard.test",
+      "password": "dev2-pass",
+      "username": "dev2"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev2@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev2"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员重新登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "新建分组",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_name": "项目组",
+      "owner_uids": []
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_name": "项目组",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "admin@admin.com",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 加入分组成为开发者",
+    "method": "POST",
+    "url": "/api/group/add_member",
+    "request": {
+      "id": "{{gid}}",
+      "member_uids": [
+        "{{dev_uid}}"
+      ],
+      "role": "dev"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_members": [
+          {
+            "email": "dev2@apiyard.test",
+            "role": "dev",
+            "uid": "<id>",
+            "username": "dev2"
+          }
+        ],
+        "exist_members": [],
+        "no_members": [],
+        "result": {
+          "n": 1,
+          "nModified": 1,
+          "ok": 1
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "检查项目名（可用）",
+    "method": "GET",
+    "url": "/api/project/check_project_name?group_id={{gid}}&name=订单服务",
+    "status": 200,
+    "response": {
+      "data": {},
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "检查项目名（为空）",
+    "method": "GET",
+    "url": "/api/project/check_project_name?group_id={{gid}}",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "项目名不能为空"
+    }
+  },
+  {
+    "step": "新建项目（basepath 自动补全斜杠）",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "basepath": "orders/",
+      "color": "blue",
+      "desc": "订单相关接口",
+      "group_id": "{{gid}}",
+      "icon": "code-o",
+      "name": "订单服务",
+      "project_type": "private"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/orders",
+        "color": "blue",
+        "desc": "订单相关接口",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "icon": "code-o",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "订单服务",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建同名项目",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "group_id": "{{gid}}",
+      "name": "订单服务"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "已存在的项目名"
+    }
+  },
+  {
+    "step": "basepath 格式错误",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "basepath": "/a b",
+      "group_id": "{{gid}}",
+      "name": "格式错误"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "basepath格式有误"
+    }
+  },
+  {
+    "step": "检查项目名（已存在）",
+    "method": "GET",
+    "url": "/api/project/check_project_name?group_id={{gid}}&name=订单服务",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "已存在的项目名"
+    }
+  },
+  {
+    "step": "获取项目",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/orders",
+        "cat": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "公共分类",
+            "index": 0,
+            "name": "公共分类",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ],
+        "color": "blue",
+        "desc": "订单相关接口",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "icon": "code-o",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "订单服务",
+        "project_type": "private",
+        "role": "admin",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "获取不存在的项目",
+    "method": "GET",
+    "url": "/api/project/get?id=99999",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 40011,
+      "errmsg": "服务器出错..."
+    }
+  },
+  {
+    "step": "分组的项目列表",
+    "method": "GET",
+    "url": "/api/project/list?group_id={{gid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "basepath": "/orders",
+            "color": "blue",
+            "desc": "订单相关接口",
+            "env": [
+              {
+                "_id": "<objectid>",
+                "domain": "http://127.0.0.1",
+                "global": [],
+                "header": [],
+                "name": "local"
+              }
+            ],
+            "follow": false,
+            "group_id": "<id>",
+            "icon": "code-o",
+            "name": "订单服务",
+            "project_type": "private",
+            "switch_notice": true,
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ]
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改项目",
+    "method": "POST",
+    "url": "/api/project/up",
+    "request": {
+      "basepath": "/v2/orders",
+      "desc": "修改后的描述",
+      "group_id": "{{gid}}",
+      "id": "{{pid}}",
+      "name": "订单服务V2",
+      "project_type": "public",
+      "switch_notice": false
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改环境",
+    "method": "POST",
+    "url": "/api/project/up_env",
+    "request": {
+      "env": [
+        {
+          "domain": "http://127.0.0.1",
+          "global": [],
+          "header": [],
+          "name": "local"
+        },
+        {
+          "domain": "http://test.example.com",
+          "global": [
+            {
+              "name": "k",
+              "value": "v"
+            }
+          ],
+          "header": [
+            {
+              "name": "X-Token",
+              "value": "t"
+            }
+          ],
+          "name": "test"
+        }
+      ],
+      "id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "环境名重复",
+    "method": "POST",
+    "url": "/api/project/up_env",
+    "request": {
+      "env": [
+        {
+          "domain": "http://a",
+          "name": "a"
+        },
+        {
+          "domain": "http://b",
+          "name": "a"
+        }
+      ],
+      "id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 405,
+      "errmsg": "环境变量名重复"
+    }
+  },
+  {
+    "step": "获取环境",
+    "method": "GET",
+    "url": "/api/project/get_env?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          },
+          {
+            "_id": "<objectid>",
+            "domain": "http://test.example.com",
+            "global": [
+              {
+                "_id": "<objectid>",
+                "name": "k",
+                "value": "v"
+              }
+            ],
+            "header": [
+              {
+                "name": "X-Token",
+                "value": "t"
+              }
+            ],
+            "name": "test"
+          }
+        ]
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改 tag",
+    "method": "POST",
+    "url": "/api/project/up_tag",
+    "request": {
+      "id": "{{pid}}",
+      "tag": [
+        {
+          "desc": "第一版",
+          "name": "v1"
+        }
+      ]
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改图标颜色",
+    "method": "POST",
+    "url": "/api/project/upset",
+    "request": {
+      "color": "red",
+      "icon": "star-o",
+      "id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改后的项目",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/v2/orders",
+        "cat": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "公共分类",
+            "index": 0,
+            "name": "公共分类",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ],
+        "color": "red",
+        "desc": "修改后的描述",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          },
+          {
+            "_id": "<objectid>",
+            "domain": "http://test.example.com",
+            "global": [
+              {
+                "_id": "<objectid>",
+                "name": "k",
+                "value": "v"
+              }
+            ],
+            "header": [
+              {
+                "name": "X-Token",
+                "value": "t"
+              }
+            ],
+            "name": "test"
+          }
+        ],
+        "group_id": "<id>",
+        "icon": "star-o",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "订单服务V2",
+        "project_type": "public",
+        "role": "admin",
+        "strice": false,
+        "switch_notice": false,
+        "tag": [
+          {
+            "_id": "<objectid>",
+            "desc": "第一版",
+            "name": "v1"
+          }
+        ],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "获取 token",
+    "method": "GET",
+    "url": "/api/project/token?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": "<volatile>",
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "更新 token",
+    "method": "GET",
+    "url": "/api/project/update_token?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1,
+        "token": "<token>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "关注项目",
+    "method": "POST",
+    "url": "/api/follow/add",
+    "request": {
+      "projectid": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "color": "red",
+        "icon": "star-o",
+        "projectid": "<id>",
+        "projectname": "订单服务V2",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "重复关注",
+    "method": "POST",
+    "url": "/api/follow/add",
+    "request": {
+      "projectid": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "项目已关注"
+    }
+  },
+  {
+    "step": "关注列表",
+    "method": "GET",
+    "url": "/api/follow/list",
+    "status": 200,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "color": "red",
+            "icon": "star-o",
+            "projectid": "<id>",
+            "projectname": "订单服务V2",
+            "uid": "<id>"
+          }
+        ]
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "关注后的项目列表",
+    "method": "GET",
+    "url": "/api/project/list?group_id={{gid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "basepath": "/v2/orders",
+            "color": "red",
+            "desc": "修改后的描述",
+            "env": [
+              {
+                "_id": "<objectid>",
+                "domain": "http://127.0.0.1",
+                "global": [],
+                "header": [],
+                "name": "local"
+              },
+              {
+                "_id": "<objectid>",
+                "domain": "http://test.example.com",
+                "global": [
+                  {
+                    "_id": "<objectid>",
+                    "name": "k",
+                    "value": "v"
+                  }
+                ],
+                "header": [
+                  {
+                    "name": "X-Token",
+                    "value": "t"
+                  }
+                ],
+                "name": "test"
+              }
+            ],
+            "follow": true,
+            "group_id": "<id>",
+            "icon": "star-o",
+            "name": "订单服务V2",
+            "project_type": "public",
+            "switch_notice": false,
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ]
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "搜索",
+    "method": "GET",
+    "url": "/api/project/search?q=订单",
+    "status": 200,
+    "response": {
+      "data": {
+        "group": [],
+        "interface": [],
+        "project": [
+          {
+            "_id": "<id>",
+            "addTime": "<time>",
+            "basepath": "/v2/orders",
+            "env": [
+              {
+                "_id": "<objectid>",
+                "domain": "http://127.0.0.1",
+                "global": [],
+                "header": [],
+                "name": "local"
+              },
+              {
+                "_id": "<objectid>",
+                "domain": "http://test.example.com",
+                "global": [
+                  {
+                    "_id": "<objectid>",
+                    "name": "k",
+                    "value": "v"
+                  }
+                ],
+                "header": [
+                  {
+                    "name": "X-Token",
+                    "value": "t"
+                  }
+                ],
+                "name": "test"
+              }
+            ],
+            "groupId": "<id>",
+            "members": [],
+            "name": "订单服务V2",
+            "uid": "<id>",
+            "upTime": "<time>"
+          }
+        ]
+      },
+      "errcode": 0,
+      "errmsg": "ok"
+    }
+  },
+  {
+    "step": "项目动态",
+    "method": "GET",
+    "url": "/api/log/list?limit=10&page=1&type=project&typeid={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 修改了项目图标、颜色",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 更新了项目 <a href=\"/project/<id>/interface/api\">订单服务V2</a> 的tag",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 更新了项目 <a href=\"/project/<id>/interface/api\">订单服务V2</a> 的环境",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 更新了项目 <a href=\"/project/<id>/interface/api\">订单服务</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 添加了项目 <a href=\"/project/<id>\">订单服务</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "total": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "分组动态",
+    "method": "GET",
+    "url": "/api/log/list?limit=10&page=1&type=group&typeid={{gid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 新增了分组 <a href=\"/group/<id>\">项目组</a>",
+            "type": "group",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "<a href=\"/user/profile/<id>\">admin</a> 新增了分组成员 <a href = \"/user/profile/<id>\">dev2</a> 为 开发者",
+            "type": "group",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "在 <a href=\"/project/<id>\">订单服务V2</a> 项目: <a href=\"/user/profile/<id>\">admin</a> 修改了项目图标、颜色",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "在 <a href=\"/project/<id>\">订单服务V2</a> 项目: <a href=\"/user/profile/<id>\">admin</a> 更新了项目 <a href=\"/project/<id>/interface/api\">订单服务V2</a> 的tag",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "在 <a href=\"/project/<id>\">订单服务V2</a> 项目: <a href=\"/user/profile/<id>\">admin</a> 更新了项目 <a href=\"/project/<id>/interface/api\">订单服务V2</a> 的环境",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "在 <a href=\"/project/<id>\">订单服务V2</a> 项目: <a href=\"/user/profile/<id>\">admin</a> 更新了项目 <a href=\"/project/<id>/interface/api\">订单服务</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          },
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "content": "在 <a href=\"/project/<id>\">订单服务V2</a> 项目: <a href=\"/user/profile/<id>\">admin</a> 添加了项目 <a href=\"/project/<id>\">订单服务</a>",
+            "type": "project",
+            "typeid": "<id>",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "total": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员在项目中的角色",
+    "method": "GET",
+    "url": "/api/user/project?id={{pid}}&type=project",
+    "status": 200,
+    "response": {
+      "data": {
+        "group": {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "custom_field1": {
+            "enable": false
+          },
+          "group_name": "项目组",
+          "members": [
+            {
+              "_id": "<objectid>",
+              "email": "admin@admin.com",
+              "role": "owner",
+              "uid": "<id>",
+              "username": "admin"
+            },
+            {
+              "_id": "<objectid>",
+              "email": "dev2@apiyard.test",
+              "role": "dev",
+              "uid": "<id>",
+              "username": "dev2"
+            }
+          ],
+          "role": "owner",
+          "type": "public",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        "project": {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "basepath": "/v2/orders",
+          "color": "red",
+          "desc": "修改后的描述",
+          "env": [
+            {
+              "_id": "<objectid>",
+              "domain": "http://127.0.0.1",
+              "global": [],
+              "header": [],
+              "name": "local"
+            },
+            {
+              "_id": "<objectid>",
+              "domain": "http://test.example.com",
+              "global": [
+                {
+                  "_id": "<objectid>",
+                  "name": "k",
+                  "value": "v"
+                }
+              ],
+              "header": [
+                {
+                  "name": "X-Token",
+                  "value": "t"
+                }
+              ],
+              "name": "test"
+            }
+          ],
+          "group_id": "<id>",
+          "icon": "star-o",
+          "is_json5": false,
+          "is_mock_open": false,
+          "members": [],
+          "name": "订单服务V2",
+          "project_type": "public",
+          "role": "owner",
+          "strice": false,
+          "switch_notice": false,
+          "tag": [
+            {
+              "_id": "<objectid>",
+              "desc": "第一版",
+              "name": "v1"
+            }
+          ],
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "dev2@apiyard.test",
+      "password": "dev2-pass"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev2@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev2"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "dev2 新建项目（自动成为组长）",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "basepath": "/stock",
+      "group_id": "{{gid}}",
+      "name": "库存服务"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/stock",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "库存服务",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 查看他人项目",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/v2/orders",
+        "cat": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "公共分类",
+            "index": 0,
+            "name": "公共分类",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ],
+        "color": "red",
+        "desc": "修改后的描述",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          },
+          {
+            "_id": "<objectid>",
+            "domain": "http://test.example.com",
+            "global": [
+              {
+                "_id": "<objectid>",
+                "name": "k",
+                "value": "v"
+              }
+            ],
+            "header": [
+              {
+                "name": "X-Token",
+                "value": "t"
+              }
+            ],
+            "name": "test"
+          }
+        ],
+        "group_id": "<id>",
+        "icon": "star-o",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "订单服务V2",
+        "project_type": "public",
+        "role": "dev",
+        "strice": false,
+        "switch_notice": false,
+        "tag": [
+          {
+            "_id": "<objectid>",
+            "desc": "第一版",
+            "name": "v1"
+          }
+        ],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 不能修改他人项目",
+    "method": "POST",
+    "url": "/api/project/up",
+    "request": {
+      "id": "{{pid}}",
+      "name": "x"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 405,
+      "errmsg": "没有权限"
+    }
+  },
+  {
+    "step": "dev2 不能删除他人项目",
+    "method": "POST",
+    "url": "/api/project/del",
+    "request": {
+      "id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 405,
+      "errmsg": "没有权限"
+    }
+  },
+  {
+    "step": "dev2 看到的项目列表",
+    "method": "GET",
+    "url": "/api/project/list?group_id={{gid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "basepath": "/stock",
+            "env": [
+              {
+                "_id": "<objectid>",
+                "domain": "http://127.0.0.1",
+                "global": [],
+                "header": [],
+                "name": "local"
+              }
+            ],
+            "follow": false,
+            "group_id": "<id>",
+            "name": "库存服务",
+            "project_type": "private",
+            "switch_notice": true,
+            "uid": "<id>",
+            "up_time": "<time>"
+          },
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "basepath": "/v2/orders",
+            "color": "red",
+            "desc": "修改后的描述",
+            "env": [
+              {
+                "_id": "<objectid>",
+                "domain": "http://127.0.0.1",
+                "global": [],
+                "header": [],
+                "name": "local"
+              },
+              {
+                "_id": "<objectid>",
+                "domain": "http://test.example.com",
+                "global": [
+                  {
+                    "_id": "<objectid>",
+                    "name": "k",
+                    "value": "v"
+                  }
+                ],
+                "header": [
+                  {
+                    "name": "X-Token",
+                    "value": "t"
+                  }
+                ],
+                "name": "test"
+              }
+            ],
+            "follow": false,
+            "group_id": "<id>",
+            "icon": "star-o",
+            "name": "订单服务V2",
+            "project_type": "public",
+            "switch_notice": false,
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ]
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev2 在自己项目中的角色",
+    "method": "GET",
+    "url": "/api/user/project?id={{pid2}}&type=project",
+    "status": 200,
+    "response": {
+      "data": {
+        "group": {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "custom_field1": {
+            "enable": false
+          },
+          "group_name": "项目组",
+          "members": [
+            {
+              "_id": "<objectid>",
+              "email": "admin@admin.com",
+              "role": "owner",
+              "uid": "<id>",
+              "username": "admin"
+            },
+            {
+              "_id": "<objectid>",
+              "email": "dev2@apiyard.test",
+              "role": "dev",
+              "uid": "<id>",
+              "username": "dev2"
+            }
+          ],
+          "role": "member",
+          "type": "public",
+          "uid": "<id>",
+          "up_time": "<time>"
+        },
+        "project": {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "basepath": "/stock",
+          "env": [
+            {
+              "_id": "<objectid>",
+              "domain": "http://127.0.0.1",
+              "global": [],
+              "header": [],
+              "name": "local"
+            }
+          ],
+          "group_id": "<id>",
+          "is_json5": false,
+          "is_mock_open": false,
+          "members": [
+            {
+              "_id": "<objectid>",
+              "email": "dev2@apiyard.test",
+              "email_notice": true,
+              "role": "owner",
+              "uid": "<id>",
+              "username": "dev2"
+            }
+          ],
+          "name": "库存服务",
+          "project_type": "private",
+          "role": "owner",
+          "strice": false,
+          "switch_notice": true,
+          "tag": [],
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员再次登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "取消关注",
+    "method": "POST",
+    "url": "/api/follow/del",
+    "request": {
+      "projectid": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "取消未关注的项目",
+    "method": "POST",
+    "url": "/api/follow/del",
+    "request": {
+      "projectid": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "项目未关注"
+    }
+  },
+  {
+    "step": "删除 dev2 的项目",
+    "method": "POST",
+    "url": "/api/project/del",
+    "request": {
+      "id": "{{pid2}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除项目",
+    "method": "POST",
+    "url": "/api/project/del",
+    "request": {
+      "id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除后获取项目",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 40011,
+      "errmsg": "服务器出错..."
+    }
+  },
+  {
+    "step": "清理分组",
+    "method": "POST",
+    "url": "/api/group/del",
+    "request": {
+      "id": "{{gid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  }
+]

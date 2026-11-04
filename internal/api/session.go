@@ -106,5 +106,67 @@ func (a *API) groupRole(ctx context.Context, u *store.User, groupID int64) (stri
 // canManageGroup 对应 YApi checkAuth(id, 'group', 'danger')：只有管理员和组长可以执行。
 func (a *API) canManageGroup(ctx context.Context, u *store.User, groupID int64) (bool, error) {
 	role, err := a.groupRole(ctx, u, groupID)
-	return role == "admin" || role == "owner", err
+	return allows(role, actionDanger), err
+}
+
+// projectRole 返回当前用户在项目中的角色，对应 YApi getProjectRole(id, 'project')：
+// 管理员 → admin；项目创建者 → owner；项目成员按其角色；都不是时看所在分组的角色。项目不存在时返回空字符串。
+func (a *API) projectRole(ctx context.Context, u *store.User, projectID int64) (string, error) {
+	if u.Role == "admin" {
+		return "admin", nil
+	}
+	p, err := a.store.ProjectByID(ctx, projectID)
+	if errors.Is(err, store.ErrNotFound) {
+		return "", nil
+	}
+	if err != nil {
+		return "", err
+	}
+	if p.UID == u.ID {
+		return "owner", nil
+	}
+	m, err := a.store.ProjectMemberOf(ctx, projectID, u.ID)
+	if err == nil {
+		if m.Role == "owner" || m.Role == "dev" {
+			return m.Role, nil
+		}
+		return "guest", nil
+	}
+	if !errors.Is(err, store.ErrNotFound) {
+		return "", err
+	}
+	return a.groupRole(ctx, u, p.GroupID)
+}
+
+// 权限动作，对应 YApi checkAuth 的 action 参数。
+const (
+	actionDanger = "danger" // 删除、修改设置等：管理员和组长
+	actionEdit   = "edit"   // 编辑内容：再加上开发者
+	actionView   = "view"   // 查看：再加上访客
+)
+
+// allows 判断角色能否执行某类动作。
+func allows(role, action string) bool {
+	switch role {
+	case "admin", "owner":
+		return true
+	case "dev":
+		return action == actionEdit || action == actionView
+	case "guest":
+		return action == actionView
+	default:
+		return false
+	}
+}
+
+// canProject 对应 YApi checkAuth(id, 'project', action)。
+func (a *API) canProject(ctx context.Context, u *store.User, projectID int64, action string) (bool, error) {
+	role, err := a.projectRole(ctx, u, projectID)
+	return allows(role, action), err
+}
+
+// canGroup 对应 YApi checkAuth(id, 'group', action)。
+func (a *API) canGroup(ctx context.Context, u *store.User, groupID int64, action string) (bool, error) {
+	role, err := a.groupRole(ctx, u, groupID)
+	return allows(role, action), err
 }

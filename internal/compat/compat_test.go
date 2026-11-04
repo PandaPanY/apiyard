@@ -57,6 +57,39 @@ func TestLookup(t *testing.T) {
 	}
 }
 
+func TestReplaceAt(t *testing.T) {
+	v := map[string]any{"data": map[string]any{"list": []any{"a", "b"}}, "top": "x"}
+	for _, p := range []string{"top", "data.list.1"} {
+		if err := replaceAt(v, p, "<volatile>"); err != nil {
+			t.Fatalf("replaceAt(%s): %v", p, err)
+		}
+	}
+	if v["top"] != "<volatile>" || v["data"].(map[string]any)["list"].([]any)[1] != "<volatile>" {
+		t.Errorf("替换结果不对: %v", v)
+	}
+	for _, bad := range []string{"missing", "data.list.9", "top.x"} {
+		if err := replaceAt(v, bad, "x"); err == nil {
+			t.Errorf("路径 %s 应当报错", bad)
+		}
+	}
+}
+
+func TestSortArrayAt(t *testing.T) {
+	a := map[string]any{"list": []any{"b", "a", "c"}}
+	b := map[string]any{"list": []any{"c", "b", "a"}}
+	for _, v := range []any{a, b} {
+		if err := sortArrayAt(v, "list"); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if d, _ := Diff([]Exchange{{Response: a}}, []Exchange{{Response: b}}); len(d) != 0 {
+		t.Errorf("排序后内容相同的数组应视为一致: %v", d)
+	}
+	if err := sortArrayAt(a, "list.0"); err == nil {
+		t.Error("路径不是数组时应报错")
+	}
+}
+
 func TestNormalize(t *testing.T) {
 	in := map[string]any{
 		"_id":         json.Number("11"),
@@ -69,8 +102,20 @@ func TestNormalize(t *testing.T) {
 		"token":       "abc",
 		"env":         []any{map[string]any{"_id": "65f0c0ffee0ddba11c0ffee0"}},
 		"desc":        nil,
+		"groupId":     json.Number("56"),
+		"content":     `<a href="/user/profile/11">admin</a> 更新了 <a href="/project/23/interface/api/cat_17">x</a>`,
+		"path":        "/users/1",
 	}
 	got := Normalize(in).(map[string]any)
+	if got["groupId"] != "<id>" {
+		t.Error("驼峰写法的 ID 字段也应归一化")
+	}
+	if want := `<a href="/user/profile/<id>">admin</a> 更新了 <a href="/project/<id>/interface/api/cat_<id>">x</a>`; got["content"] != want {
+		t.Errorf("动态内容中链接里的 ID 应归一化:\n  得到 %s\n  期望 %s", got["content"], want)
+	}
+	if got["path"] != "/users/1" {
+		t.Error("不含链接的普通字符串不应被改动")
+	}
 	if got["_id"] != "<id>" || got["group_id"] != "<id>" || got["projectid"] != "<id>" {
 		t.Errorf("数字 ID 应替换为占位符: %#v", got)
 	}

@@ -39,7 +39,7 @@ func New(cfg config.Config, st *store.Store, logger *slog.Logger) (http.Handler,
 	}
 
 	if cfg.YAPIUpstream == "" {
-		api.New(st, api.Options{CloseRegister: cfg.CloseRegister, WebFS: webFS}, logger).Register(mux)
+		api.New(st, api.Options{CloseRegister: cfg.CloseRegister, TokenSalt: cfg.TokenSalt, WebFS: webFS}, logger).Register(mux)
 		return mux, nil
 	}
 

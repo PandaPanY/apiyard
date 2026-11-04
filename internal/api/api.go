@@ -15,8 +15,9 @@ import (
 
 // Options 是接口层的配置。
 type Options struct {
-	CloseRegister bool  // 关闭注册（YApi 配置 closeRegister）
-	WebFS         fs.FS // 前端静态文件，用于读取默认头像；可以为 nil
+	CloseRegister bool   // 关闭注册（YApi 配置 closeRegister）
+	TokenSalt     string // 开放 API token 的加密口令（YApi 配置 passsalt），为空时使用 YApi 的默认值
+	WebFS         fs.FS  // 前端静态文件，用于读取默认头像；可以为 nil
 }
 
 // API 持有接口层的依赖。
@@ -37,6 +38,9 @@ func (a *API) Register(mux *http.ServeMux) {
 	a.registerUser(mux)
 	a.registerProfile(mux)
 	a.registerGroup(mux)
+	a.registerProject(mux)
+	a.registerFollow(mux)
+	a.registerLog(mux)
 }
 
 // handlerFunc 处理一次调用；返回的错误统一转换为 YApi 的“服务器出错”响应。
