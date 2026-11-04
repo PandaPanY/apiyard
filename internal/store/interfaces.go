@@ -198,12 +198,6 @@ func (s *Store) InterfacesByProject(ctx context.Context, projectID int64) ([]*In
 		"SELECT "+interfaceColumns+" FROM interfaces WHERE project_id = ? ORDER BY position, id", projectID)
 }
 
-// InterfacesByCat 列出分类下的接口，按 index、创建顺序排列。
-func (s *Store) InterfacesByCat(ctx context.Context, catID int64) ([]*Interface, error) {
-	return s.queryInterfaces(ctx,
-		"SELECT "+interfaceColumns+" FROM interfaces WHERE catid = ? ORDER BY position, id", catID)
-}
-
 // SetInterfacePosition 修改接口的 index，返回匹配的行数。
 func (s *Store) SetInterfacePosition(ctx context.Context, id, position int64) (int64, error) {
 	return s.execCount(ctx, "UPDATE interfaces SET position = ? WHERE id = ?", position, id)

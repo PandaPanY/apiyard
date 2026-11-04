@@ -1,11 +1,13 @@
 # YApi 前端调用的接口清单
 
-> 来源：`yapi-vendor@1.12.0` 中 `client/` 和 `exts/` 的源码静态扫描，共 105 个路径（预构建产物中为 104 个）。
+> 来源：`yapi-vendor@1.12.0` 中 `client/` 和 `exts/` 的源码静态扫描，共 104 个路径，与预构建产物一致。最初统计为 105 个，多出的 `/api/user` 来自接口编辑表单里的示例路径 `/api/user/{id}`，并不是真实调用，已删除。
+> M2 的 38 个里包含 `/api/project/download`：前端有这个链接（在隐藏的区块里），但原版服务端并没有实现，访问返回 404。所以实际需要实现的是 37 个。
+> 另外，ApiYard 在 M1 实现了 `/api/user/project`：前端并不调用它，但它在 YApi 的服务端路由里，周边工具可能会用到。
 > 前端沿用 YApi 原有界面（决策 D4），因此这些接口的路径、参数和响应格式都要与 YApi 一致。
 
 | 阶段 | 数量 |
 |---|---|
-| M1 | 27 |
+| M1 | 26 |
 | M2 | 38 |
 | M2 占位 | 4 |
 | M3 | 3 |
@@ -28,7 +30,6 @@
 | M1 | `/api/group/get_mygroup` |  |  |
 | M1 | `/api/group/list` |  |  |
 | M1 | `/api/group/up` |  |  |
-| M1 | `/api/user` |  |  |
 | M1 | `/api/user/avatar` |  |  |
 | M1 | `/api/user/change_password` |  |  |
 | M1 | `/api/user/del` |  |  |

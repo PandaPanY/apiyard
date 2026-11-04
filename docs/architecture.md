@@ -12,20 +12,23 @@
 ```
 cmd/apiyard/            程序入口：解析配置，启动服务
 internal/config/        配置加载（命令行参数 > 环境变量 > 默认值）
-internal/server/        HTTP 路由、中间件、优雅退出
-internal/model/         领域模型：用户、分组、项目、分类、接口          (M1)
-internal/store/         存储接口；sqlite/ 为默认实现，表结构见 docs/schema.md (M1)
-internal/auth/          登录、会话、角色权限                            (M1)
-internal/api/           与 YApi 路径一致的 /api/* 处理器，按资源分文件  (M1–M3)
-internal/yapitoken/     开放 API 的 token 编解码                        (M3)
-internal/openapi/       OpenAPI 3 / Swagger 2 导入导出                  (M3)
-internal/migrate/       从 YApi 的 MongoDB 导入数据                      (M4)
-internal/mock/          Mock 数据生成与 Mock 路由                        (M5)
-web/                    前端构建产物，通过 embed 打进可执行文件          (M6)
-internal/mcp/           MCP Server                                      (M7)
+internal/server/        HTTP 路由、前端托管、全量转发模式、优雅退出
+internal/store/         SQLite 存储（领域结构体也定义在这里），表结构见 docs/schema.md (M1–M2)
+internal/auth/          密码哈希、登录令牌（与 YApi 一致）                (M1)
+internal/api/           与 YApi 路径一致的 /api/* 处理器，按资源分文件   (M1–M3)
+internal/yapitoken/     开放 API 的 token 编解码                         (M2，原计划 M3)
+internal/schemafake/    按 JSON Schema 生成示例数据（schema2json，Mock 复用）(M2)
+internal/web/           托管预构建前端，注入前端补丁层（D6）             (M0.5)
+internal/compat/        兼容测试框架：执行场景、归一化、比对 golden      (M0.5)
+internal/openapi/       OpenAPI 3 / Swagger 2 导入导出                   (M3)
+internal/migrate/       从 YApi 的 MongoDB 导入数据                       (M4)
+internal/mock/          Mock 数据生成与 Mock 路由                         (M5)
+internal/mcp/           MCP Server                                       (M7)
+web/yapi/               预构建前端（由 tools/fetch-yapi-web 下载，不入库），M6 用 embed 打进可执行文件
+tools/                  compat（录制 / 比对兼容场景）、fetch-yapi-web（下载前端）
 ```
 
-依赖方向：`server → api/auth/mock → store → model`，`store` 不依赖 HTTP 层。
+依赖方向：`server → api/web`，`api → auth/store/yapitoken/schemafake`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
 
 ## 关键决策
 
@@ -52,7 +55,7 @@ internal/mcp/           MCP Server                                      (M7)
 
 - 原有前端是 Apache-2.0 许可，可以使用，保留出处说明即可。这样能把工作量集中在后端。
 - `yapi-vendor@1.12.0` 自带构建好的前端（`static/prd`），**不需要用老旧的 Node 14 + node-sass 重新构建**。
-- **代价**：前端直接调用 YApi 的内部接口，共 105 个路径（见 [yapi-routes.md](yapi-routes.md)）：v0.1 要实现 68 个、占位 4 个，其余 33 个延后。所以从 M1 开始，后端就按 YApi 的路径和响应格式来实现，而不是另起一套。
+- **代价**：前端直接调用 YApi 的内部接口，共 104 个路径（见 [yapi-routes.md](yapi-routes.md)）：v0.1 要实现 66 个、占位 4 个，其余 33 个延后；另有 `project/download` 一个，原版也没有实现。所以从 M1 开始，后端就按 YApi 的路径和响应格式来实现，而不是另起一套。
 - 等后端稳定后，再评估是否重写前端。
 - **状态：基本确认（2026-11-04）。** 由 Go 托管预构建前端、`/api` 转发给原版 YApi 时，登录、建项目、加接口、编辑保存、WebSocket 冲突检测、Mock 都能正常工作。延后功能的隐藏方式见 D6。
 - `-yapi-upstream` 是**全量转发**模式：全部 `/api`、`/mock` 交给原版 YApi，不使用 ApiYard 自己的实现，只用于验证前端托管和对比行为。M0.5 时曾设想"只转发未实现的接口"，但 ApiYard 有了自己的用户表和登录令牌后，两边数据不互通（原版无法识别 ApiYard 签发的 Cookie），混用会导致界面失效，所以 M1 改为全量转发。
@@ -60,7 +63,7 @@ internal/mcp/           MCP Server                                      (M7)
 ### D5：Mock 默认只用 JSON Schema 生成数据
 
 - YApi 的漏洞根源是用 `vm2`/`safeify` 在未鉴权的情况下执行用户脚本。
-- M4 只支持静态响应、JSON Schema 和 Mock.js 占位符，不执行任何脚本。
+- M5（Mock 服务）只支持静态响应、JSON Schema 和 Mock.js 占位符，不执行任何脚本。
 - 以后如果要支持脚本 Mock，使用 goja：不注入任何宿主对象，设置执行超时，并且只有项目管理员才能开启。
 
 ### D6：用"前端补丁层"调整沿用的 YApi 前端
@@ -76,7 +79,11 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 
 ## 与 YApi 刻意不同的地方
 
-兼容优先，但以下几处出于安全或健壮性考虑与原版不同。它们只影响异常请求或未授权请求，正常使用时的响应与原版一致（由兼容测试保证）。
+兼容优先，但下面这些地方与原版不同，分两类列出。
+
+### 只影响异常请求或未授权请求
+
+这些差异出于安全或健壮性考虑。正常使用时，响应与原版一致，由兼容测试保证；只有在越权访问、参数异常、名称里含有 HTML 特殊字符，或者走到原版出错的分支时，才看得出区别。
 
 | 位置 | YApi 原版 | ApiYard | 原因 |
 |---|---|---|---|
@@ -84,15 +91,11 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 动态内容（log） | 用户名、分组名等原样拼进 HTML，前端按 HTML 渲染 | 做 HTML 转义 | 存储型 XSS |
 | 登录 Cookie | 只有 HttpOnly | 增加 `SameSite=Lax`；经 HTTPS 访问时再加 `Secure` | 防 CSRF；内网 HTTP 部署仍能登录 |
 | `/api/group/add` | 不传 `owner_uids` 会抛异常 | 按空数组处理 | 健壮性 |
-| 首次启动的管理员 | 固定密码 `ymfe.org` | 不配置密码时随机生成，只在日志里出现一次 | 避免公开的默认密码 |
 | `/api/user/search` | 关键词被当作正则表达式 | 按普通文本做不区分大小写的匹配 | 避免正则注入；常见输入结果相同 |
 | 参数校验的错误提示 | ajv-i18n 生成 | 模仿其格式，个别措辞可能不同 | 不值得完整复刻 ajv |
-| 修改用户名、邮箱 | 只同步第一个包含该成员的项目里的副本（漏了 multi） | 同步全部分组和项目 | 数据一致 |
 | 上传头像 | base64 字符串原样保存 | 解码后保存，非法数据返回 400 | 健壮性 |
 | `/api/project/token` | 不检查权限，任何登录用户都能拿到任意项目的 token | 要求开发者及以上 | token 能通过开放 API 读写项目 |
 | `/api/project/update_token` | 不检查权限；生成的 token 漏了 uid（加密的是 `undefined|...`），开放 API 无法对应到用户 | 要求组长或管理员；使用当前用户的 uid | 越权；修正 bug |
-| 修改项目图标颜色 | 只更新当前用户自己的关注记录 | 更新所有关注该项目的记录 | 数据一致 |
-| 动态列表的顺序 | 只按秒级时间排序，同一秒内的顺序每次都可能不同 | 时间相同时按 ID 倒序 | 结果稳定 |
 | `/api/project/change_member_email_notice` | 不检查权限，任何登录用户都能改别人的邮件通知设置 | 只允许本人，或组长、管理员 | 越权 |
 | `/api/project/get_member_list` | 不检查权限，任何登录用户都能看私有项目的成员 | 私有项目要求有查看权限，否则 406（与 `project/get` 一致） | 信息泄露 |
 | 接口所属分类 | 不检查分类是否存在、是否属于该项目；`interface/up` 还能借 `project_id` 把接口移到别的项目 | 分类必须属于该项目，否则 400；忽略 `project_id` | 越权、数据一致 |
@@ -101,14 +104,25 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | `/api/user/project` 的接口类型 | 不检查权限，能读到私有项目的接口定义 | 私有项目要求查看权限，否则 406 | 信息泄露 |
 | `/api/project/copy` | 不检查源项目的权限；参数 `cat` 可以指向任意项目的分类 | 要求对源项目有查看权限，只复制属于源项目的分类下的接口；整个复制在一个事务里完成 | 信息泄露、数据一致 |
 | `/api/interface/solve_conflict` | 不检查权限；被挡住的连接关闭时也会清除编辑者，第三个人就能同时进入编辑 | 要求编辑权限；只有占用成功的连接关闭时才清除；进程重启时清除全部编辑状态 | 修正 bug |
-| `/api/interface/up` 的 `nModified` | `up_time` 变了也算修改，同一秒内重复保存是 0，否则是 1 | 忽略 `up_time`，内容没变就是 0 | 结果稳定 |
 | 修改说明 `message` | 原样拼进动态的 HTML | 转义后再把换行换成 `<br>` | 存储型 XSS |
 | form 请求体缺少 `req_headers` | 抛异常 | 按空数组处理 | 健壮性 |
+| `/api/log/list`（项目动态）、`list_by_update` | 不检查权限，能读到私有项目的动态和改动内容 | 私有项目要求查看权限，否则 406 | 信息泄露 |
+| `/api/user/login_by_ldap` | 没配置 LDAP 时返回 401 和一条 JS 异常信息 | 返回 401 和“暂不支持 LDAP 登录” | 提示更清楚 |
+
+### 正常使用中也能看到的差异
+
+这些差异在正常操作中就能察觉。每一项都是权衡后的选择：修正原版的 bug、让结果稳定，或者暂不提供有风险的功能。兼容测试的场景避开了这些情况，或者用 `volatile` 处理随机结果。
+
+| 位置 | YApi 原版 | ApiYard | 原因 |
+|---|---|---|---|
+| 首次启动的管理员 | 固定密码 `ymfe.org` | 不配置密码时随机生成，只在日志里出现一次 | 避免公开的默认密码 |
+| 修改用户名、邮箱 | 只同步第一个包含该成员的项目里的副本（漏了 multi） | 同步全部分组和项目 | 数据一致 |
+| 修改项目图标颜色 | 只更新当前用户自己的关注记录 | 更新所有关注该项目的记录 | 数据一致 |
+| 动态列表的顺序 | 只按秒级时间排序，同一秒内的顺序每次都可能不同 | 时间相同时按 ID 倒序 | 结果稳定 |
+| `/api/interface/up` 的 `nModified` | `up_time` 变了也算修改，同一秒内重复保存是 0，否则是 1 | 忽略 `up_time`，内容没变就是 0 | 结果稳定 |
 | `/api/interface/schema2json` | json-schema-faker | 自己实现的生成器（`internal/schemafake`），覆盖常用关键字；结果本来就是随机的 | 不依赖 Node |
 | `save` 的 `dataSync=good` 合并 | 合并后的 JSON Schema 保留原有键顺序 | 键按字母顺序输出，内容相同 | Go 的 map 不保序；只影响文本格式 |
-| `/api/log/list`（项目动态）、`list_by_update` | 不检查权限，能读到私有项目的动态和改动内容 | 私有项目要求查看权限，否则 406 | 信息泄露 |
-| `/api/project/swagger_url` | 服务端去请求用户给的任意 URL | 暂不提供，返回 402 和提示 | SSRF |
-| `/api/user/login_by_ldap` | 没配置 LDAP 时返回 401 和一条 JS 异常信息 | 返回 401 和“暂不支持 LDAP 登录” | 提示更清楚 |
+| `/api/project/swagger_url` | 服务端去请求用户给的任意 URL | 暂不提供，返回 402 和提示；“从 URL 导入”在 M3 做导入功能时再决定是否提供（加地址限制） | SSRF |
 
 ## YApi 兼容要点
 
