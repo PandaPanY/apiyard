@@ -93,7 +93,7 @@
       "basepath": "/pay",
       "color": "blue",
       "desc": "对外支付接口",
-      "group_id": 17,
+      "group_id": "{{g1}}",
       "icon": "code-o",
       "name": "支付网关",
       "project_type": "private"
@@ -140,7 +140,7 @@
     "request": {
       "basepath": "/ledger",
       "color": "green",
-      "group_id": 17,
+      "group_id": "{{g1}}",
       "icon": "code-o",
       "name": "账务系统",
       "project_type": "private"
@@ -186,7 +186,7 @@
     "request": {
       "basepath": "/user",
       "color": "purple",
-      "group_id": 19,
+      "group_id": "{{g2}}",
       "icon": "code-o",
       "name": "用户服务",
       "project_type": "private"
@@ -232,7 +232,7 @@
     "request": {
       "desc": "下单与查询",
       "name": "订单",
-      "project_id": 11
+      "project_id": "{{p1}}"
     },
     "status": 200,
     "response": {
@@ -258,7 +258,7 @@
     "request": {
       "desc": "",
       "name": "流水",
-      "project_id": 18
+      "project_id": "{{p2}}"
     },
     "status": 200,
     "response": {
@@ -284,7 +284,7 @@
     "request": {
       "desc": "",
       "name": "账号",
-      "project_id": 25
+      "project_id": "{{p3}}"
     },
     "status": 200,
     "response": {
@@ -308,11 +308,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "desc": "<p>创建一笔待支付订单</p>",
       "method": "POST",
       "path": "/orders",
-      "project_id": 11,
+      "project_id": "{{p1}}",
       "req_body_is_json_schema": true,
       "req_body_other": "{\"type\":\"object\",\"required\":[\"amount\",\"currency\"],\"properties\":{\"amount\":{\"type\":\"integer\",\"description\":\"金额，单位分\"},\"currency\":{\"type\":\"string\",\"enum\":[\"CNY\",\"USD\"]},\"remark\":{\"type\":\"string\"}}}",
       "req_body_type": "json",
@@ -379,10 +379,10 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
       "path": "/orders/{id}",
-      "project_id": 11,
+      "project_id": "{{p1}}",
       "req_params": [
         {
           "desc": "订单号",
@@ -459,11 +459,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/1",
-      "project_id": 11,
-      "title": "支付示例接口 1"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -505,11 +505,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/2",
-      "project_id": 11,
-      "title": "支付示例接口 2"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -551,11 +551,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/3",
-      "project_id": 11,
-      "title": "支付示例接口 3"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -597,11 +597,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/4",
-      "project_id": 11,
-      "title": "支付示例接口 4"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -643,11 +643,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/5",
-      "project_id": 11,
-      "title": "支付示例接口 5"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -689,11 +689,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/6",
-      "project_id": 11,
-      "title": "支付示例接口 6"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -735,11 +735,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/7",
-      "project_id": 11,
-      "title": "支付示例接口 7"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -781,11 +781,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/8",
-      "project_id": 11,
-      "title": "支付示例接口 8"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -827,11 +827,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/9",
-      "project_id": 11,
-      "title": "支付示例接口 9"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -873,11 +873,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/10",
-      "project_id": 11,
-      "title": "支付示例接口 10"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -919,11 +919,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/11",
-      "project_id": 11,
-      "title": "支付示例接口 11"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -965,11 +965,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 20,
+      "catid": "{{c1}}",
       "method": "GET",
-      "path": "/demo/12",
-      "project_id": 11,
-      "title": "支付示例接口 12"
+      "path": "/demo/{{i}}",
+      "project_id": "{{p1}}",
+      "title": "支付示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1011,11 +1011,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/1",
-      "project_id": 18,
-      "title": "账务示例接口 1"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1057,11 +1057,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/2",
-      "project_id": 18,
-      "title": "账务示例接口 2"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1103,11 +1103,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/3",
-      "project_id": 18,
-      "title": "账务示例接口 3"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1149,11 +1149,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/4",
-      "project_id": 18,
-      "title": "账务示例接口 4"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1195,11 +1195,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/5",
-      "project_id": 18,
-      "title": "账务示例接口 5"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1241,11 +1241,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/6",
-      "project_id": 18,
-      "title": "账务示例接口 6"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1287,11 +1287,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/7",
-      "project_id": 18,
-      "title": "账务示例接口 7"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1333,11 +1333,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/8",
-      "project_id": 18,
-      "title": "账务示例接口 8"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1379,11 +1379,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/9",
-      "project_id": 18,
-      "title": "账务示例接口 9"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1425,11 +1425,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/10",
-      "project_id": 18,
-      "title": "账务示例接口 10"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1471,11 +1471,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/11",
-      "project_id": 18,
-      "title": "账务示例接口 11"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1517,11 +1517,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 23,
+      "catid": "{{c2}}",
       "method": "GET",
-      "path": "/entries/12",
-      "project_id": 18,
-      "title": "账务示例接口 12"
+      "path": "/entries/{{i}}",
+      "project_id": "{{p2}}",
+      "title": "账务示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1563,11 +1563,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/1",
-      "project_id": 25,
-      "title": "用户示例接口 1"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1609,11 +1609,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/2",
-      "project_id": 25,
-      "title": "用户示例接口 2"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1655,11 +1655,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/3",
-      "project_id": 25,
-      "title": "用户示例接口 3"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1701,11 +1701,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/4",
-      "project_id": 25,
-      "title": "用户示例接口 4"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1747,11 +1747,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/5",
-      "project_id": 25,
-      "title": "用户示例接口 5"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1793,11 +1793,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/6",
-      "project_id": 25,
-      "title": "用户示例接口 6"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1839,11 +1839,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/7",
-      "project_id": 25,
-      "title": "用户示例接口 7"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1885,11 +1885,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/8",
-      "project_id": 25,
-      "title": "用户示例接口 8"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1931,11 +1931,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/9",
-      "project_id": 25,
-      "title": "用户示例接口 9"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -1977,11 +1977,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/10",
-      "project_id": 25,
-      "title": "用户示例接口 10"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -2023,11 +2023,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/11",
-      "project_id": 25,
-      "title": "用户示例接口 11"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -2069,11 +2069,11 @@
     "method": "POST",
     "url": "/api/interface/add",
     "request": {
-      "catid": 26,
+      "catid": "{{c3}}",
       "method": "POST",
-      "path": "/users/12",
-      "project_id": 25,
-      "title": "用户示例接口 12"
+      "path": "/users/{{i}}",
+      "project_id": "{{p3}}",
+      "title": "用户示例接口 {{i}}"
     },
     "status": 200,
     "response": {
@@ -2113,7 +2113,7 @@
   {
     "step": "支付网关接口列表",
     "method": "GET",
-    "url": "/api/interface/list?limit=50&page=1&project_id=11",
+    "url": "/api/interface/list?limit=50&page=1&project_id={{p1}}",
     "status": 200,
     "response": {
       "data": {
@@ -2325,7 +2325,7 @@
   {
     "step": "支付网关菜单",
     "method": "GET",
-    "url": "/api/interface/list_menu?project_id=11",
+    "url": "/api/interface/list_menu?project_id={{p1}}",
     "status": 200,
     "response": {
       "data": [
@@ -2572,7 +2572,7 @@
   {
     "step": "分组 支付中台 的项目",
     "method": "GET",
-    "url": "/api/project/list?group_id=17&limit=10&page=1",
+    "url": "/api/project/list?group_id={{g1}}&limit=10&page=1",
     "status": 200,
     "response": {
       "data": {

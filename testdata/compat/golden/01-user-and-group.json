@@ -138,7 +138,7 @@
   {
     "step": "查询分组",
     "method": "GET",
-    "url": "/api/group/get?id=13",
+    "url": "/api/group/get?id={{gid}}",
     "status": 200,
     "response": {
       "data": {
@@ -165,7 +165,7 @@
     "request": {
       "group_desc": "描述已修改",
       "group_name": "后端组（改名）",
-      "id": 13
+      "id": "{{gid}}"
     },
     "status": 200,
     "response": {
@@ -307,9 +307,9 @@
     "method": "POST",
     "url": "/api/group/add_member",
     "request": {
-      "id": 13,
+      "id": "{{gid}}",
       "member_uids": [
-        13
+        "{{dev_uid}}"
       ],
       "role": "dev"
     },
@@ -339,7 +339,7 @@
   {
     "step": "分组成员列表",
     "method": "GET",
-    "url": "/api/group/get_member_list?id=13",
+    "url": "/api/group/get_member_list?id={{gid}}",
     "status": 200,
     "response": {
       "data": [
@@ -367,8 +367,8 @@
     "method": "POST",
     "url": "/api/group/change_member_role",
     "request": {
-      "id": 13,
-      "member_uid": 13,
+      "id": "{{gid}}",
+      "member_uid": "{{dev_uid}}",
       "role": "owner"
     },
     "status": 200,
@@ -387,8 +387,8 @@
     "method": "POST",
     "url": "/api/group/del_member",
     "request": {
-      "id": 13,
-      "member_uid": 13
+      "id": "{{gid}}",
+      "member_uid": "{{dev_uid}}"
     },
     "status": 200,
     "response": {
@@ -442,7 +442,7 @@
     "method": "POST",
     "url": "/api/group/del",
     "request": {
-      "id": 13
+      "id": "{{gid}}"
     },
     "status": 200,
     "response": {

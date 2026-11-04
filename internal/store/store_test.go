@@ -87,6 +87,64 @@ func TestUsers(t *testing.T) {
 	}
 }
 
+func TestUpdateProfileSyncsMemberCopies(t *testing.T) {
+	ctx := context.Background()
+	s := openTest(t)
+	u := newUser(t, s, "dev@example.com")
+	g := &Group{UID: u.ID, Name: "g", Type: "public"}
+	if err := s.CreateGroup(ctx, g, []Member{{UID: u.ID, Role: "owner", Username: &u.Username, Email: &u.Email}}); err != nil {
+		t.Fatal(err)
+	}
+
+	name := "新名字"
+	if n, err := s.UpdateProfile(ctx, u.ID, &name, nil); n != 1 || err != nil {
+		t.Fatalf("UpdateProfile: %d %v", n, err)
+	}
+	got, _ := s.UserByID(ctx, u.ID)
+	if got.Username != name || got.Email != u.Email {
+		t.Errorf("只应修改用户名: %+v", got)
+	}
+	if m, _ := s.GroupMember(ctx, g.ID, u.ID); *m.Username != name {
+		t.Errorf("分组成员里的用户名副本应同步更新: %v", *m.Username)
+	}
+	if n, _ := s.UpdateProfile(ctx, 999, &name, nil); n != 0 {
+		t.Error("不存在的用户应返回 0")
+	}
+}
+
+func TestPasswordAndDelete(t *testing.T) {
+	ctx := context.Background()
+	s := openTest(t)
+	u := newUser(t, s, "dev@example.com")
+
+	if n, _ := s.UpdatePassword(ctx, u.ID, "h2", "s2"); n != 1 {
+		t.Error("UpdatePassword 应影响 1 行")
+	}
+	if got, _ := s.UserByID(ctx, u.ID); got.Password != "h2" || got.Passsalt != "s2" {
+		t.Errorf("密码未更新: %+v", got)
+	}
+	if n, _ := s.DeleteUser(ctx, u.ID); n != 1 {
+		t.Error("DeleteUser 应影响 1 行")
+	}
+	if _, err := s.UserByID(ctx, u.ID); !errors.Is(err, ErrNotFound) {
+		t.Error("删除后应查不到用户")
+	}
+}
+
+func TestAvatars(t *testing.T) {
+	ctx := context.Background()
+	s := openTest(t)
+	if created, err := s.SaveAvatar(ctx, 11, Avatar{Image: []byte{1}, Type: "image/png"}); !created || err != nil {
+		t.Fatalf("首次保存应为新建: %v %v", created, err)
+	}
+	if created, _ := s.SaveAvatar(ctx, 11, Avatar{Image: []byte{2}, Type: "image/jpeg"}); created {
+		t.Error("再次保存应为覆盖")
+	}
+	if a, _ := s.AvatarOf(ctx, 11); a.Type != "image/jpeg" || a.Image[0] != 2 {
+		t.Errorf("头像未被覆盖: %+v", a)
+	}
+}
+
 func TestGroupsAndMembers(t *testing.T) {
 	ctx := context.Background()
 	s := openTest(t)

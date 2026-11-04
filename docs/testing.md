@@ -14,7 +14,11 @@ tools/compat/    命令行工具
 
 ## 自动运行
 
-`go test ./...` 会自动执行兼容比对（`internal/server/compat_test.go`）：在进程内启动一个使用全新数据库的 ApiYard，执行已实现的场景，并与 golden 文件逐字段比对，**不需要连接对照实例**。每完成一个里程碑，就把对应场景加进 `implementedScenarios`。
+`go test ./...` 会自动执行兼容比对（`internal/server/compat_test.go`）：在进程内启动一个使用全新数据库的 ApiYard，按顺序执行已实现的场景，并与 golden 文件逐字段比对，**不需要连接对照实例**。每完成一部分功能，就把对应场景加进 `implementedScenarios`。
+
+录制时所有场景**按文件名顺序在同一个实例上**执行，后面的场景可以依赖前面留下的数据（例如 02 用到 01 注册的 dev1）。比对也照此进行，所以已实现的场景必须是从第一个开始的连续一段，测试会检查这一点。
+
+golden 文件里的 `url` 和 `request` 记录的是场景中的模板（保留 `{{变量}}`），不是替换后的值，因此重新录制时 golden 文件不会因为 ID 变化而改动。
 
 ## 常用命令
 

@@ -98,6 +98,57 @@ func (s *Store) queryUsers(ctx context.Context, query string, args ...any) ([]*U
 	return out, rows.Err()
 }
 
+// syncMemberCopies 把用户的最新用户名和邮箱同步到分组、项目成员里保存的副本，参数依次为三个 uid。
+var syncMemberCopies = []string{
+	`UPDATE group_members SET username = (SELECT username FROM users WHERE id = ?),
+	        email = (SELECT email FROM users WHERE id = ?) WHERE uid = ?`,
+	`UPDATE project_members SET username = (SELECT username FROM users WHERE id = ?),
+	        email = (SELECT email FROM users WHERE id = ?) WHERE uid = ?`,
+}
+
+// UpdateProfile 修改用户名和邮箱（为 nil 的不改），并同步分组、项目成员里保存的副本。返回匹配的行数。
+// YApi 只同步了第一个包含该成员的项目（漏了 multi 选项），这里全部同步。
+func (s *Store) UpdateProfile(ctx context.Context, uid int64, username, email *string) (int64, error) {
+	var n int64
+	err := s.withTx(ctx, func(tx *sql.Tx) error {
+		res, err := tx.ExecContext(ctx,
+			"UPDATE users SET username = coalesce(?, username), email = coalesce(?, email), up_time = ? WHERE id = ?",
+			nullString(username), nullString(email), Now(), uid)
+		if err != nil {
+			return err
+		}
+		if n, err = res.RowsAffected(); err != nil || n == 0 {
+			return err
+		}
+		for _, stmt := range syncMemberCopies {
+			if _, err := tx.ExecContext(ctx, stmt, uid, uid, uid); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return n, err
+}
+
+// UpdatePassword 更换密码哈希和 passsalt。passsalt 也是登录令牌的签名密钥，所以旧的登录状态随之失效。
+func (s *Store) UpdatePassword(ctx context.Context, uid int64, hash, passsalt string) (int64, error) {
+	res, err := s.db.ExecContext(ctx, "UPDATE users SET password = ?, passsalt = ?, up_time = ? WHERE id = ?",
+		hash, passsalt, Now(), uid)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
+// DeleteUser 删除用户，返回删除的行数。与 YApi 一样不清理该用户的个人空间和成员身份。
+func (s *Store) DeleteUser(ctx context.Context, uid int64) (int64, error) {
+	res, err := s.db.ExecContext(ctx, "DELETE FROM users WHERE id = ?", uid)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 // MarkStudied 记录用户已看完新手指引，返回受影响的行数。
 func (s *Store) MarkStudied(ctx context.Context, uid int64) (int64, error) {
 	res, err := s.db.ExecContext(ctx, "UPDATE users SET study = 1, up_time = ? WHERE id = ?", Now(), uid)

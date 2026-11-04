@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"io"
 	"log/slog"
@@ -312,4 +313,58 @@ func TestBootstrap(t *testing.T) {
 // num 把 JSON 解码得到的数字 ID 转成查询参数用的文本。
 func num(v any) string {
 	return strconv.FormatFloat(v.(float64), 'f', -1, 64)
+}
+
+func TestProfileEdgeCases(t *testing.T) {
+	env := newEnv(t, Options{})
+	admin := env.client()
+	admin.login("admin@admin.com", "ymfe.org")
+
+	expectCode(t, admin.call("GET", "/api/user/find", nil), 400)                                   // 管理员不传 id
+	expectCode(t, admin.call("POST", "/api/user/update", map[string]any{}), 400)                   // 不传 uid
+	expectCode(t, admin.call("POST", "/api/user/update", map[string]any{"uid": 999}), 400)         // 用户不存在
+	expectCode(t, admin.call("POST", "/api/user/del", map[string]any{}), 400)                      // 不传 id
+	expectCode(t, admin.call("POST", "/api/user/change_password", map[string]any{"uid": 11}), 400) // 不传新密码
+	// 管理员修改管理员（包括自己）的密码时也必须提供旧密码
+	expectCode(t, admin.call("POST", "/api/user/change_password", map[string]any{"uid": 11, "password": "x"}), 400)
+	// 修改不存在用户的密码：YApi 抛异常
+	expectCode(t, admin.call("POST", "/api/user/change_password", map[string]any{"uid": 999, "password": "x"}), 40011)
+}
+
+func TestUploadAvatar(t *testing.T) {
+	env := newEnv(t, Options{})
+	c := env.client()
+	c.login("admin@admin.com", "ymfe.org")
+
+	expectCode(t, c.call("POST", "/api/user/upload_avatar", map[string]any{}), 400)
+	expectCode(t, c.call("POST", "/api/user/upload_avatar", map[string]any{"basecode": "data:image/png;base64,***"}), 400)
+	big := "data:image/png;base64," + strings.Repeat("A", 300000)
+	if r := c.call("POST", "/api/user/upload_avatar", map[string]any{"basecode": big}); r["errmsg"] != "图片大小不能超过200kb" {
+		t.Errorf("超过大小上限应被拒绝: %v", r["errmsg"])
+	}
+
+	png := []byte("\x89PNG-uploaded")
+	r := c.call("POST", "/api/user/upload_avatar",
+		map[string]any{"basecode": "data:image/png;base64," + base64.StdEncoding.EncodeToString(png)})
+	expectCode(t, r, 0)
+	if _, ok := r["data"].(map[string]any)["upserted"]; !ok {
+		t.Error("首次上传应返回 MongoDB upsert 形式的结果")
+	}
+	resp, err := c.http.Get(env.srv.URL + "/api/user/avatar")
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ := io.ReadAll(resp.Body)
+	_ = resp.Body.Close()
+	if !bytes.Equal(body, png) {
+		t.Errorf("读取到的头像与上传的不一致: %q", body)
+	}
+}
+
+func TestUserProjectTypes(t *testing.T) {
+	c := newEnv(t, Options{}).client()
+	c.login("admin@admin.com", "ymfe.org")
+	expectCode(t, c.call("GET", "/api/user/project?type=project&id=1", nil), 422)
+	expectCode(t, c.call("GET", "/api/user/project?type=interface&id=1", nil), 422)
+	expectCode(t, c.call("GET", "/api/user/project?type=other", nil), 0)
 }

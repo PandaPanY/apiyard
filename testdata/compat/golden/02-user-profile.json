@@ -1,0 +1,615 @@
+[
+  {
+    "step": "管理员登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "查看自己的信息",
+    "method": "GET",
+    "url": "/api/user/find?id={{admin_uid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "搜索 dev1",
+    "method": "GET",
+    "url": "/api/user/search?q=dev1",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "addTime": "<time>",
+          "email": "dev1@apiyard.test",
+          "role": "member",
+          "uid": "<id>",
+          "upTime": "<time>",
+          "username": "dev1"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "ok"
+    }
+  },
+  {
+    "step": "管理员查看他人信息",
+    "method": "GET",
+    "url": "/api/user/find?id={{dev_uid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev1@apiyard.test",
+        "role": "member",
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev1"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "查看不存在的用户",
+    "method": "GET",
+    "url": "/api/user/find?id=99999",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 402,
+      "errmsg": "不存在的用户"
+    }
+  },
+  {
+    "step": "新建以 dev1 为组长的分组",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_name": "资料组",
+      "owner_uids": [
+        "{{dev_uid}}"
+      ]
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_name": "资料组",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "dev1@apiyard.test",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "dev1"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员修改他人用户名",
+    "method": "POST",
+    "url": "/api/user/update",
+    "request": {
+      "uid": "{{dev_uid}}",
+      "username": "dev1-改名"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "改成已被注册的邮箱",
+    "method": "POST",
+    "url": "/api/user/update",
+    "request": {
+      "email": "admin@admin.com",
+      "uid": "{{dev_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "该email已经注册"
+    }
+  },
+  {
+    "step": "修改后的信息",
+    "method": "GET",
+    "url": "/api/user/find?id={{dev_uid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev1@apiyard.test",
+        "role": "member",
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev1-改名"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "分组成员里的用户名同步更新",
+    "method": "GET",
+    "url": "/api/group/get_member_list?id={{gid}}",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<objectid>",
+          "email": "dev1@apiyard.test",
+          "role": "owner",
+          "uid": "<id>",
+          "username": "dev1-改名"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员重置他人密码（无需旧密码）",
+    "method": "POST",
+    "url": "/api/user/change_password",
+    "request": {
+      "password": "dev1-new",
+      "uid": "{{dev_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "dev1 用新密码登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "dev1@apiyard.test",
+      "password": "dev1-new"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev1@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev1-改名"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "普通用户不能查看他人",
+    "method": "GET",
+    "url": "/api/user/find?id={{admin_uid}}",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "没有权限"
+    }
+  },
+  {
+    "step": "普通用户不能修改他人",
+    "method": "POST",
+    "url": "/api/user/update",
+    "request": {
+      "uid": "{{admin_uid}}",
+      "username": "x"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 401,
+      "errmsg": "没有权限"
+    }
+  },
+  {
+    "step": "普通用户改密码必须提供旧密码",
+    "method": "POST",
+    "url": "/api/user/change_password",
+    "request": {
+      "password": "p2",
+      "uid": "{{dev_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "旧密码不能为空"
+    }
+  },
+  {
+    "step": "旧密码错误",
+    "method": "POST",
+    "url": "/api/user/change_password",
+    "request": {
+      "old_password": "wrong",
+      "password": "p2",
+      "uid": "{{dev_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 402,
+      "errmsg": "旧密码错误"
+    }
+  },
+  {
+    "step": "普通用户改密码",
+    "method": "POST",
+    "url": "/api/user/change_password",
+    "request": {
+      "old_password": "dev1-new",
+      "password": "dev1-final",
+      "uid": "{{dev_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "改密码后原登录状态失效",
+    "method": "GET",
+    "url": "/api/user/status",
+    "status": 200,
+    "response": {
+      "canRegister": true,
+      "data": null,
+      "errcode": 40011,
+      "errmsg": "请登录...",
+      "ladp": false
+    }
+  },
+  {
+    "step": "dev1 用最终密码登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "dev1@apiyard.test",
+      "password": "dev1-final"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "dev1@apiyard.test",
+        "role": "member",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "dev1-改名"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "上传不支持格式的头像",
+    "method": "POST",
+    "url": "/api/user/upload_avatar",
+    "request": {
+      "basecode": "data:image/gif;base64,R0lGODlhAQABAAAAACw="
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "仅支持jpeg和png格式的图片"
+    }
+  },
+  {
+    "step": "上传 PNG 头像",
+    "method": "POST",
+    "url": "/api/user/upload_avatar",
+    "request": {
+      "basecode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 0,
+        "ok": 1,
+        "upserted": [
+          {
+            "_id": "<objectid>",
+            "index": 0
+          }
+        ]
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "再次上传覆盖头像",
+    "method": "POST",
+    "url": "/api/user/upload_avatar",
+    "request": {
+      "basecode": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACv/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AN//Z"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "普通用户不能删除用户",
+    "method": "POST",
+    "url": "/api/user/del",
+    "request": {
+      "id": "{{admin_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 402,
+      "errmsg": "Without permission."
+    }
+  },
+  {
+    "step": "组长查看分组权限",
+    "method": "GET",
+    "url": "/api/user/project?id={{gid}}&type=group",
+    "status": 200,
+    "response": {
+      "data": {
+        "group": {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "custom_field1": {
+            "enable": false
+          },
+          "group_name": "资料组",
+          "members": [
+            {
+              "_id": "<objectid>",
+              "email": "dev1@apiyard.test",
+              "role": "owner",
+              "uid": "<id>",
+              "username": "dev1-改名"
+            }
+          ],
+          "role": "owner",
+          "type": "public",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "查看不存在分组的权限",
+    "method": "GET",
+    "url": "/api/user/project?id=99999&type=group",
+    "status": 200,
+    "response": {
+      "data": {},
+      "errcode": 422,
+      "errmsg": "Cannot read property 'toObject' of null"
+    }
+  },
+  {
+    "step": "管理员重新登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "管理员查看分组权限",
+    "method": "GET",
+    "url": "/api/user/project?id={{gid}}&type=group",
+    "status": 200,
+    "response": {
+      "data": {
+        "group": {
+          "__v": 0,
+          "_id": "<id>",
+          "add_time": "<time>",
+          "custom_field1": {
+            "enable": false
+          },
+          "group_name": "资料组",
+          "members": [
+            {
+              "_id": "<objectid>",
+              "email": "dev1@apiyard.test",
+              "role": "owner",
+              "uid": "<id>",
+              "username": "dev1-改名"
+            }
+          ],
+          "role": "owner",
+          "type": "public",
+          "uid": "<id>",
+          "up_time": "<time>"
+        }
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员不能删除自己",
+    "method": "POST",
+    "url": "/api/user/del",
+    "request": {
+      "id": "{{admin_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 403,
+      "errmsg": "禁止删除管理员"
+    }
+  },
+  {
+    "step": "删除用户",
+    "method": "POST",
+    "url": "/api/user/del",
+    "request": {
+      "id": "{{dev_uid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除后的用户列表",
+    "method": "GET",
+    "url": "/api/user/list?limit=20&page=1",
+    "status": 200,
+    "response": {
+      "data": {
+        "count": 1,
+        "list": [
+          {
+            "_id": "<id>",
+            "add_time": "<time>",
+            "email": "admin@admin.com",
+            "role": "admin",
+            "study": false,
+            "type": "site",
+            "up_time": "<time>",
+            "username": "admin"
+          }
+        ],
+        "total": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "删除后查找该用户",
+    "method": "GET",
+    "url": "/api/user/find?id={{dev_uid}}",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 402,
+      "errmsg": "不存在的用户"
+    }
+  },
+  {
+    "step": "清理分组",
+    "method": "POST",
+    "url": "/api/group/del",
+    "request": {
+      "id": "{{gid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  }
+]

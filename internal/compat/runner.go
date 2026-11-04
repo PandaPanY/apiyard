@@ -9,16 +9,19 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 )
 
 // Exchange 是一次接口调用的录制结果，也是 golden 文件的组成单位。
+// URL 和 Request 记录的是场景里的模板（保留 {{变量}}），不是替换后的值：
+// 变量多是每次运行都不同的 ID，记录模板能让重新录制时 golden 文件保持不变。比对只看 Status 和 Response。
 type Exchange struct {
 	Step     string `json:"step"`
 	Method   string `json:"method"`
-	URL      string `json:"url"` // 路径加查询串，变量已替换
+	URL      string `json:"url"`
 	Request  any    `json:"request,omitempty"`
 	Status   int    `json:"status"`
 	Response any    `json:"response"` // 已归一化；非 JSON 响应保存为字符串
@@ -86,7 +89,7 @@ func (r *runner) do(ctx context.Context, st Step, name string) (Exchange, error)
 		return Exchange{}, err
 	}
 
-	ex := Exchange{Step: name, Method: st.Method, URL: target, Request: body, Status: resp.StatusCode}
+	ex := Exchange{Step: name, Method: st.Method, URL: templateURL(st), Request: st.Body, Status: resp.StatusCode}
 	var parsed any
 	if decodeJSON(raw, &parsed) != nil {
 		ex.Response = string(raw)
@@ -105,6 +108,23 @@ func (r *runner) do(ctx context.Context, st Step, name string) (Exchange, error)
 		r.vars[varName] = val
 	}
 	return ex, nil
+}
+
+// templateURL 返回未替换变量的路径和查询串，只用于记录；参数按名称排序且不转义，便于阅读。
+func templateURL(st Step) string {
+	if len(st.Query) == 0 {
+		return st.Path
+	}
+	keys := make([]string, 0, len(st.Query))
+	for k := range st.Query {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	pairs := make([]string, len(keys))
+	for i, k := range keys {
+		pairs[i] = k + "=" + st.Query[k]
+	}
+	return st.Path + "?" + strings.Join(pairs, "&")
 }
 
 // target 返回替换过变量的路径和查询串。

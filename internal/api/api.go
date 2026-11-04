@@ -35,6 +35,7 @@ func New(s *store.Store, opts Options, logger *slog.Logger) *API {
 // Register 把已实现的接口挂到 mux 上。
 func (a *API) Register(mux *http.ServeMux) {
 	a.registerUser(mux)
+	a.registerProfile(mux)
 	a.registerGroup(mux)
 }
 

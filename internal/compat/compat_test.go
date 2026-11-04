@@ -103,7 +103,8 @@ func fakeYApi() *httptest.Server {
 			_, _ = fmt.Fprint(w, `{"errcode":40011,"errmsg":"请登录..."}`)
 			return
 		}
-		_, _ = fmt.Fprintf(w, `{"errcode":0,"data":{"id":%s}}`, r.URL.Query().Get("id"))
+		// 用 echo 回显收到的参数，避开 ID 字段的归一化，便于检查变量是否替换
+		_, _ = fmt.Fprintf(w, `{"errcode":0,"data":{"echo":"%s"}}`, r.URL.Query().Get("id"))
 	})
 	mux.HandleFunc("GET /item/{n}", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprintf(w, `{"errcode":0,"data":"%s"}`, r.PathValue("n"))
@@ -131,10 +132,13 @@ func TestRun(t *testing.T) {
 	if got[1].Response.(map[string]any)["data"].(map[string]any)["add_time"] != "<time>" {
 		t.Error("录制结果应已归一化")
 	}
-	if got[2].URL != "/group?id=11" {
-		t.Errorf("捕获的变量应替换到查询参数里, 实际 %s", got[2].URL)
+	if echo := got[2].Response.(map[string]any)["data"].(map[string]any)["echo"]; echo != "11" {
+		t.Errorf("捕获的变量应替换到查询参数里, 服务端收到 %v", echo)
 	}
-	if got[4].Step != "批量 #2" || got[4].URL != "/item/2" {
+	if got[2].URL != "/group?id={{gid}}" {
+		t.Errorf("录制结果应保留模板，避免 ID 变化导致 golden 文件变动, 实际 %s", got[2].URL)
+	}
+	if got[4].Step != "批量 #2" || got[4].Response.(map[string]any)["data"] != "2" {
 		t.Errorf("重复步骤展开不对: %+v", got[4])
 	}
 }

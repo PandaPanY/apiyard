@@ -61,7 +61,7 @@ v0.2：M7 MCP Server        v0.3 及以后：延后功能，按用户反馈排�
 | 2 | 统一的响应封装 `{errcode, errmsg, data}`，错误码与 YApi 一致 | ✅ |
 | 3 | 登录会话：Cookie 名称和格式与 YApi 一致（`_yapi_token`、`_yapi_uid`），密码哈希兼容 YApi 的算法，以便迁移后原密码还能用 | ✅ 令牌与 YApi 逐字节一致 |
 | 4 | 角色权限：admin / owner / dev / guest，权限判断逻辑对照 YApi 的 `checkAuth` | ✅ 分组部分；项目部分随 M2 |
-| 5 | 实现 24 个接口：`/api/user/*`（14 个）、`/api/group/*`（10 个）。`/api/follow/*`（3 个）依赖项目数据，移到 M2 | 18/24：分组 10 个 ✅，用户 8 个 ✅，剩 find、update、change_password、del、upload_avatar、project |
+| 5 | 实现 24 个接口：`/api/user/*`（14 个）、`/api/group/*`（10 个）。`/api/follow/*`（3 个）依赖项目数据，移到 M2 | ✅ 24/24；`user/project` 中项目、接口两种类型随 M2 补全 |
 | 6 | 托管前端静态文件，以及前端路由的回退处理 | ✅（M0.5 完成） |
 | 7 | 首次启动时创建管理员账号（命令行参数或环境变量） | ✅ |
 

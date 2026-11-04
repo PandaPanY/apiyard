@@ -1,0 +1,87 @@
+{
+  "description": "M1：个人信息查询与修改、改密码、头像、删除用户，以及非管理员的权限限制。依赖场景 01 注册的 dev1",
+  "steps": [
+    {
+      "name": "管理员登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" },
+      "capture": { "admin_uid": "data.uid" }
+    },
+    { "name": "查看自己的信息", "method": "GET", "path": "/api/user/find", "query": { "id": "{{admin_uid}}" } },
+    {
+      "name": "搜索 dev1", "method": "GET", "path": "/api/user/search", "query": { "q": "dev1" },
+      "capture": { "dev_uid": "data.0.uid" }
+    },
+    { "name": "管理员查看他人信息", "method": "GET", "path": "/api/user/find", "query": { "id": "{{dev_uid}}" } },
+    { "name": "查看不存在的用户", "method": "GET", "path": "/api/user/find", "query": { "id": "99999" }, "errcode": 402 },
+    {
+      "name": "新建以 dev1 为组长的分组", "method": "POST", "path": "/api/group/add",
+      "body": { "group_name": "资料组", "owner_uids": ["{{dev_uid}}"] },
+      "capture": { "gid": "data._id" }
+    },
+    {
+      "name": "管理员修改他人用户名", "method": "POST", "path": "/api/user/update",
+      "body": { "uid": "{{dev_uid}}", "username": "dev1-改名" }
+    },
+    {
+      "name": "改成已被注册的邮箱", "method": "POST", "path": "/api/user/update",
+      "body": { "uid": "{{dev_uid}}", "email": "admin@admin.com" }, "errcode": 401
+    },
+    { "name": "修改后的信息", "method": "GET", "path": "/api/user/find", "query": { "id": "{{dev_uid}}" } },
+    { "name": "分组成员里的用户名同步更新", "method": "GET", "path": "/api/group/get_member_list", "query": { "id": "{{gid}}" } },
+    {
+      "name": "管理员重置他人密码（无需旧密码）", "method": "POST", "path": "/api/user/change_password",
+      "body": { "uid": "{{dev_uid}}", "password": "dev1-new" }
+    },
+    {
+      "name": "dev1 用新密码登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "dev1@apiyard.test", "password": "dev1-new" }
+    },
+    { "name": "普通用户不能查看他人", "method": "GET", "path": "/api/user/find", "query": { "id": "{{admin_uid}}" }, "errcode": 401 },
+    {
+      "name": "普通用户不能修改他人", "method": "POST", "path": "/api/user/update",
+      "body": { "uid": "{{admin_uid}}", "username": "x" }, "errcode": 401
+    },
+    {
+      "name": "普通用户改密码必须提供旧密码", "method": "POST", "path": "/api/user/change_password",
+      "body": { "uid": "{{dev_uid}}", "password": "p2" }, "errcode": 400
+    },
+    {
+      "name": "旧密码错误", "method": "POST", "path": "/api/user/change_password",
+      "body": { "uid": "{{dev_uid}}", "old_password": "wrong", "password": "p2" }, "errcode": 402
+    },
+    {
+      "name": "普通用户改密码", "method": "POST", "path": "/api/user/change_password",
+      "body": { "uid": "{{dev_uid}}", "old_password": "dev1-new", "password": "dev1-final" }
+    },
+    { "name": "改密码后原登录状态失效", "method": "GET", "path": "/api/user/status", "errcode": 40011 },
+    {
+      "name": "dev1 用最终密码登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "dev1@apiyard.test", "password": "dev1-final" }
+    },
+    {
+      "name": "上传不支持格式的头像", "method": "POST", "path": "/api/user/upload_avatar",
+      "body": { "basecode": "data:image/gif;base64,R0lGODlhAQABAAAAACw=" }, "errcode": 400
+    },
+    {
+      "name": "上传 PNG 头像", "method": "POST", "path": "/api/user/upload_avatar",
+      "body": { "basecode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" }
+    },
+    {
+      "name": "再次上传覆盖头像", "method": "POST", "path": "/api/user/upload_avatar",
+      "body": { "basecode": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACv/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AN//Z" }
+    },
+    { "name": "普通用户不能删除用户", "method": "POST", "path": "/api/user/del", "body": { "id": "{{admin_uid}}" }, "errcode": 402 },
+    { "name": "组长查看分组权限", "method": "GET", "path": "/api/user/project", "query": { "id": "{{gid}}", "type": "group" } },
+    { "name": "查看不存在分组的权限", "method": "GET", "path": "/api/user/project", "query": { "id": "99999", "type": "group" }, "errcode": 422 },
+    {
+      "name": "管理员重新登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    { "name": "管理员查看分组权限", "method": "GET", "path": "/api/user/project", "query": { "id": "{{gid}}", "type": "group" } },
+    { "name": "管理员不能删除自己", "method": "POST", "path": "/api/user/del", "body": { "id": "{{admin_uid}}" }, "errcode": 403 },
+    { "name": "删除用户", "method": "POST", "path": "/api/user/del", "body": { "id": "{{dev_uid}}" } },
+    { "name": "删除后的用户列表", "method": "GET", "path": "/api/user/list", "query": { "page": "1", "limit": "20" } },
+    { "name": "删除后查找该用户", "method": "GET", "path": "/api/user/find", "query": { "id": "{{dev_uid}}" }, "errcode": 402 },
+    { "name": "清理分组", "method": "POST", "path": "/api/group/del", "body": { "id": "{{gid}}" } }
+  ]
+}
