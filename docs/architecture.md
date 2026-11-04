@@ -106,6 +106,9 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | form 请求体缺少 `req_headers` | 抛异常 | 按空数组处理 | 健壮性 |
 | `/api/interface/schema2json` | json-schema-faker | 自己实现的生成器（`internal/schemafake`），覆盖常用关键字；结果本来就是随机的 | 不依赖 Node |
 | `save` 的 `dataSync=good` 合并 | 合并后的 JSON Schema 保留原有键顺序 | 键按字母顺序输出，内容相同 | Go 的 map 不保序；只影响文本格式 |
+| `/api/log/list`（项目动态）、`list_by_update` | 不检查权限，能读到私有项目的动态和改动内容 | 私有项目要求查看权限，否则 406 | 信息泄露 |
+| `/api/project/swagger_url` | 服务端去请求用户给的任意 URL | 暂不提供，返回 402 和提示 | SSRF |
+| `/api/user/login_by_ldap` | 没配置 LDAP 时返回 401 和一条 JS 异常信息 | 返回 401 和“暂不支持 LDAP 登录” | 提示更清楚 |
 
 ## YApi 兼容要点
 

@@ -114,6 +114,9 @@ func TestLogListValidation(t *testing.T) {
 	e := newProjectEnv(t)
 	expectCode(t, e.admin.call("GET", "/api/log/list?type=project", nil), 400)
 	expectCode(t, e.admin.call("GET", "/api/log/list?typeid=1", nil), 400)
+	// 与 YApi 不同：私有项目的动态要求查看权限
+	expectCode(t, e.outside.call("GET", "/api/log/list?type=project&typeid="+q(e.pid), nil), 406)
+	expectCode(t, e.dev.call("GET", "/api/log/list?type=project&typeid="+q(e.pid), nil), 0)
 	r := e.admin.call("GET", "/api/log/list?type=project&typeid="+q(e.pid)+"&selectValue=999", nil)
 	if list := r["data"].(map[string]any)["list"].([]any); len(list) != 0 {
 		t.Errorf("按接口筛选时应只返回该接口的改动: %v", list)

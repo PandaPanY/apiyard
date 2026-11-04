@@ -1,0 +1,69 @@
+{
+  "description": "M2-4：按接口路径查询最近一次修改动态（数据导入时使用）。每个接口只修改一次，避免同一秒内多条动态时原版排序不确定",
+  "steps": [
+    {
+      "name": "管理员登录", "method": "POST", "path": "/api/user/login",
+      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+    },
+    {
+      "name": "新建分组", "method": "POST", "path": "/api/group/add",
+      "body": { "group_name": "动态组", "owner_uids": [] },
+      "capture": { "gid": "data._id" }
+    },
+    {
+      "name": "新建带 basepath 的项目", "method": "POST", "path": "/api/project/add",
+      "body": { "name": "动态项目", "basepath": "/v1", "group_id": "{{gid}}" },
+      "capture": { "pid": "data._id" }
+    },
+    {
+      "name": "获取默认分类", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" },
+      "capture": { "cat0": "data.cat.0._id" }
+    },
+    {
+      "name": "新建 GET /users", "method": "POST", "path": "/api/interface/add",
+      "body": { "project_id": "{{pid}}", "catid": "{{cat0}}", "title": "用户列表", "path": "/users", "method": "GET" },
+      "capture": { "i1": "data._id" }
+    },
+    {
+      "name": "新建 POST /users", "method": "POST", "path": "/api/interface/add",
+      "body": { "project_id": "{{pid}}", "catid": "{{cat0}}", "title": "新建用户", "path": "/users", "method": "POST" },
+      "capture": { "i2": "data._id" }
+    },
+    {
+      "name": "新建 GET /orders（不修改）", "method": "POST", "path": "/api/interface/add",
+      "body": { "project_id": "{{pid}}", "catid": "{{cat0}}", "title": "订单列表", "path": "/orders", "method": "GET" }
+    },
+    {
+      "name": "修改 GET /users", "method": "POST", "path": "/api/interface/up",
+      "body": { "id": "{{i1}}", "catid": "{{cat0}}", "title": "用户列表V2", "message": "改名" }
+    },
+    {
+      "name": "修改 POST /users", "method": "POST", "path": "/api/interface/up",
+      "body": { "id": "{{i2}}", "catid": "{{cat0}}", "status": "done" }
+    },
+    {
+      "name": "按路径查最近的修改", "method": "POST", "path": "/api/log/list_by_update",
+      "body": { "type": "project", "typeid": "{{pid}}", "apis": [
+        { "method": "GET", "path": "/v1/users" },
+        { "method": "POST", "path": "/users" },
+        { "method": "GET", "path": "/orders" },
+        { "method": "GET", "path": "/nope" },
+        { "method": "get", "path": "/users" }
+      ] }
+    },
+    {
+      "name": "没有 apis", "method": "POST", "path": "/api/log/list_by_update",
+      "body": { "type": "project", "typeid": "{{pid}}" }, "errcode": 402
+    },
+    {
+      "name": "项目不存在", "method": "POST", "path": "/api/log/list_by_update",
+      "body": { "type": "project", "typeid": 99999, "apis": [] }, "errcode": 402
+    },
+    {
+      "name": "缺少 type", "method": "POST", "path": "/api/log/list_by_update",
+      "body": { "typeid": "{{pid}}", "apis": [] }, "errcode": 400
+    },
+    { "name": "删除项目", "method": "POST", "path": "/api/project/del", "body": { "id": "{{pid}}" } },
+    { "name": "清理分组", "method": "POST", "path": "/api/group/del", "body": { "id": "{{gid}}" } }
+  ]
+}

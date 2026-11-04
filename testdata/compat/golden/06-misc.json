@@ -1,0 +1,461 @@
+[
+  {
+    "step": "管理员登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "新建分组",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_name": "动态组",
+      "owner_uids": []
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_name": "动态组",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "admin@admin.com",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建带 basepath 的项目",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "basepath": "/v1",
+      "group_id": "{{gid}}",
+      "name": "动态项目"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/v1",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "动态项目",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "获取默认分类",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/v1",
+        "cat": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "公共分类",
+            "index": 0,
+            "name": "公共分类",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ],
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "动态项目",
+        "project_type": "private",
+        "role": "admin",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建 GET /users",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat0}}",
+      "method": "GET",
+      "path": "/users",
+      "project_id": "{{pid}}",
+      "title": "用户列表"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/users",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户列表",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建 POST /users",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat0}}",
+      "method": "POST",
+      "path": "/users",
+      "project_id": "{{pid}}",
+      "title": "新建用户"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "新建用户",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建 GET /orders（不修改）",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat0}}",
+      "method": "GET",
+      "path": "/orders",
+      "project_id": "{{pid}}",
+      "title": "订单列表"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/orders",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/orders"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "订单列表",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改 GET /users",
+    "method": "POST",
+    "url": "/api/interface/up",
+    "request": {
+      "catid": "{{cat0}}",
+      "id": "{{i1}}",
+      "message": "改名",
+      "title": "用户列表V2"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "修改 POST /users",
+    "method": "POST",
+    "url": "/api/interface/up",
+    "request": {
+      "catid": "{{cat0}}",
+      "id": "{{i2}}",
+      "status": "done"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "按路径查最近的修改",
+    "method": "POST",
+    "url": "/api/log/list_by_update",
+    "request": {
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/v1/users"
+        },
+        {
+          "method": "POST",
+          "path": "/users"
+        },
+        {
+          "method": "GET",
+          "path": "/orders"
+        },
+        {
+          "method": "GET",
+          "path": "/nope"
+        },
+        {
+          "method": "get",
+          "path": "/users"
+        }
+      ],
+      "type": "project",
+      "typeid": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "_id": "<id>",
+          "add_time": "<time>",
+          "content": "<a href=\"/user/profile/<id>\">admin</a> \n                    更新了分类 <a href=\"/project/<id>/interface/api/cat_<id>\">公共分类</a> \n                    下的接口 <a href=\"/project/<id>/interface/api/<id>\">用户列表</a><p>改名</p>",
+          "type": "project",
+          "typeid": "<id>",
+          "uid": "<id>",
+          "username": "admin"
+        },
+        {
+          "_id": "<id>",
+          "add_time": "<time>",
+          "content": "<a href=\"/user/profile/<id>\">admin</a> \n                    更新了分类 <a href=\"/project/<id>/interface/api/cat_<id>\">公共分类</a> \n                    下的接口 <a href=\"/project/<id>/interface/api/<id>\">新建用户</a><p></p>",
+          "type": "project",
+          "typeid": "<id>",
+          "uid": "<id>",
+          "username": "admin"
+        }
+      ],
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "没有 apis",
+    "method": "POST",
+    "url": "/api/log/list_by_update",
+    "request": {
+      "type": "project",
+      "typeid": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 402,
+      "errmsg": "Cannot read property 'length' of undefined"
+    }
+  },
+  {
+    "step": "项目不存在",
+    "method": "POST",
+    "url": "/api/log/list_by_update",
+    "request": {
+      "apis": [],
+      "type": "project",
+      "typeid": 99999
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 402,
+      "errmsg": "Cannot read property 'toObject' of null"
+    }
+  },
+  {
+    "step": "缺少 type",
+    "method": "POST",
+    "url": "/api/log/list_by_update",
+    "request": {
+      "apis": [],
+      "typeid": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "请求参数 data 应当有必需属性 type"
+    }
+  },
+  {
+    "step": "删除项目",
+    "method": "POST",
+    "url": "/api/project/del",
+    "request": {
+      "id": "{{pid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "清理分组",
+    "method": "POST",
+    "url": "/api/group/del",
+    "request": {
+      "id": "{{gid}}"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "deletedCount": 1,
+        "n": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  }
+]

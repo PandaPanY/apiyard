@@ -68,7 +68,7 @@
 | M2 | `/api/project/copy` |  |  |
 | M2 | `/api/project/del` |  |  |
 | M2 | `/api/project/del_member` |  |  |
-| M2 | `/api/project/download` |  |  |
+| M2 | `/api/project/download` |  | 原版没有实现（前端按钮是隐藏的），返回 404，ApiYard 相同 |
 | M2 | `/api/project/get` | ✓ |  |
 | M2 | `/api/project/get_env` |  |  |
 | M2 | `/api/project/get_member_list` |  |  |
@@ -80,10 +80,10 @@
 | M2 | `/api/project/up_tag` |  |  |
 | M2 | `/api/project/update_token` |  |  |
 | M2 | `/api/project/upset` |  |  |
-| M2 占位 | `/api/interface/download_crx` |  | 返回“未开放”，界面不报错 |
-| M2 占位 | `/api/project/swagger_url` |  | 返回“未开放”，界面不报错 |
-| M2 占位 | `/api/user/login_by_ldap` |  | 返回“未开放”，界面不报错 |
-| M2 占位 | `/api/user/login_by_token` |  | 返回“未开放”，界面不报错 |
+| M2 占位 | `/api/interface/download_crx` |  | 前端目录里带有插件包，直接提供下载 |
+| M2 占位 | `/api/project/swagger_url` |  | 返回 402 和提示（服务端代取 URL 有 SSRF 风险） |
+| M2 占位 | `/api/user/login_by_ldap` |  | 返回 401 和“暂不支持 LDAP 登录” |
+| M2 占位 | `/api/user/login_by_token` |  | 与原版没有登录插件时相同：跳回首页 |
 | M3 | `/api/interface/interUpload` |  | 导入导出 |
 | M3 | `/api/plugin/export` | ✓ | 导入导出 |
 | M3 | `/api/plugin/exportSwagger` | ✓ | 导入导出 |

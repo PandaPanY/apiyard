@@ -83,7 +83,7 @@ v0.2：M7 MCP Server        v0.3 及以后：延后功能，按用户反馈排�
 | M2-1 | 项目增删改查、环境 / tag / 图标、token、检查项目名、搜索、项目权限；关注 3 个接口；`log/list`；`user/project` 的项目类型 | `03-project` | ✅ |
 | M2-2 | 项目成员 5 个接口 | `04-project-member` | ✅ |
 | M2-3 | 分类与接口 16 个接口（含 WebSocket 冲突检测、`schema2json`）；`user/project` 的接口类型；复制项目（会连同接口一起复制，所以放在接口之后） | `05-interface` | ✅ |
-| M2-4 | `log/list_by_update`、4 个占位接口、`project/download` | `06-misc` | |
+| M2-4 | `log/list_by_update`、4 个占位接口、`project/download` | `06-misc` | ✅ |
 
 | # | 任务 |
 |---|---|

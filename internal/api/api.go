@@ -43,6 +43,7 @@ func (a *API) Register(mux *http.ServeMux) {
 	a.registerFollow(mux)
 	a.registerLog(mux)
 	a.registerInterface(mux)
+	a.registerUnsupported(mux)
 }
 
 // handlerFunc 处理一次调用；返回的错误统一转换为 YApi 的“服务器出错”响应。
