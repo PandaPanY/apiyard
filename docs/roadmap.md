@@ -114,7 +114,7 @@ v0.2：M7 MCP Server        v0.3 及以后：延后功能，按用户反馈排�
 | M3-1 | 开放 API 鉴权：白名单接口支持 `token` 参数（新旧两种 token），token 只能操作所属项目 | `07-open-api` | ✅ |
 | M3-2 | 导出：`/api/plugin/export`（JSON / Markdown / HTML）、`/api/plugin/exportSwagger` | `08-export` | ✅ |
 | M3-3 | 导入：`/api/open/import_data`（Swagger 2 / OpenAPI 3 的 JSON，三种同步模式）；界面导入（Swagger、Postman、HAR、YApi JSON）实测 | `09-import` | ✅ |
-| M3-4 | 生态实测：yapi-to-typescript、Yapi-MCP、easy-yapi | — | |
+| M3-4 | 生态实测：yapi-to-typescript、Yapi-MCP、easy-yapi（脚本见 [`testenv/eco`](../testenv/eco/README.md)） | — | ✅ |
 
 | # | 任务 |
 |---|---|
@@ -127,8 +127,8 @@ v0.2：M7 MCP Server        v0.3 及以后：延后功能，按用户反馈排�
 
 **验收标准**：
 - token 编解码与 YApi 生成的 token 互通，双方生成的 token 都能被对方解析。
-- 三个周边工具都只改服务器地址，不改其他配置，就能正常工作。
-- 一份 OpenAPI 3 文件导入后再导出，主要信息不丢失（有单元测试保证）。
+- 三个周边工具都只改服务器地址，不改其他配置，就能正常工作。yapi-to-typescript、Yapi-MCP 真实运行，结果与原版一致；easy-yapi 是 IDEA 插件，只按其源码回放了请求，**真实插件尚未验证**。
+- 一份 OpenAPI 3 文件导入后再导出，主要信息不丢失（有单元测试保证）。导出格式是 Swagger 2，与原版相同；导出为 OpenAPI 3 不在 M3 范围内。
 
 ---
 

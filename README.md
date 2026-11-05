@@ -28,7 +28,7 @@ ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成�
 - [x] M0.5 前置验证：搭建 YApi 对照环境，验证能否沿用原有前端，搭好兼容测试框架
 - [x] M1 账号与分组：SQLite 存储、登录会话、角色权限、用户 / 分组接口（24 个）
 - [ ] M2 项目与接口：项目 / 接口 / 动态接口（38 个），界面核心流程可用，公开仓库
-- [ ] M3 开放 API 与导入导出：token 兼容，OpenAPI / Swagger 导入导出，周边工具实测
+- [x] M3 开放 API 与导入导出：token 兼容，导入 Swagger 2 / OpenAPI 3、导出 Swagger 2，周边工具实测（easy-yapi 为按源码回放）
 - [ ] M4 数据迁移：一条命令从 YApi 的 MongoDB 迁移，原密码、token、链接都继续有效
 - [ ] M5 Mock 服务：基于 JSON Schema 和 Mock.js 语法生成数据，不执行脚本
 - [ ] M6 打包发布 v0.1：单文件、Docker 镜像、CI、文档

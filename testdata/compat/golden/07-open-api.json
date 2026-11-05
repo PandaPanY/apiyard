@@ -1110,6 +1110,53 @@
     }
   },
   {
+    "step": "管理员获取 P 的 token",
+    "method": "GET",
+    "url": "/api/project/token?project_id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": "<volatile>",
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "管理员 token 获取项目（不带 id，角色是 admin）",
+    "method": "GET",
+    "url": "/api/project/get?token={{atok}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/open",
+        "cat": [],
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "开放项目",
+        "project_type": "private",
+        "role": "admin",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
     "step": "项目动态（token 操作记在 dev2 名下）",
     "method": "GET",
     "url": "/api/log/list?limit=30&page=1&type=project&typeid={{pid}}",

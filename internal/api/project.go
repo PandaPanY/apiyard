@@ -297,9 +297,14 @@ func (a *API) projectGet(c *call) error {
 		doc["env"] = []map[string]any{{"name": "local", "domain": "http://127.0.0.1"}}
 	}
 	// YApi 查分类和角色时用的是 params.id；只给 project_id（开放 API 的用法）时 id 为空，
-	// 结果分类总是空数组、角色是 false。周边工具按这个结果编写，这里保持一致。
+	// 结果分类总是空数组；角色计算对管理员提前返回 admin，其他用户查不到项目而得到 false。
+	// 周边工具按这个结果编写，这里保持一致。
 	if !ok {
-		doc["cat"], doc["role"] = []any{}, false
+		var role any = false
+		if c.user.Role == "admin" {
+			role = "admin"
+		}
+		doc["cat"], doc["role"] = []any{}, role
 		return c.ok(doc)
 	}
 	cats, err := a.store.CatsByProject(ctx, id)

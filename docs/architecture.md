@@ -179,7 +179,7 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | `/api/interface/getCatMenu` | 私有项目要求编辑权限（访客看不到）；项目不存在时异常没有被处理，Koa 返回 404 | 源码 |
 | 复制项目 | 不建默认分类；分类按参数 `cat` 的顺序新建（index 都是 0），接口按标题排序复制并保留原 index；`is_json5` 取模型默认值 true | 实测 |
 | 开放 API token | 只对 15 个白名单接口和 `/api/open/*` 生效；`project_id` 被强制改成 token 所属项目（参数校验之前）。新格式 token 代表生成它的用户，按其角色判断读权限；旧格式（原始 token）代表 uid 999999 的 system 普通会员，读不了私有项目，但写接口不检查角色。解不开也找不到的 token 被忽略 | `controllers/base.js` + 实测 |
-| token 访问的特殊情况 | `add_cat` 只读请求体，token 不会补上 `project_id`；`project/get` 只给 token 不给 `id` 时，`cat` 为空数组、`role` 为 false；`interface/get` 的接口不属于 token 项目时返回 400 `token有误` | 实测 |
+| token 访问的特殊情况 | `add_cat` 只读请求体，token 不会补上 `project_id`；`project/get` 只给 token 不给 `id` 时，`cat` 为空数组，`role` 对管理员是 admin、其他用户是 false；`interface/get` 的接口不属于 token 项目时返回 400 `token有误` | 实测 |
 | 导出 | 分类按 index 排序，分类内按 index、标题排序，没有接口的分类不导出；`status=open` 只导出公开接口。JSON 导出中分类去掉了 `_id` 等字段，接口却保留完整字段（原版删的是 Mongoose 文档对象上的属性，没有生效）。项目不存在、请求体或响应体不是合法 JSON（Swagger）时返回 502 `下载出错` | `exts/yapi-plugin-export-*` + 实测 |
 | Markdown 导出 | 字符串拼接，可以逐字复现：JSON Schema 转成 HTML 表格，`<p key=N>` 的 N 把值为 undefined 的字段也算在内；数组行的 key 是 `array-N`，N 来自进程内一直递增的计数器 | `common/markdown.js`、`common/schema-transformTo-table.js` |
 | 数据导入 | 界面导入在**浏览器里解析**文件（Swagger、Postman、HAR、YApi JSON），再按"按名称复用或新建分类 → 有 basePath 时修改项目 → 逐个 `interface/add`（普通模式）或 `interface/save`（智能合并 good、完全覆盖 merge）"写入；`interUpload` 不会被请求。开放 API 的 `import_data` 在服务端走同样的流程，没有标签的接口放进第一个分类；参数 `merge` 默认 normal，旧参数名 `dataSync` 会被参数校验去掉，不起作用 | `common/HandleImportData.js` + 实测 |

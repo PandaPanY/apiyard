@@ -2,120 +2,454 @@
   "description": "M3-1：开放 API 的 token 鉴权。token 由 dev2 生成（项目开发者），退出登录后只凭 token 访问白名单接口。原版允许 token 越权操作其他项目，这类请求不放在这里，由单元测试覆盖。依赖场景 03 注册的 dev2",
   "steps": [
     {
-      "name": "管理员登录", "method": "POST", "path": "/api/user/login",
-      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+      "name": "管理员登录",
+      "method": "POST",
+      "path": "/api/user/login",
+      "body": {
+        "email": "admin@admin.com",
+        "password": "ymfe.org"
+      }
     },
     {
-      "name": "找到 dev2", "method": "GET", "path": "/api/user/search", "query": { "q": "dev2" },
-      "capture": { "dev2_uid": "data.0.uid" }
+      "name": "找到 dev2",
+      "method": "GET",
+      "path": "/api/user/search",
+      "query": {
+        "q": "dev2"
+      },
+      "capture": {
+        "dev2_uid": "data.0.uid"
+      }
     },
     {
-      "name": "新建分组", "method": "POST", "path": "/api/group/add",
-      "body": { "group_name": "开放组", "owner_uids": [] },
-      "capture": { "gid": "data._id" }
+      "name": "新建分组",
+      "method": "POST",
+      "path": "/api/group/add",
+      "body": {
+        "group_name": "开放组",
+        "owner_uids": []
+      },
+      "capture": {
+        "gid": "data._id"
+      }
     },
     {
-      "name": "新建私有项目 P", "method": "POST", "path": "/api/project/add",
-      "body": { "name": "开放项目", "basepath": "/open", "group_id": "{{gid}}" },
-      "capture": { "pid": "data._id" }
+      "name": "新建私有项目 P",
+      "method": "POST",
+      "path": "/api/project/add",
+      "body": {
+        "name": "开放项目",
+        "basepath": "/open",
+        "group_id": "{{gid}}"
+      },
+      "capture": {
+        "pid": "data._id"
+      }
     },
     {
-      "name": "新建项目 Q", "method": "POST", "path": "/api/project/add",
-      "body": { "name": "另一个项目", "group_id": "{{gid}}" },
-      "capture": { "qid": "data._id" }
+      "name": "新建项目 Q",
+      "method": "POST",
+      "path": "/api/project/add",
+      "body": {
+        "name": "另一个项目",
+        "group_id": "{{gid}}"
+      },
+      "capture": {
+        "qid": "data._id"
+      }
     },
     {
-      "name": "P 的默认分类", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}" },
-      "capture": { "cat0": "data.cat.0._id" }
+      "name": "P 的默认分类",
+      "method": "GET",
+      "path": "/api/project/get",
+      "query": {
+        "id": "{{pid}}"
+      },
+      "capture": {
+        "cat0": "data.cat.0._id"
+      }
     },
     {
-      "name": "Q 的默认分类", "method": "GET", "path": "/api/project/get", "query": { "id": "{{qid}}" },
-      "capture": { "qcat": "data.cat.0._id" }
+      "name": "Q 的默认分类",
+      "method": "GET",
+      "path": "/api/project/get",
+      "query": {
+        "id": "{{qid}}"
+      },
+      "capture": {
+        "qcat": "data.cat.0._id"
+      }
     },
     {
-      "name": "P 中的接口", "method": "POST", "path": "/api/interface/add",
-      "body": { "project_id": "{{pid}}", "catid": "{{cat0}}", "title": "订单详情", "path": "/orders/{id}", "method": "GET" },
-      "capture": { "ip": "data._id" }
+      "name": "P 中的接口",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat0}}",
+        "title": "订单详情",
+        "path": "/orders/{id}",
+        "method": "GET"
+      },
+      "capture": {
+        "ip": "data._id"
+      }
     },
     {
-      "name": "Q 中的接口", "method": "POST", "path": "/api/interface/add",
-      "body": { "project_id": "{{qid}}", "catid": "{{qcat}}", "title": "Q 的接口", "path": "/q", "method": "GET" },
-      "capture": { "iq": "data._id" }
+      "name": "Q 中的接口",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{qid}}",
+        "catid": "{{qcat}}",
+        "title": "Q 的接口",
+        "path": "/q",
+        "method": "GET"
+      },
+      "capture": {
+        "iq": "data._id"
+      }
     },
     {
-      "name": "dev2 成为 P 的开发者", "method": "POST", "path": "/api/project/add_member",
-      "body": { "id": "{{pid}}", "member_uids": ["{{dev2_uid}}"], "role": "dev" }
+      "name": "dev2 成为 P 的开发者",
+      "method": "POST",
+      "path": "/api/project/add_member",
+      "body": {
+        "id": "{{pid}}",
+        "member_uids": [
+          "{{dev2_uid}}"
+        ],
+        "role": "dev"
+      }
     },
     {
-      "name": "dev2 登录", "method": "POST", "path": "/api/user/login",
-      "body": { "email": "dev2@apiyard.test", "password": "dev2-pass" }
+      "name": "dev2 登录",
+      "method": "POST",
+      "path": "/api/user/login",
+      "body": {
+        "email": "dev2@apiyard.test",
+        "password": "dev2-pass"
+      }
     },
     {
-      "name": "dev2 获取 P 的 token", "method": "GET", "path": "/api/project/token", "query": { "project_id": "{{pid}}" },
-      "capture": { "tok": "data" }, "volatile": ["data"]
-    },
-    { "name": "退出登录", "method": "GET", "path": "/api/user/logout" },
-
-    { "name": "不带 token 被拒绝", "method": "GET", "path": "/api/interface/list", "query": { "project_id": "{{pid}}" }, "errcode": 40011 },
-    { "name": "无效 token 被忽略", "method": "GET", "path": "/api/interface/list", "query": { "project_id": "{{pid}}", "token": "0123456789abcdef" }, "errcode": 40011 },
-    { "name": "非白名单接口不认 token", "method": "GET", "path": "/api/project/list", "query": { "group_id": "{{gid}}", "token": "{{tok}}" }, "errcode": 40011 },
-
-    { "name": "token 获取项目（不带 id）", "method": "GET", "path": "/api/project/get", "query": { "token": "{{tok}}" } },
-    { "name": "token 获取项目（带 id）", "method": "GET", "path": "/api/project/get", "query": { "id": "{{pid}}", "token": "{{tok}}" } },
-    { "name": "token 接口菜单", "method": "GET", "path": "/api/interface/list_menu", "query": { "token": "{{tok}}" } },
-    { "name": "token 接口菜单（project_id 被 token 覆盖）", "method": "GET", "path": "/api/interface/list_menu", "query": { "project_id": "{{qid}}", "token": "{{tok}}" } },
-    { "name": "token 接口列表", "method": "GET", "path": "/api/interface/list", "query": { "token": "{{tok}}", "page": "1", "limit": "10" } },
-    { "name": "token 分类列表", "method": "GET", "path": "/api/interface/getCatMenu", "query": { "token": "{{tok}}" } },
-    { "name": "token 分类下的接口", "method": "GET", "path": "/api/interface/list_cat", "query": { "catid": "{{cat0}}", "token": "{{tok}}" } },
-    { "name": "token 获取接口", "method": "GET", "path": "/api/interface/get", "query": { "id": "{{ip}}", "token": "{{tok}}" } },
-    { "name": "token 获取其他项目的接口", "method": "GET", "path": "/api/interface/get", "query": { "id": "{{iq}}", "token": "{{tok}}" }, "errcode": 400 },
-
-    {
-      "name": "token 新建分类不带 project_id（原版只从请求体读取）", "method": "POST", "path": "/api/interface/add_cat", "query": { "token": "{{tok}}" },
-      "body": { "name": "开放分类" }, "errcode": 400
+      "name": "dev2 获取 P 的 token",
+      "method": "GET",
+      "path": "/api/project/token",
+      "query": {
+        "project_id": "{{pid}}"
+      },
+      "capture": {
+        "tok": "data"
+      },
+      "volatile": [
+        "data"
+      ]
     },
     {
-      "name": "token 新建分类", "method": "POST", "path": "/api/interface/add_cat", "query": { "token": "{{tok}}" },
-      "body": { "name": "开放分类", "desc": "通过 token 新建", "project_id": "{{pid}}" },
-      "capture": { "c1": "data._id" }
+      "name": "退出登录",
+      "method": "GET",
+      "path": "/api/user/logout"
     },
     {
-      "name": "token 新建接口（token 放在请求体里）", "method": "POST", "path": "/api/interface/add",
-      "body": { "token": "{{tok}}", "catid": "{{c1}}", "title": "新建订单", "path": "/orders", "method": "POST", "req_body_type": "json", "req_body_other": "{\"type\":\"object\"}" },
-      "capture": { "i2": "data._id" }
+      "name": "不带 token 被拒绝",
+      "method": "GET",
+      "path": "/api/interface/list",
+      "query": {
+        "project_id": "{{pid}}"
+      },
+      "errcode": 40011
     },
     {
-      "name": "token 新建接口时 project_id 被覆盖", "method": "POST", "path": "/api/interface/add", "query": { "token": "{{tok}}" },
-      "body": { "project_id": "{{qid}}", "catid": "{{c1}}", "title": "取消订单", "path": "/orders/{id}/cancel", "method": "POST" }
+      "name": "无效 token 被忽略",
+      "method": "GET",
+      "path": "/api/interface/list",
+      "query": {
+        "project_id": "{{pid}}",
+        "token": "0123456789abcdef"
+      },
+      "errcode": 40011
     },
     {
-      "name": "token 修改接口", "method": "POST", "path": "/api/interface/up", "query": { "token": "{{tok}}" },
-      "body": { "id": "{{i2}}", "catid": "{{c1}}", "title": "创建订单", "status": "done" }
+      "name": "非白名单接口不认 token",
+      "method": "GET",
+      "path": "/api/project/list",
+      "query": {
+        "group_id": "{{gid}}",
+        "token": "{{tok}}"
+      },
+      "errcode": 40011
     },
     {
-      "name": "token save 已有接口", "method": "POST", "path": "/api/interface/save", "query": { "token": "{{tok}}" },
-      "body": { "catid": "{{c1}}", "title": "创建订单V2", "path": "/orders", "method": "POST" }
+      "name": "token 获取项目（不带 id）",
+      "method": "GET",
+      "path": "/api/project/get",
+      "query": {
+        "token": "{{tok}}"
+      }
     },
     {
-      "name": "token save 新接口", "method": "POST", "path": "/api/interface/save", "query": { "token": "{{tok}}" },
-      "body": { "catid": "{{c1}}", "title": "订单列表", "path": "/orders", "method": "GET" }
+      "name": "token 获取项目（带 id）",
+      "method": "GET",
+      "path": "/api/project/get",
+      "query": {
+        "id": "{{pid}}",
+        "token": "{{tok}}"
+      }
     },
     {
-      "name": "token 修改项目（开发者没有权限）", "method": "POST", "path": "/api/project/up", "query": { "token": "{{tok}}" },
-      "body": { "id": "{{pid}}", "desc": "通过 token 修改" }, "errcode": 405
-    },
-    { "name": "token 修改后的菜单", "method": "GET", "path": "/api/interface/list_menu", "query": { "token": "{{tok}}" } },
-
-    {
-      "name": "管理员再次登录", "method": "POST", "path": "/api/user/login",
-      "body": { "email": "admin@admin.com", "password": "ymfe.org" }
+      "name": "token 接口菜单",
+      "method": "GET",
+      "path": "/api/interface/list_menu",
+      "query": {
+        "token": "{{tok}}"
+      }
     },
     {
-      "name": "项目动态（token 操作记在 dev2 名下）", "method": "GET", "path": "/api/log/list",
-      "query": { "typeid": "{{pid}}", "type": "project", "page": "1", "limit": "30" }, "unordered": ["data.list"]
+      "name": "token 接口菜单（project_id 被 token 覆盖）",
+      "method": "GET",
+      "path": "/api/interface/list_menu",
+      "query": {
+        "project_id": "{{qid}}",
+        "token": "{{tok}}"
+      }
     },
-    { "name": "删除 P", "method": "POST", "path": "/api/project/del", "body": { "id": "{{pid}}" } },
-    { "name": "删除 Q", "method": "POST", "path": "/api/project/del", "body": { "id": "{{qid}}" } },
-    { "name": "清理分组", "method": "POST", "path": "/api/group/del", "body": { "id": "{{gid}}" } }
+    {
+      "name": "token 接口列表",
+      "method": "GET",
+      "path": "/api/interface/list",
+      "query": {
+        "token": "{{tok}}",
+        "page": "1",
+        "limit": "10"
+      }
+    },
+    {
+      "name": "token 分类列表",
+      "method": "GET",
+      "path": "/api/interface/getCatMenu",
+      "query": {
+        "token": "{{tok}}"
+      }
+    },
+    {
+      "name": "token 分类下的接口",
+      "method": "GET",
+      "path": "/api/interface/list_cat",
+      "query": {
+        "catid": "{{cat0}}",
+        "token": "{{tok}}"
+      }
+    },
+    {
+      "name": "token 获取接口",
+      "method": "GET",
+      "path": "/api/interface/get",
+      "query": {
+        "id": "{{ip}}",
+        "token": "{{tok}}"
+      }
+    },
+    {
+      "name": "token 获取其他项目的接口",
+      "method": "GET",
+      "path": "/api/interface/get",
+      "query": {
+        "id": "{{iq}}",
+        "token": "{{tok}}"
+      },
+      "errcode": 400
+    },
+    {
+      "name": "token 新建分类不带 project_id（原版只从请求体读取）",
+      "method": "POST",
+      "path": "/api/interface/add_cat",
+      "query": {
+        "token": "{{tok}}"
+      },
+      "body": {
+        "name": "开放分类"
+      },
+      "errcode": 400
+    },
+    {
+      "name": "token 新建分类",
+      "method": "POST",
+      "path": "/api/interface/add_cat",
+      "query": {
+        "token": "{{tok}}"
+      },
+      "body": {
+        "name": "开放分类",
+        "desc": "通过 token 新建",
+        "project_id": "{{pid}}"
+      },
+      "capture": {
+        "c1": "data._id"
+      }
+    },
+    {
+      "name": "token 新建接口（token 放在请求体里）",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "token": "{{tok}}",
+        "catid": "{{c1}}",
+        "title": "新建订单",
+        "path": "/orders",
+        "method": "POST",
+        "req_body_type": "json",
+        "req_body_other": "{\"type\":\"object\"}"
+      },
+      "capture": {
+        "i2": "data._id"
+      }
+    },
+    {
+      "name": "token 新建接口时 project_id 被覆盖",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "query": {
+        "token": "{{tok}}"
+      },
+      "body": {
+        "project_id": "{{qid}}",
+        "catid": "{{c1}}",
+        "title": "取消订单",
+        "path": "/orders/{id}/cancel",
+        "method": "POST"
+      }
+    },
+    {
+      "name": "token 修改接口",
+      "method": "POST",
+      "path": "/api/interface/up",
+      "query": {
+        "token": "{{tok}}"
+      },
+      "body": {
+        "id": "{{i2}}",
+        "catid": "{{c1}}",
+        "title": "创建订单",
+        "status": "done"
+      }
+    },
+    {
+      "name": "token save 已有接口",
+      "method": "POST",
+      "path": "/api/interface/save",
+      "query": {
+        "token": "{{tok}}"
+      },
+      "body": {
+        "catid": "{{c1}}",
+        "title": "创建订单V2",
+        "path": "/orders",
+        "method": "POST"
+      }
+    },
+    {
+      "name": "token save 新接口",
+      "method": "POST",
+      "path": "/api/interface/save",
+      "query": {
+        "token": "{{tok}}"
+      },
+      "body": {
+        "catid": "{{c1}}",
+        "title": "订单列表",
+        "path": "/orders",
+        "method": "GET"
+      }
+    },
+    {
+      "name": "token 修改项目（开发者没有权限）",
+      "method": "POST",
+      "path": "/api/project/up",
+      "query": {
+        "token": "{{tok}}"
+      },
+      "body": {
+        "id": "{{pid}}",
+        "desc": "通过 token 修改"
+      },
+      "errcode": 405
+    },
+    {
+      "name": "token 修改后的菜单",
+      "method": "GET",
+      "path": "/api/interface/list_menu",
+      "query": {
+        "token": "{{tok}}"
+      }
+    },
+    {
+      "name": "管理员再次登录",
+      "method": "POST",
+      "path": "/api/user/login",
+      "body": {
+        "email": "admin@admin.com",
+        "password": "ymfe.org"
+      }
+    },
+    {
+      "name": "管理员获取 P 的 token",
+      "method": "GET",
+      "path": "/api/project/token",
+      "query": {
+        "project_id": "{{pid}}"
+      },
+      "capture": {
+        "atok": "data"
+      },
+      "volatile": [
+        "data"
+      ]
+    },
+    {
+      "name": "管理员 token 获取项目（不带 id，角色是 admin）",
+      "method": "GET",
+      "path": "/api/project/get",
+      "query": {
+        "token": "{{atok}}"
+      }
+    },
+    {
+      "name": "项目动态（token 操作记在 dev2 名下）",
+      "method": "GET",
+      "path": "/api/log/list",
+      "query": {
+        "typeid": "{{pid}}",
+        "type": "project",
+        "page": "1",
+        "limit": "30"
+      },
+      "unordered": [
+        "data.list"
+      ]
+    },
+    {
+      "name": "删除 P",
+      "method": "POST",
+      "path": "/api/project/del",
+      "body": {
+        "id": "{{pid}}"
+      }
+    },
+    {
+      "name": "删除 Q",
+      "method": "POST",
+      "path": "/api/project/del",
+      "body": {
+        "id": "{{qid}}"
+      }
+    },
+    {
+      "name": "清理分组",
+      "method": "POST",
+      "path": "/api/group/del",
+      "body": {
+        "id": "{{gid}}"
+      }
+    }
   ]
 }
