@@ -1,4 +1,4 @@
-// Command apiyard 启动 ApiYard 服务。
+// Command apiyard 启动 ApiYard 服务；apiyard migrate 把 YApi 的数据迁移过来。
 package main
 
 import (
@@ -23,6 +23,16 @@ func main() {
 }
 
 func run(logger *slog.Logger) error {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	if len(os.Args) > 1 && os.Args[1] == "migrate" {
+		err := runMigrate(ctx, os.Args[2:], os.Stdout)
+		if errors.Is(err, flag.ErrHelp) {
+			return nil
+		}
+		return err
+	}
+
 	cfg, err := config.Load(os.Args[1:])
 	if errors.Is(err, flag.ErrHelp) {
 		return nil
@@ -30,8 +40,5 @@ func run(logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
-
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
 	return server.Run(ctx, cfg, logger)
 }

@@ -9,6 +9,9 @@ services:
     restart: unless-stopped
     volumes:
       - mongo-data:/data/db
+    # 迁移测试（M4）要直连 MongoDB，同样只绑定 127.0.0.1，通过 SSH 隧道访问
+    ports:
+      - "127.0.0.1:13017:27017"
     healthcheck:
       test: ["CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping').ok"]
       interval: 5s

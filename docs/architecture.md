@@ -22,14 +22,14 @@ internal/web/           托管预构建前端，注入前端补丁层（D6）   
 internal/compat/        兼容测试框架：执行场景、归一化、比对 golden      (M0.5)
 internal/openapi/       Swagger 2 / OpenAPI 3 转换为 YApi 接口（导入）   (M3)
 internal/jsjson/        按 JS 规则解析和输出 JSON（保持键顺序），导入导出共用 (M3)
-internal/migrate/       从 YApi 的 MongoDB 导入数据                       (M4)
+internal/migrate/       从 YApi 的 MongoDB 或 mongodump 目录迁移数据     (M4)
 internal/mock/          Mock 数据生成与 Mock 路由                         (M5)
 internal/mcp/           MCP Server                                       (M7)
 web/yapi/               预构建前端（由 tools/fetch-yapi-web 下载，不入库），M6 用 embed 打进可执行文件
-tools/                  compat（录制 / 比对兼容场景）、fetch-yapi-web（下载前端）
+tools/                  compat（录制 / 比对兼容场景）、migcheck（核对迁移结果）、fetch-yapi-web（下载前端）
 ```
 
-依赖方向：`server → api/web`，`api → auth/store/yapitoken/schemafake/openapi/jsjson`，`openapi → jsjson`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
+依赖方向：`server → api/web`，`api → auth/store/yapitoken/schemafake/openapi/jsjson`，`openapi → jsjson`，`migrate → store/jsjson`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
 
 ## 关键决策
 
@@ -185,12 +185,17 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 数据导入 | 界面导入在**浏览器里解析**文件（Swagger、Postman、HAR、YApi JSON），再按"按名称复用或新建分类 → 有 basePath 时修改项目 → 逐个 `interface/add`（普通模式）或 `interface/save`（智能合并 good、完全覆盖 merge）"写入；`interUpload` 不会被请求。开放 API 的 `import_data` 在服务端走同样的流程，没有标签的接口放进第一个分类；参数 `merge` 默认 normal，旧参数名 `dataSync` 会被参数校验去掉，不起作用 | `common/HandleImportData.js` + 实测 |
 | Swagger 转换 | 由 swagger-client 展开 `$ref`，展开后的对象末尾加 `"$$ref": "原引用"`；循环引用的内层不展开；`allOf` 深度合并；路径级参数追加到操作参数后面。版本号形如 `v1` 的 tag 不作为分类 | `exts/yapi-plugin-import-swagger/run.js` + 容器内运行原版代码对照 |
 
-### 数据集合（M3 迁移范围）
+### 数据集合（M4 迁移范围）
 
 | YApi 集合 | 是否迁移 | 说明 |
 |---|---|---|
 | user、group、project、token | 是 | 核心数据 |
 | interface_cat、interface | 是 | 核心数据 |
+| follow、log、avatar | 是 | 关注、操作动态、头像；数据量不大，迁移后界面与原来一样 |
 | interface_col、interface_case | 延后 | 自动化测试相关，不在 v0.1 范围内 |
-| follow | 是 | 数据量小，方便用户保留关注关系 |
-| log、avatar、storage | 否 | 日志、头像、插件存储 |
+| wiki、adv_mock、statis_mock、storage 等 | 否 | 插件数据 |
+
+迁移的细节（类型转换、孤儿数据、重复成员）见 [migration.md](migration.md)。另外两点是迁移实测时才发现的：
+
+- 动态只按秒级时间排序，同一秒内的记录 MongoDB 按插入顺序返回，所以 ApiYard 同一秒内按 ID 升序。分组动态是 `$or` 查询，同一秒内分组和各项目的动态谁先谁后取决于 MongoDB 的执行计划（与组内项目数有关），不去复现。
+- YApi 删除项目时不清理它的分类和 token，迁移时作为孤儿数据跳过。

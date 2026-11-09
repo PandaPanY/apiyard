@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/PandaPanY/apiyard/internal/yapitoken"
@@ -108,8 +109,15 @@ func TestLegacyRawToken(t *testing.T) {
 		}
 	}
 	logs := e.admin.call("GET", "/api/log/list?type=project&typeid="+q(e.pid), nil)["data"].(map[string]any)["list"].([]any)
-	if logs[0].(map[string]any)["username"] != "system" {
-		t.Errorf("动态应记在 system 名下: %v", logs[0])
+	// 动态可能和建项目的记录在同一秒，那样会排在后面，所以找最新的一条接口动态
+	var last map[string]any
+	for _, l := range logs {
+		if m := l.(map[string]any); strings.Contains(m["content"].(string), "旧 token") {
+			last = m
+		}
+	}
+	if last == nil || last["username"] != "system" {
+		t.Errorf("动态应记在 system 名下: %v", logs)
 	}
 
 	// 公开项目可以读

@@ -38,6 +38,20 @@ go run ./tools/compat check -target http://localhost:3000 -run user
 
 `check` 发现差异时退出码为 1，可以直接用于 CI。
 
+## 迁移核对
+
+兼容场景从空库开始；迁移测试则要验证已有的数据搬过来之后行为不变。迁移保留了全部 ID，所以两边的响应应当完全相同，不需要归一化。
+
+```bash
+# 隧道同时转发 MongoDB（对照实例把它绑定在服务器的 127.0.0.1:13017）
+ssh -N -L 13000:127.0.0.1:13000 -L 13017:127.0.0.1:13017 testenv
+go run ./cmd/apiyard migrate -mongo mongodb://127.0.0.1:13017/yapi -db migrated.db -overwrite
+go run ./cmd/apiyard -addr 127.0.0.1:3101 -db migrated.db -token-salt abcde
+go run ./tools/migcheck -yapi http://localhost:13000 -yard http://127.0.0.1:3101
+```
+
+`migcheck` 用管理员登录两边，遍历用户、分组、项目、分类、接口、动态、导出，并用 YApi 生成的 token 调用开放 API，逐个对比响应。动态列表同一秒内的先后不比较（见 architecture.md），HTML 导出本来就不逐字一致，也不比较。YApi 在第一次读取 `project/token` 时才给项目生成 token，迁移时还没有 token 的项目两边会各自生成一个不同的；遇到这种情况，重新迁移一次再核对。用周边工具核对见 [`testenv/eco`](../testenv/eco/README.md) 的 `migrated.sh`。
+
 ## 场景格式
 
 ```json

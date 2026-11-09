@@ -26,6 +26,10 @@ bash run.sh
 
 `run.sh` 会重置对照实例，结果在 `out/`，有差异时退出码为 1。
 
+### 迁移后的实测
+
+`migrated.sh` 不重置对照实例：它用 YApi 里原有的项目 token，让 yapi-to-typescript 分别对原版和迁移后的 ApiYard 生成代码，要求逐字一致。先把对照实例迁移到 `/data/apiyard-testenv/apiyard/migrated.db`（见 [docs/testing.md](../../docs/testing.md) 的“迁移核对”），再运行 `bash migrated.sh`。
+
 ## 注意
 
 - 三个工具依次使用同一个项目，顺序固定（YTT → easy-yapi → MCP），两边相同。

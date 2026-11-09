@@ -26,8 +26,10 @@ func (s *Store) CreateLog(ctx context.Context, l Log) error {
 	return err
 }
 
-// logOrder：新的在前。YApi 只按秒级时间排序，同一秒内的顺序不确定；这里再按 ID 排，结果稳定。
-const logOrder = " ORDER BY add_time DESC, id DESC"
+// logOrder：新的在前。YApi 只按秒级时间排序（sort({add_time: -1})），同一秒内的记录 MongoDB 按索引里的插入顺序返回，
+// 所以这里同一秒内按 ID 升序。迁移的数据里同一秒的动态很常见（例如批量导入），单个对象的动态顺序与 YApi 一致。
+// 分组动态是 $or 查询，同一秒内分组和各项目的动态谁先谁后取决于 MongoDB 的执行计划，这里不去复现。
+const logOrder = " ORDER BY add_time DESC, id ASC"
 
 // LogFilter 是查询某个对象动态的条件。
 type LogFilter struct {

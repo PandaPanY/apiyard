@@ -16,7 +16,7 @@ ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成�
 
 - **单文件部署**：Go 编译，前端内嵌，默认使用 SQLite，不需要 MongoDB
 - **兼容 YApi 开放 API**：15 个开放接口与 YApi 保持一致，easy-yapi、yapi-to-typescript、Yapi-MCP 等工具无需修改
-- **一键迁移**：直接从 YApi 的 MongoDB 导入用户、分组、项目和接口，原有 token 继续可用
+- **一键迁移**：直接从 YApi 的 MongoDB（或 mongodump 导出的目录）导入用户、分组、项目、接口和动态，原有账号密码、token、接口链接都继续有效
 - **安全的 Mock**：默认只按 JSON Schema 生成数据；脚本 Mock 运行在没有系统访问能力的引擎里
 - **内网友好**：去掉原版前端的 Google Analytics 统计和外部版本检查，不向外部站点发送任何数据
 - **标准格式**：支持导入导出 OpenAPI 3 / Swagger 2
@@ -29,7 +29,7 @@ ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成�
 - [x] M1 账号与分组：SQLite 存储、登录会话、角色权限、用户 / 分组接口（24 个）
 - [ ] M2 项目与接口：项目 / 接口 / 动态接口（38 个），界面核心流程可用，公开仓库
 - [x] M3 开放 API 与导入导出：token 兼容，导入 Swagger 2 / OpenAPI 3、导出 Swagger 2，周边工具实测（easy-yapi 为按源码回放）
-- [ ] M4 数据迁移：一条命令从 YApi 的 MongoDB 迁移，原密码、token、链接都继续有效
+- [x] M4 数据迁移：一条命令从 YApi 的 MongoDB 迁移，原密码、token、链接都继续有效（Mock 地址随 M5 生效）
 - [ ] M5 Mock 服务：基于 JSON Schema 和 Mock.js 语法生成数据，不执行脚本
 - [ ] M6 打包发布 v0.1：单文件、Docker 镜像、CI、文档
 - [ ] M7 MCP Server（v0.2）
@@ -77,6 +77,18 @@ golangci-lint run
 | `-yapi-upstream` | `APIYARD_YAPI_UPSTREAM` | 空 | 开发用：把**全部** `/api`、`/mock` 请求转发给原版 YApi，用于对比行为（对照实例见 [`testenv/yapi`](testenv/yapi/README.md)） |
 
 本地开发时可以这样运行：`go run ./cmd/apiyard -db apiyard-dev.db -admin-password ymfe.org`。
+
+### 从 YApi 迁移
+
+```bash
+# 预检：报告各类数据的数量、会跳过和修正的记录，不写入任何数据
+apiyard migrate -mongo "mongodb://127.0.0.1:27017/yapi" -dry-run
+# 正式迁移，然后用 YApi 配置文件里的 passsalt 启动
+apiyard migrate -mongo "mongodb://127.0.0.1:27017/yapi" -db apiyard.db
+apiyard -db apiyard.db -token-salt 原来的passsalt
+```
+
+MongoDB 低于 3.6 时，先用 `mongodump` 导出，再用 `-dump <目录>` 代替 `-mongo`。完整步骤见 [`docs/migration.md`](docs/migration.md)。
 
 接口兼容性测试（与原版 YApi 逐字段比对）见 [`docs/testing.md`](docs/testing.md)。
 

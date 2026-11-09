@@ -151,8 +151,8 @@ func TestLogQueries(t *testing.T) {
 	}
 
 	logs, _ := s.ListLogs(ctx, LogFilter{Type: "project", TypeID: p.ID}, 1, 10)
-	if len(logs) != 2 || logs[0].Content != "p2" {
-		t.Errorf("同一秒内的动态应按 ID 倒序: %+v", logs)
+	if len(logs) != 2 || logs[0].Content != "p1" {
+		t.Errorf("同一秒内的动态应按 ID 升序（与 YApi 相同）: %+v", logs)
 	}
 	iface := int64(7)
 	if n, _ := s.CountLogs(ctx, LogFilter{Type: "project", TypeID: p.ID, InterfaceID: &iface}); n != 1 {
