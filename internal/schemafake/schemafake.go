@@ -10,6 +10,8 @@ import (
 	"math/rand/v2"
 	"strings"
 	"time"
+
+	"github.com/PandaPanY/apiyard/internal/mockjs"
 )
 
 // Options 控制生成方式。
@@ -31,12 +33,14 @@ func Generate(schema any, opts Options) (any, error) {
 		return nil, ErrInvalidSchema
 	}
 	g := &generator{root: root, opts: opts}
-	return g.value(root, 0), nil
+	v := g.value(root, 0)
+	return v, g.err
 }
 
 type generator struct {
 	root map[string]any
 	opts Options
+	err  error // Mock 规则出错（与原版一样，整个生成失败）
 }
 
 // #nosec G404 -- 示例数据不需要密码学安全的随机数
@@ -68,10 +72,16 @@ func (g *generator) value(s map[string]any, depth int) any {
 	if list, ok := s["enum"].([]any); ok && len(list) > 0 {
 		return list[randInt(0, int64(len(list)-1))]
 	}
-	// YApi 的 JSON Schema 编辑器把 Mock 规则写在 mock.mock 中；普通文本直接作为值，@ 开头的 Mock 占位符留到 Mock 功能实现
+	// YApi 的 JSON Schema 编辑器把 Mock 规则写在 mock.mock 中，YApi 给 json-schema-faker 注册了 mock 扩展，
+	// 值是 Mock.mock(规则) 的结果（不按 type 转换，例如 @integer 得到数字）
 	if m, ok := s["mock"].(map[string]any); ok {
-		if text, ok := m["mock"].(string); ok && text != "" && !strings.HasPrefix(text, "@") {
-			return text
+		if text, ok := m["mock"].(string); ok && text != "" {
+			v, err := mockjs.Mock(text)
+			if err != nil {
+				g.err = err
+				return nil
+			}
+			return v
 		}
 	}
 

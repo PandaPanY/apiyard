@@ -24,6 +24,7 @@ var implementedScenarios = map[string]bool{
 	"07-open-api":       true,
 	"08-export":         true,
 	"09-import":         true,
+	"10-mock":           true,
 }
 
 // TestCompatWithYApi 在进程内启动一个全新的 ApiYard，按顺序执行已实现的兼容场景，

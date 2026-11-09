@@ -1,0 +1,835 @@
+[
+ {
+  "schema": {
+   "type": "object",
+   "required": [
+    "a",
+    "b",
+    "c"
+   ]
+  },
+  "data": {},
+  "message": "data 应当有必需属性 .a"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "required": [
+    "a",
+    "b",
+    "c"
+   ]
+  },
+  "data": {
+   "a": 1
+  },
+  "message": "data 应当有必需属性 .b"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "required": [
+    "a",
+    "b",
+    "c"
+   ]
+  },
+  "data": {
+   "b": 1
+  },
+  "message": "data 应当有必需属性 .a"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "required": [
+    "a",
+    "b",
+    "c"
+   ]
+  },
+  "data": {
+   "a": 1,
+   "b": 1
+  },
+  "message": "data 应当有必需属性 .c"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "required": [
+    "a",
+    "b",
+    "c"
+   ]
+  },
+  "data": {
+   "c": 1
+  },
+  "message": "data 应当有必需属性 .a"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "required": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k"
+   ]
+  },
+  "data": {},
+  "message": "data 应当有必需属性 .a"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "required": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k"
+   ]
+  },
+  "data": {
+   "a": 1
+  },
+  "message": "data 应当有必需属性 .b"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string",
+     "minLength": 2,
+     "maxLength": 3,
+     "pattern": "^a"
+    }
+   }
+  },
+  "data": {
+   "name": 1
+  },
+  "message": "data.name 应当是 string 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string",
+     "minLength": 2,
+     "maxLength": 3,
+     "pattern": "^a"
+    }
+   }
+  },
+  "data": {
+   "name": "a"
+  },
+  "message": "data.name 不应少于 2 个字符"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string",
+     "minLength": 2,
+     "maxLength": 3,
+     "pattern": "^a"
+    }
+   }
+  },
+  "data": {
+   "name": "abcd"
+  },
+  "message": "data.name 不应多于 3 个字符"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string",
+     "minLength": 2,
+     "maxLength": 3,
+     "pattern": "^a"
+    }
+   }
+  },
+  "data": {
+   "name": "bb"
+  },
+  "message": "data.name 应当匹配模式 \"^a\""
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string",
+     "minLength": 2,
+     "maxLength": 3,
+     "pattern": "^a"
+    }
+   }
+  },
+  "data": {
+   "name": "中文字"
+  },
+  "message": "data.name 应当匹配模式 \"^a\""
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "n": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 5,
+     "exclusiveMaximum": true,
+     "multipleOf": 2
+    }
+   }
+  },
+  "data": {
+   "n": 1.5
+  },
+  "message": "data.n 应当是 integer 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "n": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 5,
+     "exclusiveMaximum": true,
+     "multipleOf": 2
+    }
+   }
+  },
+  "data": {
+   "n": 0
+  },
+  "message": "data.n 应当为 >= 1"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "n": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 5,
+     "exclusiveMaximum": true,
+     "multipleOf": 2
+    }
+   }
+  },
+  "data": {
+   "n": 5
+  },
+  "message": "data.n 应当为 < 5"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "n": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 5,
+     "exclusiveMaximum": true,
+     "multipleOf": 2
+    }
+   }
+  },
+  "data": {
+   "n": 3
+  },
+  "message": "data.n 应当是 2 的整数倍"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "n": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 5,
+     "exclusiveMaximum": true,
+     "multipleOf": 2
+    }
+   }
+  },
+  "data": {
+   "n": "2"
+  },
+  "message": "data.n 应当是 integer 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "t": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1,
+     "maxItems": 2,
+     "uniqueItems": true
+    }
+   }
+  },
+  "data": {
+   "t": []
+  },
+  "message": "data.t 不应少于 1 个项"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "t": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1,
+     "maxItems": 2,
+     "uniqueItems": true
+    }
+   }
+  },
+  "data": {
+   "t": [
+    1
+   ]
+  },
+  "message": "data.t[0] 应当是 string 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "t": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1,
+     "maxItems": 2,
+     "uniqueItems": true
+    }
+   }
+  },
+  "data": {
+   "t": [
+    "a",
+    "a"
+   ]
+  },
+  "message": "data.t 不应当含有重复项 (第 0 项与第 1 项是重复的)"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "t": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1,
+     "maxItems": 2,
+     "uniqueItems": true
+    }
+   }
+  },
+  "data": {
+   "t": [
+    "a",
+    "b",
+    "c"
+   ]
+  },
+  "message": "data.t 不应多于 2 个项"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "o": {
+     "type": "object",
+     "properties": {
+      "x-y": {
+       "type": "number"
+      },
+      "z": {
+       "enum": [
+        1,
+        2
+       ]
+      }
+     }
+    }
+   }
+  },
+  "data": {
+   "o": {
+    "x-y": "a"
+   }
+  },
+  "message": "data.o['x-y'] 应当是 number 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "o": {
+     "type": "object",
+     "properties": {
+      "x-y": {
+       "type": "number"
+      },
+      "z": {
+       "enum": [
+        1,
+        2
+       ]
+      }
+     }
+    }
+   }
+  },
+  "data": {
+   "o": {
+    "z": 3
+   }
+  },
+  "message": "data.o.z 应当是预设定的枚举值之一"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "u": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number",
+       "minimum": 10
+      }
+     ]
+    },
+    "w": {
+     "oneOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "integer"
+      }
+     ]
+    },
+    "v": {
+     "not": {
+      "type": "null"
+     }
+    }
+   }
+  },
+  "data": {
+   "u": true
+  },
+  "message": "data.u 应当是 string 类型\ndata.u 应当是 number 类型\ndata.u 数据应为 anyOf 所指定的其中一个"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "u": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number",
+       "minimum": 10
+      }
+     ]
+    },
+    "w": {
+     "oneOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "integer"
+      }
+     ]
+    },
+    "v": {
+     "not": {
+      "type": "null"
+     }
+    }
+   }
+  },
+  "data": {
+   "u": 5
+  },
+  "message": "data.u 应当是 string 类型\ndata.u 应当为 >= 10\ndata.u 数据应为 anyOf 所指定的其中一个"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "u": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number",
+       "minimum": 10
+      }
+     ]
+    },
+    "w": {
+     "oneOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "integer"
+      }
+     ]
+    },
+    "v": {
+     "not": {
+      "type": "null"
+     }
+    }
+   }
+  },
+  "data": {
+   "w": 1
+  },
+  "message": "data.w 只能匹配一个 \"oneOf\" 中的 schema"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "u": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number",
+       "minimum": 10
+      }
+     ]
+    },
+    "w": {
+     "oneOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "integer"
+      }
+     ]
+    },
+    "v": {
+     "not": {
+      "type": "null"
+     }
+    }
+   }
+  },
+  "data": {
+   "w": "x"
+  },
+  "message": "data.w 应当是 number 类型\ndata.w 应当是 integer 类型\ndata.w 只能匹配一个 \"oneOf\" 中的 schema"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "u": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number",
+       "minimum": 10
+      }
+     ]
+    },
+    "w": {
+     "oneOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "integer"
+      }
+     ]
+    },
+    "v": {
+     "not": {
+      "type": "null"
+     }
+    }
+   }
+  },
+  "data": {
+   "v": null
+  },
+  "message": "data.v 不应当匹配 \"not\" schema"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "a": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": {
+    "type": "number"
+   },
+   "minProperties": 1,
+   "maxProperties": 2
+  },
+  "data": {},
+  "message": "data 不应有少于 1 个属性"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "a": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": {
+    "type": "number"
+   },
+   "minProperties": 1,
+   "maxProperties": 2
+  },
+  "data": {
+   "a": "x",
+   "b": "s"
+  },
+  "message": "data['b'] 应当是 number 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "a": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": {
+    "type": "number"
+   },
+   "minProperties": 1,
+   "maxProperties": 2
+  },
+  "data": {
+   "a": "x",
+   "b": 1,
+   "c": 2
+  },
+  "message": "data 不应有多于 2 个属性"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "list": {
+     "type": "array",
+     "items": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "additionalItems": false
+    }
+   }
+  },
+  "data": {
+   "list": [
+    1
+   ]
+  },
+  "message": "data.list[0] 应当是 string 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "list": {
+     "type": "array",
+     "items": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "additionalItems": false
+    }
+   }
+  },
+  "data": {
+   "list": [
+    "a",
+    "b"
+   ]
+  },
+  "message": "data.list[1] 应当是 number 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "list": {
+     "type": "array",
+     "items": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "additionalItems": false
+    }
+   }
+  },
+  "data": {
+   "list": [
+    "a",
+    1,
+    2
+   ]
+  },
+  "message": "data.list 不允许超过2个元素"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "definitions": {
+    "id": {
+     "type": "integer"
+    }
+   },
+   "properties": {
+    "id": {
+     "$ref": "#/definitions/id"
+    }
+   }
+  },
+  "data": {
+   "id": "x"
+  },
+  "message": "data.id 应当是 integer 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "b": {
+     "type": "boolean"
+    },
+    "s": {
+     "type": "string",
+     "format": "email"
+    }
+   }
+  },
+  "data": {
+   "b": "true"
+  },
+  "message": "data.b 应当是 boolean 类型"
+ },
+ {
+  "schema": {
+   "type": "object",
+   "properties": {
+    "b": {
+     "type": "boolean"
+    },
+    "s": {
+     "type": "string",
+     "format": "email"
+    }
+   }
+  },
+  "data": {
+   "s": "x"
+  },
+  "message": ""
+ },
+ {
+  "schema": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id"
+    ]
+   }
+  },
+  "data": [
+   {}
+  ],
+  "message": "data[0] 应当有必需属性 .id"
+ },
+ {
+  "schema": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id"
+    ]
+   }
+  },
+  "data": {},
+  "message": "data 应当是 array 类型"
+ }
+]

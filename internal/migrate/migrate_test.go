@@ -66,6 +66,7 @@ func sample() memSource {
 		"project": {
 			{{Key: "_id", Value: 30}, {Key: "uid", Value: 11}, {Key: "name", Value: "支付"}, {Key: "group_id", Value: 20},
 				{Key: "project_type", Value: "private"}, {Key: "basepath", Value: "/pay"},
+				{Key: "is_mock_open", Value: true}, {Key: "project_mock_script", Value: "mockJson.a = 1"},
 				{Key: "env", Value: bson.A{bson.D{{Key: "_id", Value: oid}, {Key: "name", Value: "local"}, {Key: "domain", Value: "http://127.0.0.1"}}}},
 				{Key: "members", Value: bson.A{bson.D{{Key: "uid", Value: 12}, {Key: "role", Value: "owner"}, {Key: "email_notice", Value: false}}}}},
 			{{Key: "_id", Value: 31}, {Key: "name", Value: "孤儿项目"}, {Key: "group_id", Value: 99}, {Key: "project_type", Value: "public"}},
@@ -152,7 +153,7 @@ func TestMigrate(t *testing.T) {
 	var out bytes.Buffer
 	rep.Print(&out)
 	for _, s := range []string{"所属分组不存在", "所属分类不存在", "_id 不是正整数", "UNIQUE constraint failed: users.email",
-		"项目已有 token", "成员重复", "role 的取值 \"boss\" 无效", "req_body_type 的取值 \"\" 无效"} {
+		"项目已有 token", "成员重复", "全局 Mock 脚本", "role 的取值 \"boss\" 无效", "req_body_type 的取值 \"\" 无效"} {
 		if !strings.Contains(out.String(), s) {
 			t.Errorf("报告里应提到 %q:\n%s", s, out.String())
 		}

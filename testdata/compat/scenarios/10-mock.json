@@ -1,0 +1,842 @@
+{
+  "description": "M5：Mock 服务。地址匹配（完整路径、query_path、路径参数）、Mock.js 规则和占位符、${query.x} 变量、JSON Schema、各种响应类型、跨域、严格模式校验。随机生成的响应只比对形状",
+  "steps": [
+    {
+      "name": "管理员登录",
+      "method": "POST",
+      "path": "/api/user/login",
+      "body": {
+        "email": "admin@admin.com",
+        "password": "ymfe.org"
+      }
+    },
+    {
+      "name": "新建分组",
+      "method": "POST",
+      "path": "/api/group/add",
+      "body": {
+        "group_name": "Mock 组",
+        "owner_uids": []
+      },
+      "capture": {
+        "gid": "data._id"
+      }
+    },
+    {
+      "name": "新建项目",
+      "method": "POST",
+      "path": "/api/project/add",
+      "body": {
+        "name": "Mock 项目",
+        "basepath": "/api",
+        "group_id": "{{gid}}",
+        "desc": "Mock 测试"
+      },
+      "capture": {
+        "pid": "data._id"
+      }
+    },
+    {
+      "name": "默认分类",
+      "method": "GET",
+      "path": "/api/project/get",
+      "query": {
+        "id": "{{pid}}"
+      },
+      "capture": {
+        "cat": "data.cat.0._id"
+      }
+    },
+    {
+      "name": "新建接口：用户列表",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "用户列表",
+        "path": "/users",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "{\"code\": 0, \"data|2-4\": [{\"id|+1\": 1, \"name\": \"@cname\", \"email\": \"@email\", \"age|18-60\": 1, \"active|1\": true, \"created\": \"@datetime\", \"tags|1-3\": [\"@word\"], \"score|1-100.1-2\": 1, \"city\": \"@city(true)\", \"ip\": \"@ip\", \"guid\": \"@guid\", \"color\": \"@color\", \"url\": \"@url\"}], \"phone|regexp\": \"1[3-9]\\\\d{9}\"}"
+      },
+      "capture": {
+        "i1": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：用户详情",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "用户详情",
+        "path": "/users/{id}",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "{\"id\": \"${query.id}\", \"q\": \"${query.q}\", \"params\": \"${params.id}\", \"none\": \"${query.none}\"}"
+      },
+      "capture": {
+        "i2": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：新建用户",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "新建用户",
+        "path": "/users",
+        "method": "POST",
+        "req_headers": [],
+        "req_body_form": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{name: '${body.name}', // JSON5 注释\n tag: '${body.tags}', all: '${params.name}',}"
+      },
+      "capture": {
+        "i3": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：纯文本",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "纯文本",
+        "path": "/plain",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "raw",
+        "res_body": "pong @email"
+      },
+      "capture": {
+        "i4": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：HTML",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "HTML",
+        "path": "/html",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "raw",
+        "res_body": "  <p>hi</p>"
+      },
+      "capture": {
+        "i5": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：空响应体",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "空响应体",
+        "path": "/empty",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": ""
+      },
+      "capture": {
+        "i6": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：数字",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "数字",
+        "path": "/number",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "123"
+      },
+      "capture": {
+        "i7": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：null",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "null",
+        "path": "/null",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "null"
+      },
+      "capture": {
+        "i8": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：不是 JSON",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "不是 JSON",
+        "path": "/text",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "hello @upper(\"x\")"
+      },
+      "capture": {
+        "i9": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：JSON Schema",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "JSON Schema",
+        "path": "/schema",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body_is_json_schema": true,
+        "res_body": "{\"type\": \"object\", \"required\": [\"id\", \"name\", \"email\", \"ok\", \"list\"], \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1, \"maximum\": 9}, \"name\": {\"type\": \"string\", \"mock\": {\"mock\": \"@cname\"}}, \"email\": {\"type\": \"string\", \"mock\": {\"mock\": \"@email\"}}, \"ok\": {\"type\": \"boolean\"}, \"list\": {\"type\": \"array\", \"minItems\": 2, \"maxItems\": 2, \"items\": {\"type\": \"object\", \"required\": [\"n\"], \"properties\": {\"n\": {\"type\": \"number\", \"mock\": {\"mock\": \"@integer(1, 5)\"}}}}}}}"
+      },
+      "capture": {
+        "i10": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：查询参数一",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "查询参数一",
+        "path": "/search?type=1",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "{\"type\": 1}"
+      },
+      "capture": {
+        "i11": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：查询参数二",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "查询参数二",
+        "path": "/search?type=2&page=1",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "{\"type\": 2}"
+      },
+      "capture": {
+        "i12": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：段内参数",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "段内参数",
+        "path": "/files/{name}.json",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "{\"file\": \"${query.name}\"}"
+      },
+      "capture": {
+        "i13": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：冒号参数",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "冒号参数",
+        "path": "/orders/:oid/items",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "{\"oid\": \"${query.oid}\"}"
+      },
+      "capture": {
+        "i14": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：Mock.js 出错",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "Mock.js 出错",
+        "path": "/broken",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "{\"img\": \"@dataImage\", \"n|1-3\": 1}"
+      },
+      "capture": {
+        "i15": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：取不到的变量",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "取不到的变量",
+        "path": "/bad-var",
+        "method": "POST",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "json",
+        "res_body": "{\"v\": \"${body.x.y}\"}"
+      },
+      "capture": {
+        "i16": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：表单",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "表单",
+        "path": "/form",
+        "method": "POST",
+        "req_headers": [],
+        "req_body_form": [],
+        "req_body_type": "form",
+        "res_body_type": "json",
+        "res_body": "{\"a\": \"${body.a}\", \"f\": \"${body.f}\", \"all\": \"${body}\"}"
+      },
+      "capture": {
+        "i17": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：XML",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "XML",
+        "path": "/xml",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "res_body_type": "xml",
+        "res_body": "<a>@email</a>"
+      },
+      "capture": {
+        "i18": "data._id"
+      }
+    },
+    {
+      "name": "Mock 规则（形状）",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/users",
+      "shape": true,
+      "responseHeaders": [
+        "Content-Type"
+      ]
+    },
+    {
+      "name": "路径参数和查询参数",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/users/42",
+      "query": {
+        "q": "搜索"
+      }
+    },
+    {
+      "name": "请求体变量（JSON5 模板）",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/users",
+      "body": {
+        "name": "tom",
+        "tags": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    {
+      "name": "纯文本不处理占位符",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/plain",
+      "responseHeaders": [
+        "Content-Type"
+      ]
+    },
+    {
+      "name": "以 < 开头为 HTML",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/html",
+      "responseHeaders": [
+        "Content-Type"
+      ]
+    },
+    {
+      "name": "空响应体",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/empty",
+      "responseHeaders": [
+        "Content-Type"
+      ]
+    },
+    {
+      "name": "数字",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/number",
+      "responseHeaders": [
+        "Content-Type"
+      ]
+    },
+    {
+      "name": "null 返回 204",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/null"
+    },
+    {
+      "name": "不是 JSON 的模板按字符串处理",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/text",
+      "responseHeaders": [
+        "Content-Type"
+      ]
+    },
+    {
+      "name": "JSON Schema（形状）",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/schema",
+      "shape": true
+    },
+    {
+      "name": "XML 原样返回",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/xml",
+      "responseHeaders": [
+        "Content-Type"
+      ]
+    },
+    {
+      "name": "query_path：type=1",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/search",
+      "query": {
+        "type": "1"
+      }
+    },
+    {
+      "name": "query_path：只看最后一个参数",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/search",
+      "query": {
+        "type": "9",
+        "page": "1"
+      }
+    },
+    {
+      "name": "query_path：都不匹配",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/search",
+      "query": {
+        "type": "3"
+      },
+      "errcode": 404
+    },
+    {
+      "name": "段内的 {name}",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/files/report.json"
+    },
+    {
+      "name": "冒号参数",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/orders/A01/items"
+    },
+    {
+      "name": "段数不同",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/orders/A01",
+      "errcode": 404
+    },
+    {
+      "name": "方法不对",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/plain",
+      "errcode": 404
+    },
+    {
+      "name": "不存在的接口",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/nope",
+      "errcode": 404
+    },
+    {
+      "name": "基础路径只按长度截掉",
+      "method": "GET",
+      "path": "/mock/{{pid}}/xyz/plain"
+    },
+    {
+      "name": "路径编码",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/users/%E4%B8%AD"
+    },
+    {
+      "name": "项目 ID 不是数字",
+      "method": "GET",
+      "path": "/mock/abc/x",
+      "errcode": 403
+    },
+    {
+      "name": "项目不存在",
+      "method": "GET",
+      "path": "/mock/987654/x",
+      "errcode": 403
+    },
+    {
+      "name": "项目 ID 是小数",
+      "method": "GET",
+      "path": "/mock/1.5/x",
+      "errcode": 403
+    },
+    {
+      "name": "没有项目 ID",
+      "method": "GET",
+      "path": "/mock/",
+      "errcode": 400
+    },
+    {
+      "name": "Mock.js 出错时返回原模板",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/broken"
+    },
+    {
+      "name": "变量取不到时报解析出错",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/bad-var",
+      "body": {
+        "x": 5
+      },
+      "errcode": 400
+    },
+    {
+      "name": "urlencoded 表单",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/form",
+      "rawBody": "a=1&a=2&f=%E4%B8%AD+x",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    {
+      "name": "multipart：请求体换成 fields",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/form",
+      "rawBody": "--XBOUNDARY\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nva\r\n--XBOUNDARY\r\nContent-Disposition: form-data; name=\"f\"; filename=\"t.txt\"\r\nContent-Type: text/plain\r\n\r\nfile content\r\n--XBOUNDARY--\r\n",
+      "contentType": "multipart/form-data; boundary=XBOUNDARY"
+    },
+    {
+      "name": "纯文本请求体",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/form",
+      "rawBody": "hello",
+      "contentType": "text/plain",
+      "errcode": 400
+    },
+    {
+      "name": "带 Origin 的请求",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/plain",
+      "headers": {
+        "Origin": "http://example.com"
+      },
+      "responseHeaders": [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Credentials"
+      ]
+    },
+    {
+      "name": "跨域预检",
+      "method": "OPTIONS",
+      "path": "/mock/{{pid}}/api/plain",
+      "headers": {
+        "Origin": "http://example.com",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "x-token"
+      },
+      "responseHeaders": [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Methods",
+        "Access-Control-Allow-Headers",
+        "Access-Control-Max-Age",
+        "Content-Type"
+      ]
+    },
+    {
+      "name": "不是预检的 OPTIONS",
+      "method": "OPTIONS",
+      "path": "/mock/{{pid}}/api/plain",
+      "errcode": 404
+    },
+    {
+      "name": "开启严格模式",
+      "method": "POST",
+      "path": "/api/project/up",
+      "body": {
+        "id": "{{pid}}",
+        "strice": true
+      }
+    },
+    {
+      "name": "新建接口：严格：查询参数",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "严格：查询参数",
+        "path": "/strict/query",
+        "method": "GET",
+        "req_headers": [],
+        "req_body_form": [],
+        "req_query": [
+          {
+            "name": "page",
+            "required": "1"
+          },
+          {
+            "name": "size",
+            "required": "1"
+          },
+          {
+            "name": "opt",
+            "required": "0"
+          }
+        ],
+        "res_body_type": "json",
+        "res_body": "{\"ok\": true}"
+      },
+      "capture": {
+        "s1": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：严格：表单",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "严格：表单",
+        "path": "/strict/form",
+        "method": "POST",
+        "req_headers": [],
+        "req_body_form": [
+          {
+            "name": "a",
+            "type": "text",
+            "required": "1"
+          },
+          {
+            "name": "file",
+            "type": "file",
+            "required": "1"
+          }
+        ],
+        "req_body_type": "form",
+        "res_body_type": "json",
+        "res_body": "{\"ok\": true}"
+      },
+      "capture": {
+        "s2": "data._id"
+      }
+    },
+    {
+      "name": "新建接口：严格：JSON Schema",
+      "method": "POST",
+      "path": "/api/interface/add",
+      "body": {
+        "project_id": "{{pid}}",
+        "catid": "{{cat}}",
+        "title": "严格：JSON Schema",
+        "path": "/strict/json",
+        "method": "POST",
+        "req_headers": [],
+        "req_body_form": [],
+        "req_body_type": "json",
+        "req_body_is_json_schema": true,
+        "req_body_other": "{\"type\": \"object\", \"required\": [\"name\", \"age\"], \"properties\": {\"name\": {\"type\": \"string\", \"minLength\": 2}, \"age\": {\"type\": \"integer\", \"minimum\": 1}, \"tags\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}}",
+        "res_body_type": "json",
+        "res_body": "{\"ok\": true}"
+      },
+      "capture": {
+        "s3": "data._id"
+      }
+    },
+    {
+      "name": "缺少查询参数",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/strict/query",
+      "query": {
+        "size": "1"
+      },
+      "errcode": 404
+    },
+    {
+      "name": "查询参数为空字符串",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/strict/query",
+      "query": {
+        "page": "",
+        "size": "1"
+      },
+      "errcode": 404
+    },
+    {
+      "name": "查询参数齐全",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/strict/query",
+      "query": {
+        "page": "1",
+        "size": "2"
+      }
+    },
+    {
+      "name": "缺少表单字段",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/strict/form",
+      "rawBody": "a=1",
+      "contentType": "application/x-www-form-urlencoded",
+      "errcode": 404
+    },
+    {
+      "name": "multipart 表单齐全",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/strict/form",
+      "rawBody": "--XBOUNDARY\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nva\r\n--XBOUNDARY\r\nContent-Disposition: form-data; name=\"file\"; filename=\"t.txt\"\r\nContent-Type: text/plain\r\n\r\nfile content\r\n--XBOUNDARY--\r\n",
+      "contentType": "multipart/form-data; boundary=XBOUNDARY"
+    },
+    {
+      "name": "JSON 缺少必需属性",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/strict/json",
+      "body": {
+        "name": "tom"
+      },
+      "errcode": 404
+    },
+    {
+      "name": "JSON 类型不对",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/strict/json",
+      "body": {
+        "name": "tom",
+        "age": 1.5
+      },
+      "errcode": 404
+    },
+    {
+      "name": "JSON 数组元素不对",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/strict/json",
+      "body": {
+        "name": "tom",
+        "age": 2,
+        "tags": [
+          "a",
+          1
+        ]
+      },
+      "errcode": 404
+    },
+    {
+      "name": "JSON 长度不够",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/strict/json",
+      "body": {
+        "name": "t",
+        "age": 2
+      },
+      "errcode": 404
+    },
+    {
+      "name": "JSON 通过",
+      "method": "POST",
+      "path": "/mock/{{pid}}/api/strict/json",
+      "body": {
+        "name": "tom",
+        "age": 2
+      }
+    },
+    {
+      "name": "GET 不校验请求体",
+      "method": "GET",
+      "path": "/mock/{{pid}}/api/strict/query",
+      "query": {
+        "page": "1",
+        "size": "1"
+      }
+    }
+  ]
+}

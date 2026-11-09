@@ -1,0 +1,3861 @@
+{
+ "数组重复": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "list": 1
+    }
+   },
+   "$.list": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     1,
+     3
+    ]
+   },
+   "$.list[]": {
+    "n": 792,
+    "types": {
+     "object": 792
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "id": 1,
+     "name": 1
+    }
+   },
+   "$.list[].id": {
+    "n": 792,
+    "types": {
+     "number": 792
+    },
+    "classes": {},
+    "numCount": 792,
+    "intCount": 792,
+    "keys": {},
+    "num": [
+     1,
+     3
+    ]
+   },
+   "$.list[].name": {
+    "n": 792,
+    "types": {
+     "string": 792
+    },
+    "classes": {
+     "han": 792
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   }
+  }
+ },
+ "数组固定次数": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "list": 1
+    }
+   },
+   "$.list": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     4,
+     4
+    ]
+   },
+   "$.list[]": {
+    "n": 1600,
+    "types": {
+     "string": 1600
+    },
+    "classes": {
+     "lower": 1600
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   }
+  }
+ },
+ "数组取一个": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "m": 1
+    }
+   },
+   "$.m": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "upper": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     4
+    ]
+   }
+  }
+ },
+ "数组按顺序取": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "list": 1
+    }
+   },
+   "$.list": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     3,
+     3
+    ]
+   },
+   "$.list[]": {
+    "n": 1200,
+    "types": {
+     "object": 1200
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "v": 1
+    }
+   },
+   "$.list[].v": {
+    "n": 1200,
+    "types": {
+     "string": 1200
+    },
+    "classes": {
+     "lower": 1200
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   }
+  }
+ },
+ "空数组": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     0,
+     0
+    ]
+   }
+  }
+ },
+ "对象取部分属性": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "obj": 1
+    }
+   },
+   "$.obj": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "c": 1,
+     "b": 1
+    }
+   },
+   "$.obj.a": {
+    "n": 269,
+    "types": {
+     "number": 269
+    },
+    "classes": {},
+    "numCount": 269,
+    "intCount": 269,
+    "keys": {},
+    "num": [
+     1,
+     1
+    ]
+   },
+   "$.obj.c": {
+    "n": 234,
+    "types": {
+     "number": 234
+    },
+    "classes": {},
+    "numCount": 234,
+    "intCount": 234,
+    "keys": {},
+    "num": [
+     3,
+     3
+    ]
+   },
+   "$.obj.b": {
+    "n": 297,
+    "types": {
+     "number": 297
+    },
+    "classes": {},
+    "numCount": 297,
+    "intCount": 297,
+    "keys": {},
+    "num": [
+     2,
+     2
+    ]
+   }
+  }
+ },
+ "对象范围": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "obj": 1
+    }
+   },
+   "$.obj": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "c": 1,
+     "b": 1
+    }
+   },
+   "$.obj.a": {
+    "n": 162,
+    "types": {
+     "number": 162
+    },
+    "classes": {},
+    "numCount": 162,
+    "intCount": 162,
+    "keys": {},
+    "num": [
+     1,
+     1
+    ]
+   },
+   "$.obj.c": {
+    "n": 191,
+    "types": {
+     "number": 191
+    },
+    "classes": {},
+    "numCount": 191,
+    "intCount": 191,
+    "keys": {},
+    "num": [
+     3,
+     3
+    ]
+   },
+   "$.obj.b": {
+    "n": 256,
+    "types": {
+     "number": 256
+    },
+    "classes": {},
+    "numCount": 256,
+    "intCount": 256,
+    "keys": {},
+    "num": [
+     2,
+     2
+    ]
+   }
+  }
+ },
+ "整数范围": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "n": 1,
+     "neg": 1,
+     "fixed": 1
+    }
+   },
+   "$.n": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     6,
+     95
+    ]
+   },
+   "$.neg": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     -10,
+     -1
+    ]
+   },
+   "$.fixed": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     7,
+     7
+    ]
+   }
+  }
+ },
+ "小数": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "f": 1,
+     "g": 1,
+     "i": 1
+    }
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 0,
+    "keys": {},
+    "num": [
+     6.03,
+     94.75
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 0,
+    "keys": {},
+    "num": [
+     1.51,
+     1.58
+    ]
+   },
+   "$.i": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 0,
+    "keys": {},
+    "num": [
+     1.6713,
+     10.1138
+    ]
+   }
+  }
+ },
+ "自增": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "list": 1
+    }
+   },
+   "$.list": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     5,
+     5
+    ]
+   },
+   "$.list[]": {
+    "n": 2000,
+    "types": {
+     "object": 2000
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "id": 1
+    }
+   },
+   "$.list[].id": {
+    "n": 2000,
+    "types": {
+     "number": 2000
+    },
+    "classes": {},
+    "numCount": 2000,
+    "intCount": 2000,
+    "keys": {},
+    "num": [
+     10,
+     18
+    ]
+   }
+  }
+ },
+ "布尔": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "b": 1,
+     "c": 1,
+     "d": 1
+    }
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "boolean": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {}
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "boolean": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {}
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "boolean": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {}
+   }
+  }
+ },
+ "字符串重复": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "s": 1,
+     "t": 1,
+     "e": 1
+    }
+   },
+   "$.s": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     5
+    ]
+   },
+   "$.t": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     6,
+     6
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 160,
+     "alnum": 171,
+     "capital": 24,
+     "upper": 26,
+     "lower": 18,
+     "digits": 1
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     4
+    ]
+   }
+  }
+ },
+ "基础占位符": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1,
+     "g": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "boolean": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {}
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     428674515528770,
+     8334927144678896
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     1,
+     10
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     -7841275921775776,
+     7990310749626436
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     -4,
+     4
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 253,
+    "keys": {},
+    "num": [
+     -8123787201532072,
+     8058581194751480
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 0,
+    "keys": {},
+    "num": [
+     1.66,
+     10.28
+    ]
+   }
+  }
+ },
+ "字符": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 71,
+     "digits": 48,
+     "lower": 132,
+     "upper": 149
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   }
+  }
+ },
+ "字符串": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "alnum": 152,
+     "other": 238,
+     "capital": 2,
+     "lower": 3,
+     "upper": 5
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     7
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "alnum": 154,
+     "other": 241,
+     "lower": 2,
+     "upper": 2,
+     "capital": 1
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     5,
+     5
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     3
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 29,
+     "alnum": 168,
+     "other": 167,
+     "capital": 11,
+     "upper": 23,
+     "digits": 2
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     4
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "upper": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     3
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     6,
+     6
+    ]
+   }
+  }
+ },
+ "range": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     5,
+     5
+    ]
+   },
+   "$.a[]": {
+    "n": 2000,
+    "types": {
+     "number": 2000
+    },
+    "classes": {},
+    "numCount": 2000,
+    "intCount": 2000,
+    "keys": {},
+    "num": [
+     0,
+     4
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     3,
+     3
+    ]
+   },
+   "$.b[]": {
+    "n": 1200,
+    "types": {
+     "number": 1200
+    },
+    "classes": {},
+    "numCount": 1200,
+    "intCount": 1200,
+    "keys": {},
+    "num": [
+     1,
+     7
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     0,
+     0
+    ]
+   }
+  }
+ },
+ "日期": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1,
+     "g": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "date": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     10,
+     10
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     10,
+     10
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "time": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     8,
+     8
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     5
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "datetime": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     19,
+     19
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     14,
+     16
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     11,
+     13
+    ]
+   }
+  }
+ },
+ "now": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "datetime": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     19,
+     19
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "datetime": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     19,
+     19
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     16,
+     16
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     4,
+     4
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "date": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     10,
+     10
+    ]
+   }
+  }
+ },
+ "图片": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "image": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     27,
+     29
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "image": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     29,
+     29
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "image": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     36,
+     36
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "image": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     47,
+     47
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "image": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     53,
+     53
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "image": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     28,
+     29
+    ]
+   }
+  }
+ },
+ "颜色": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "hex": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     7,
+     7
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "hex": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     7,
+     7
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "color": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     18,
+     18
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "color": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     25,
+     25
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "color": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     15,
+     16
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     7,
+     7
+    ]
+   }
+  }
+ },
+ "英文文本": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1,
+     "g": 1,
+     "h": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     10
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     5,
+     5
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     4
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "sentence": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     89,
+     140
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "sentence": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     17,
+     28
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "words": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     20,
+     54
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "words": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     9,
+     19
+    ]
+   },
+   "$.h": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "sentence": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     193,
+     260
+    ]
+   }
+  }
+ },
+ "中文文本": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1,
+     "g": 1,
+     "h": 1,
+     "i": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     3
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     2
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     13,
+     19
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     7
+    ]
+   },
+   "$.h": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     28,
+     36
+    ]
+   },
+   "$.i": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     6,
+     7
+    ]
+   }
+  }
+ },
+ "姓名": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1,
+     "g": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "capital": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     4,
+     8
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "capital": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     4,
+     9
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "words": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     10,
+     16
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "words": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     16,
+     24
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     2
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   }
+  }
+ },
+ "网络": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1,
+     "g": 1,
+     "h": 1,
+     "i": 1,
+     "j": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "url": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     20,
+     31
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "url": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     20,
+     30
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "url": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     22,
+     29
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 373,
+     "alnum": 27
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     8
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     6,
+     13
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     7,
+     14
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 385,
+     "other": 14,
+     "han": 1
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     4
+    ]
+   },
+   "$.h": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "email": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     14,
+     24
+    ]
+   },
+   "$.i": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "email": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     12,
+     19
+    ]
+   },
+   "$.j": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "ip": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     11,
+     15
+    ]
+   }
+  }
+ },
+ "地址": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1,
+     "g": 1,
+     "h": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     2
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     7
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     7
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     6,
+     12
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 370,
+     "other": 30
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     4
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 375,
+     "other": 25
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     10,
+     18
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     6,
+     6
+    ]
+   },
+   "$.h": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     4,
+     4
+    ]
+   }
+  }
+ },
+ "辅助": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1,
+     "g": 1,
+     "h": 1,
+     "i": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "capital": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     5,
+     5
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "upper": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     3
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     3
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     2,
+     2
+    ]
+   },
+   "$.f[]": {
+    "n": 800,
+    "types": {
+     "number": 800
+    },
+    "classes": {},
+    "numCount": 800,
+    "intCount": 800,
+    "keys": {},
+    "num": [
+     1,
+     3
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     3,
+     3
+    ]
+   },
+   "$.g[]": {
+    "n": 1200,
+    "types": {
+     "number": 1200
+    },
+    "classes": {},
+    "numCount": 1200,
+    "intCount": 1200,
+    "keys": {},
+    "num": [
+     1,
+     3
+    ]
+   },
+   "$.h": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     2,
+     2
+    ]
+   },
+   "$.h[]": {
+    "n": 800,
+    "types": {
+     "number": 800
+    },
+    "classes": {},
+    "numCount": 800,
+    "intCount": 800,
+    "keys": {},
+    "num": [
+     1,
+     3
+    ]
+   },
+   "$.i": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     1,
+     3
+    ]
+   },
+   "$.i[]": {
+    "n": 796,
+    "types": {
+     "number": 796
+    },
+    "classes": {},
+    "numCount": 796,
+    "intCount": 796,
+    "keys": {},
+    "num": [
+     1,
+     4
+    ]
+   }
+  }
+ },
+ "杂项": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "guid": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     36,
+     36
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "guid": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     36,
+     36
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "idcard": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     18,
+     18
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     1,
+     6
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     4,
+     93
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     1794208904,
+     1794208904
+    ]
+   }
+  }
+ },
+ "大小写": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "email": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     14,
+     24
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     1,
+     3
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   }
+  }
+ },
+ "混合文本": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     6,
+     6
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "words": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     10,
+     17
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     19,
+     23
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     7,
+     7
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     8,
+     8
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     2
+    ]
+   }
+  }
+ },
+ "引用属性": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "first": 1,
+     "full": 1,
+     "ref": 1
+    }
+   },
+   "$.first": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "capital": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     4,
+     8
+    ]
+   },
+   "$.full": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "words": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     10,
+     16
+    ]
+   },
+   "$.ref": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "capital": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     4,
+     8
+    ]
+   }
+  }
+ },
+ "引用模板属性": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "msg": 1,
+     "name": 1
+    }
+   },
+   "$.msg": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   },
+   "$.name": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   }
+  }
+ },
+ "路径引用": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "user": 1,
+     "top": 1
+    }
+   },
+   "$.user": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "name": 1,
+     "copy": 1,
+     "abs": 1
+    }
+   },
+   "$.user.name": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   },
+   "$.user.copy": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   },
+   "$.user.abs": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   },
+   "$.top": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "han": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     3
+    ]
+   }
+  }
+ },
+ "参数里的占位符": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     6,
+     6
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     19,
+     20
+    ]
+   }
+  }
+ },
+ "参数不是字面量": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "date": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     10,
+     10
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     3
+    ]
+   }
+  }
+ },
+ "正则": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     6,
+     8
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     8
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "other": 366,
+     "upper": 33,
+     "words": 1
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     3
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "upper": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     2
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     11,
+     11
+    ]
+   }
+  }
+ },
+ "请求变量": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1,
+     "d": 1,
+     "e": 1,
+     "f": 1,
+     "g": 1,
+     "h": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     3
+    ]
+   },
+   "$.d": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "x": 1
+    }
+   },
+   "$.d.x": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     1,
+     1
+    ]
+   },
+   "$.e": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "digits": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.f": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "empty": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     0,
+     0
+    ]
+   },
+   "$.g": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "empty": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     0,
+     0
+    ]
+   },
+   "$.h": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     2,
+     2
+    ]
+   },
+   "$.h[]": {
+    "n": 800,
+    "types": {
+     "string": 800
+    },
+    "classes": {
+     "lower": 800
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   }
+  }
+ },
+ "嵌套": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "code": 1,
+     "data": 1
+    }
+   },
+   "$.code": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     0,
+     0
+    ]
+   },
+   "$.data": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     2,
+     4
+    ]
+   },
+   "$.data[]": {
+    "n": 1210,
+    "types": {
+     "object": 1210
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "id": 1,
+     "tags": 1,
+     "price": 1,
+     "ok": 1,
+     "info": 1
+    }
+   },
+   "$.data[].id": {
+    "n": 1210,
+    "types": {
+     "number": 1210
+    },
+    "classes": {},
+    "numCount": 1210,
+    "intCount": 1210,
+    "keys": {},
+    "num": [
+     100,
+     103
+    ]
+   },
+   "$.data[].tags": {
+    "n": 1210,
+    "types": {
+     "array": 1210
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     1,
+     2
+    ]
+   },
+   "$.data[].tags[]": {
+    "n": 1809,
+    "types": {
+     "string": 1809
+    },
+    "classes": {
+     "lower": 1809
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     3,
+     10
+    ]
+   },
+   "$.data[].price": {
+    "n": 1210,
+    "types": {
+     "number": 1210
+    },
+    "classes": {},
+    "numCount": 1210,
+    "intCount": 0,
+    "keys": {},
+    "num": [
+     14.72,
+     95.13
+    ]
+   },
+   "$.data[].ok": {
+    "n": 1210,
+    "types": {
+     "boolean": 1210
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {}
+   },
+   "$.data[].info": {
+    "n": 1210,
+    "types": {
+     "object": 1210
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "city": 1,
+     "n": 1
+    }
+   },
+   "$.data[].info.city": {
+    "n": 1210,
+    "types": {
+     "string": 1210
+    },
+    "classes": {
+     "han": 1210
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     2,
+     7
+    ]
+   },
+   "$.data[].info.n": {
+    "n": 1210,
+    "types": {
+     "number": 1210
+    },
+    "classes": {},
+    "numCount": 1210,
+    "intCount": 1210,
+    "keys": {},
+    "num": [
+     1,
+     3
+    ]
+   }
+  }
+ },
+ "数字键": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "1": 1,
+     "2": 1,
+     "b": 1
+    }
+   },
+   "$.1": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     1
+    ]
+   },
+   "$.2": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     1,
+     2
+    ]
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     1,
+     1
+    ]
+   }
+  }
+ },
+ "null 和数字": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "object": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {
+     "a": 1,
+     "b": 1,
+     "c": 1
+    }
+   },
+   "$.a": {
+    "n": 400,
+    "types": {
+     "null": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {}
+   },
+   "$.b": {
+    "n": 400,
+    "types": {
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 0,
+    "keys": {},
+    "num": [
+     1.5,
+     1.5
+    ]
+   },
+   "$.c": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     3,
+     3
+    ]
+   },
+   "$.c[]": {
+    "n": 1200,
+    "types": {
+     "null": 400,
+     "number": 400,
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {},
+    "num": [
+     1,
+     1
+    ],
+    "len": [
+     1,
+     1
+    ]
+   }
+  }
+ },
+ "dataImage": {
+  "error": "module.require is not a function"
+ },
+ "无效颜色": {
+  "error": "Cannot read property 'nicer' of undefined"
+ },
+ "顶层字符串": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "email": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     14,
+     24
+    ]
+   }
+  }
+ },
+ "顶层数组": {
+  "paths": {
+   "$": {
+    "n": 400,
+    "types": {
+     "array": 400
+    },
+    "classes": {},
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "arr": [
+     2,
+     2
+    ]
+   },
+   "$[]": {
+    "n": 800,
+    "types": {
+     "object": 400,
+     "number": 400
+    },
+    "classes": {},
+    "numCount": 400,
+    "intCount": 400,
+    "keys": {
+     "a": 1
+    },
+    "num": [
+     1,
+     2
+    ]
+   },
+   "$[].a": {
+    "n": 400,
+    "types": {
+     "string": 400
+    },
+    "classes": {
+     "lower": 400
+    },
+    "numCount": 0,
+    "intCount": 0,
+    "keys": {},
+    "len": [
+     1,
+     3
+    ]
+   }
+  }
+ }
+}

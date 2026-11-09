@@ -52,6 +52,22 @@ go run ./tools/migcheck -yapi http://localhost:13000 -yard http://127.0.0.1:3101
 
 `migcheck` 用管理员登录两边，遍历用户、分组、项目、分类、接口、动态、导出，并用 YApi 生成的 token 调用开放 API，逐个对比响应。动态列表同一秒内的先后不比较（见 architecture.md），HTML 导出本来就不逐字一致，也不比较。YApi 在第一次读取 `project/token` 时才给项目生成 token，迁移时还没有 token 的项目两边会各自生成一个不同的；遇到这种情况，重新迁移一次再核对。用周边工具核对见 [`testenv/eco`](../testenv/eco/README.md) 的 `migrated.sh`。
 
+## Mock.js 交叉核对
+
+`internal/mockjs` 是 Mock.js 的 Go 实现。随机生成的数据不能逐字比对，所以另做了一套统计对照：`testdata/mockjs/cases.json` 里的每个模板，原版 Mock.js（加上 YApi 的 mock-extra）和 Go 版本各生成 400 次，比较每个字段的类型分布、字符串的类别、数值和长度的 5%～95% 分位数、对象的键（`go test` 自动执行，不需要连接对照实例）。
+
+修改模板后，在对照实例的容器里重新生成标准答案：
+
+```bash
+scp testenv/yapi/run-mockjs.js testenv:/data/tmp/
+ssh testenv "sudo docker cp /data/tmp/run-mockjs.js apiyard-yapi:/app/vendors/run-mockjs.js"
+ssh testenv "sudo docker exec -i -w /app/vendors apiyard-yapi node run-mockjs.js" < testdata/mockjs/cases.json > testdata/mockjs/mockjs.stats.json
+```
+
+统计和分类的算法在 `run-mockjs.js` 和 `crosscheck_test.go` 里各有一份，改一处要同时改另一处。分布在分位数附近有跳变的字段（例如区县名的长度）和随时间变化的值，在模板里用 `skipRange` 跳过范围比较。
+
+严格模式的 JSON Schema 校验另有一组对照：`internal/mock/testdata/ajv.json` 是在容器里用原版 `schemaValidator` 得到的错误信息。
+
 ## 场景格式
 
 ```json
@@ -82,6 +98,12 @@ go run ./tools/migcheck -yapi http://localhost:13000 -yard http://127.0.0.1:3101
 | `volatile` | 响应中每次都不同、又无法按字段名统一处理的值（点分路径），比对前替换为 `<volatile>`。例如 `/api/project/token` 直接把随机 token 放在 `data` 里 |
 | `unordered` | 顺序不确定的数组（点分路径），比对前按元素内容排序，只比较有哪些元素。例如 YApi 的动态列表在同一秒内的顺序不固定 |
 | `textReplace` | 只用于不是 JSON 的响应（如 Markdown 导出），按正则替换每次不同的片段，每项是 `[正则, 替换文本]`。不是 JSON 的响应逐字比较 |
+| `headers` | 附加的请求头，值里可以有变量，例如跨域测试用的 `Origin` |
+| `rawBody`、`contentType` | 原样发送的请求体（代替 `body`），`contentType` 默认为 `text/plain`；用于表单、multipart 和格式不对的 JSON |
+| `responseHeaders` | 要录制并比对的响应头，例如 `Content-Type`、`Access-Control-Allow-Origin` |
+| `shape` | 只比对响应的“形状”：每个值换成类型和字符串的类别（如 `<string:email>`），数组只看有哪几种元素。用于 Mock 这类随机生成的响应 |
+
+场景 `10-mock` 里有 multipart 请求体和正则，手写 JSON 容易转义出错，由 `testenv/yapi/gen-mock-scenario.py` 生成，修改时改脚本再运行。
 
 ## 归一化规则
 

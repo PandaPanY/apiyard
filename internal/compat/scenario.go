@@ -41,6 +41,16 @@ type Step struct {
 	// TextReplace 只用于不是 JSON 的响应（如 Markdown 导出）：按正则把每次运行都不同的片段替换掉，
 	// 每项是 [正则, 替换文本]，替换文本可以用 $1 引用分组。例如把锚点里拼接的分类 ID 换成 <id>。
 	TextReplace [][2]string `json:"textReplace,omitempty"`
+	// Headers 是附加的请求头（值里可以有 {{变量}}），例如 Mock 跨域测试用的 Origin。
+	Headers map[string]string `json:"headers,omitempty"`
+	// RawBody 原样作为请求体发送（代替 Body），ContentType 默认为 text/plain。用于表单、multipart 和格式不对的 JSON。
+	RawBody     string `json:"rawBody,omitempty"`
+	ContentType string `json:"contentType,omitempty"`
+	// ResponseHeaders 列出要录制并比对的响应头，例如 Content-Type、Access-Control-Allow-Origin。
+	ResponseHeaders []string `json:"responseHeaders,omitempty"`
+	// Shape 为 true 时只比对响应的“形状”：每个值换成类型和字符串的类别（如 <string:email>），数组只看有哪几种元素。
+	// 用于 Mock 这类每次随机生成的响应。
+	Shape bool `json:"shape,omitempty"`
 }
 
 // LoadScenarios 按文件名顺序读取 dir 下的全部场景；场景之间可能有状态依赖，顺序有意义。

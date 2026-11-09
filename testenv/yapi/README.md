@@ -45,6 +45,11 @@ ssh testenv "cd /data/apiyard-testenv/yapi && docker compose down"
 ssh testenv "cd /data/apiyard-testenv/yapi && docker compose down -v"
 ```
 
+## Mock 相关的标准答案
+
+- `run-mockjs.js`：用原版的 Mock.js 生成统计特征，供 `internal/mockjs` 交叉核对，用法见 [docs/testing.md](../../docs/testing.md) 的“Mock.js 交叉核对”。
+- `gen-mock-scenario.py`：生成兼容场景 `10-mock.json`（在本机运行，不需要对照实例）。
+
 ## 生成 Swagger 导入的标准答案
 
 原版 1.12 的服务端 Swagger 导入在 Node 里加载就出错（swagger-client 依赖浏览器的 `File`），没法通过接口录制。

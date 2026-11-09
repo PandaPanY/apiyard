@@ -250,3 +250,17 @@ func (s *Store) execCount(ctx context.Context, query string, args ...any) (int64
 	}
 	return res.RowsAffected()
 }
+
+// InterfacesByQueryPath 按 query_path.path（去掉查询串的路径）和方法查找接口，对应 YApi 的 getByQueryPath。
+func (s *Store) InterfacesByQueryPath(ctx context.Context, projectID int64, path, method string) ([]*Interface, error) {
+	return s.queryInterfaces(ctx,
+		"SELECT "+interfaceColumns+" FROM interfaces WHERE project_id = ? AND json_extract(query_path, '$.path') = ? AND method = ? ORDER BY id",
+		projectID, path, method)
+}
+
+// VarInterfaces 列出项目里路径带参数（type 为 var）的接口，对应 YApi 的 getVar，Mock 按路径模板匹配时使用。
+func (s *Store) VarInterfaces(ctx context.Context, projectID int64, method string) ([]*Interface, error) {
+	return s.queryInterfaces(ctx,
+		"SELECT "+interfaceColumns+" FROM interfaces WHERE project_id = ? AND type = 'var' AND method = ? ORDER BY id",
+		projectID, method)
+}

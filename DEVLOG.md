@@ -2,6 +2,23 @@
 
 > 按日期倒序记录，最新的在最上面。每条只写要点。
 
+## 2026-11-09 M5：Mock 服务
+
+- 完成：
+  - `internal/mock`：`/mock/{项目 ID}/...`，地址匹配（完整路径、`query_path`、三种路径参数）、`${query.x}` 请求变量、`name|regexp`、JSON5 模板、JSON Schema、跨域和预检、严格模式校验（JSON Schema 校验按 ajv 5 的规则和中文信息实现）。
+  - `internal/mockjs`：移植了 Mock.js 的全部生成规则和占位符，以及 YApi 的 mock-extra；`schemafake` 的 `mock.mock` 规则和 `schema2json` 也因此支持占位符。`internal/jsjson` 增加 JSON5 解析。
+  - 兼容场景 `10-mock` 共 70 次调用与原版一致，场景 01–10 共 342 次调用；兼容框架增加 `headers`、`rawBody`、`responseHeaders`、`shape`。
+  - Mock.js 交叉核对：43 组模板各生成 400 次，统计特征与原版一致，连续运行 50 次稳定；17 组确定性的模板逐字一致。
+  - 浏览器实测：接口页显示的 Mock 地址可以直接访问；高级 Mock 的入口仍是隐藏的。
+- 问题 / 决定：
+  - 发现原版不写 Mock 脚本也能执行代码：Mock.js 用 `eval` 解析占位符参数（实测 `@pick([process.version])` 返回 Node 版本）。ApiYard 只按字面量解析。
+  - 原版 json-schema-faker 0.5.0-rc16 有缺陷：非必填字段随机缺失、没有 `maxItems` 的数组总是空的。ApiYard 按原版的设置（`alwaysFakeOptionals`）生成全部字段，作为刻意的差异写进文档；兼容场景改用全部必填、长度固定的 schema。
+  - 项目不存在时原版返回 403（`toObject` of null），源码里“不存在的项目”的分支走不到，照实测实现。
+  - Mock 地址与界面同源，返回的 HTML 能在界面的源里运行脚本，给 Mock 响应加了 `Content-Security-Policy: sandbox`。
+  - 全局 Mock 脚本不执行，响应头提示，迁移报告也会列出开启了脚本的项目；原版的延迟只能用脚本设置，所以没有延迟功能。
+  - 原版对 `'x|10.0'` 会无限补小数位直到内存耗尽，ApiYard 限制为 17 位。
+- 下一步：M6 打包发布。
+
 ## 2026-11-09 M4：数据迁移
 
 - 完成：

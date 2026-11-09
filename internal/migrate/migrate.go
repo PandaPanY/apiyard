@@ -347,6 +347,10 @@ func (m *migrator) project(ctx context.Context, d *doc) error {
 	}
 	name, typ := d.strOr("name", ""), *d.enum("project_type", []string{"public", "private"}, ptr("private"))
 	members := m.readMembers(d)
+	if d.bool("is_mock_open", false) && d.strOr("project_mock_script", "") != "" {
+		// 脚本照常迁移，但 ApiYard 不执行（D5），这些项目的 Mock 数据会与原来不同
+		m.rep.notice(d.coll, "开启了全局 Mock 脚本，ApiYard 不执行脚本，Mock 数据会与原来不同", d.id)
+	}
 	vals := []any{id, d.int("uid", 0), groupID, name, d.str("basepath"), d.str("desc"), typ,
 		boolInt(d.bool("switch_notice", true)), d.str("icon"), d.str("color"),
 		d.array("env", "header", []any{}, "global", []any{}), d.array("tag"),

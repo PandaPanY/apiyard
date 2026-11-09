@@ -73,6 +73,11 @@ func Diff(golden, actual []Exchange) ([]string, error) {
 		if g.Status != a.Status {
 			diffs = append(diffs, fmt.Sprintf("%s HTTP 状态码: 期望 %d, 实际 %d", prefix, g.Status, a.Status))
 		}
+		for _, h := range unionKeys(stringMap(g.Headers), stringMap(a.Headers)) {
+			if g.Headers[h] != a.Headers[h] {
+				diffs = append(diffs, fmt.Sprintf("%s 响应头 %s: 期望 %q, 实际 %q", prefix, h, g.Headers[h], a.Headers[h]))
+			}
+		}
 		diffValue(prefix+" $", g.Response, a.Response, &diffs)
 	}
 	if len(diffs) > maxDiffs {
@@ -118,6 +123,14 @@ func diffValue(path string, want, got any, diffs *[]string) {
 	if !reflect.DeepEqual(want, got) {
 		*diffs = append(*diffs, fmt.Sprintf("%s: 期望 %s, 实际 %s", path, brief(want), brief(got)))
 	}
+}
+
+func stringMap(m map[string]string) map[string]any {
+	out := make(map[string]any, len(m))
+	for k, v := range m {
+		out[k] = v
+	}
+	return out
 }
 
 func unionKeys(a, b map[string]any) []string {

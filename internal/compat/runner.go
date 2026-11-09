@@ -20,12 +20,14 @@ import (
 // URL 和 Request 记录的是场景里的模板（保留 {{变量}}），不是替换后的值：
 // 变量多是每次运行都不同的 ID，记录模板能让重新录制时 golden 文件保持不变。比对只看 Status 和 Response。
 type Exchange struct {
-	Step     string `json:"step"`
-	Method   string `json:"method"`
-	URL      string `json:"url"`
-	Request  any    `json:"request,omitempty"`
-	Status   int    `json:"status"`
-	Response any    `json:"response"` // 已归一化；非 JSON 响应保存为字符串
+	Step    string `json:"step"`
+	Method  string `json:"method"`
+	URL     string `json:"url"`
+	Request any    `json:"request,omitempty"`
+	Status  int    `json:"status"`
+	// Headers 是 Step.ResponseHeaders 列出的响应头，没有的头记为空字符串。
+	Headers  map[string]string `json:"headers,omitempty"`
+	Response any               `json:"response"` // 已归一化；非 JSON 响应保存为字符串
 }
 
 // Run 在 baseURL 上依次执行场景的每一步。
@@ -76,7 +78,7 @@ func (r *runner) do(ctx context.Context, st Step, name string) (Exchange, error)
 		return Exchange{}, err
 	}
 
-	req, err := r.newRequest(ctx, st.Method, target, body)
+	req, err := r.newRequest(ctx, st, target, body)
 	if err != nil {
 		return Exchange{}, err
 	}
@@ -91,7 +93,23 @@ func (r *runner) do(ctx context.Context, st Step, name string) (Exchange, error)
 	}
 
 	ex := Exchange{Step: name, Method: st.Method, URL: templateURL(st), Request: st.Body, Status: resp.StatusCode}
+	if st.RawBody != "" {
+		ex.Request = st.RawBody
+	}
+	for _, h := range st.ResponseHeaders {
+		if ex.Headers == nil {
+			ex.Headers = map[string]string{}
+		}
+		ex.Headers[h] = resp.Header.Get(h)
+	}
 	var parsed any
+	if st.Shape {
+		if decodeJSON(raw, &parsed) != nil {
+			parsed = string(raw)
+		}
+		ex.Response = Shape(parsed)
+		return ex, nil
+	}
 	if decodeJSON(raw, &parsed) != nil {
 		text := string(raw)
 		for _, rule := range st.TextReplace {
@@ -166,21 +184,39 @@ func (r *runner) target(st Step) (string, error) {
 	return p + "?" + q.Encode(), nil
 }
 
-func (r *runner) newRequest(ctx context.Context, method, target string, body any) (*http.Request, error) {
+func (r *runner) newRequest(ctx context.Context, st Step, target string, body any) (*http.Request, error) {
 	var reader io.Reader
-	if body != nil {
+	contentType := ""
+	switch {
+	case st.RawBody != "":
+		raw, err := renderText(st.RawBody, r.vars)
+		if err != nil {
+			return nil, err
+		}
+		reader, contentType = strings.NewReader(raw), st.ContentType
+		if contentType == "" {
+			contentType = "text/plain"
+		}
+	case body != nil:
 		data, err := json.Marshal(body)
 		if err != nil {
 			return nil, err
 		}
-		reader = bytes.NewReader(data)
+		reader, contentType = bytes.NewReader(data), "application/json"
 	}
-	req, err := http.NewRequestWithContext(ctx, method, r.base+target, reader)
+	req, err := http.NewRequestWithContext(ctx, st.Method, r.base+target, reader)
 	if err != nil {
 		return nil, err
 	}
-	if body != nil {
-		req.Header.Set("Content-Type", "application/json")
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	}
+	for k, v := range st.Headers {
+		val, err := renderText(v, r.vars)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set(k, val)
 	}
 	return req, nil
 }

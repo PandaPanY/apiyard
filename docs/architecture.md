@@ -23,13 +23,14 @@ internal/compat/        兼容测试框架：执行场景、归一化、比对 g
 internal/openapi/       Swagger 2 / OpenAPI 3 转换为 YApi 接口（导入）   (M3)
 internal/jsjson/        按 JS 规则解析和输出 JSON（保持键顺序），导入导出共用 (M3)
 internal/migrate/       从 YApi 的 MongoDB 或 mongodump 目录迁移数据     (M4)
-internal/mock/          Mock 数据生成与 Mock 路由                         (M5)
+internal/mock/          Mock 服务：地址匹配、请求变量、严格模式的参数校验 (M5)
+internal/mockjs/        Mock.js 的 Go 实现，以及 YApi 对它的扩展          (M5)
 internal/mcp/           MCP Server                                       (M7)
 web/yapi/               预构建前端（由 tools/fetch-yapi-web 下载，不入库），M6 用 embed 打进可执行文件
 tools/                  compat（录制 / 比对兼容场景）、migcheck（核对迁移结果）、fetch-yapi-web（下载前端）
 ```
 
-依赖方向：`server → api/web`，`api → auth/store/yapitoken/schemafake/openapi/jsjson`，`openapi → jsjson`，`migrate → store/jsjson`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
+依赖方向：`server → api/web/mock`，`api → auth/store/yapitoken/schemafake/openapi/jsjson`，`mock → store/mockjs/schemafake/jsjson`，`schemafake → mockjs → jsjson`，`openapi → jsjson`，`migrate → store/jsjson`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
 
 ## 关键决策
 
@@ -66,6 +67,7 @@ tools/                  compat（录制 / 比对兼容场景）、migcheck（核
 - YApi 的漏洞根源是用 `vm2`/`safeify` 在未鉴权的情况下执行用户脚本。
 - M5（Mock 服务）只支持静态响应、JSON Schema 和 Mock.js 占位符，不执行任何脚本。
 - 以后如果要支持脚本 Mock，使用 goja：不注入任何宿主对象，设置执行超时，并且只有项目管理员才能开启。
+- **状态：已实现（2026-11-09）。** 实现时又发现两处：Mock.js 用 `eval` 解析占位符括号里的参数，在原版里不写脚本、只写模板也能执行代码（实测 `@pick([process.version])` 返回 `v14.21.3`），ApiYard 只按字面量解析；Mock 地址与界面同源，返回的 HTML 能在界面的源里运行脚本，ApiYard 给 Mock 响应加上 `Content-Security-Policy: sandbox`。
 
 ### D6：用"前端补丁层"调整沿用的 YApi 前端
 
@@ -114,6 +116,10 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 用户已删除的 token | 当前用户为空，部分接口能用、部分接口出错 | 返回 42014 `token 无效` | 健壮性 |
 | `/api/plugin/export`、`exportSwagger` | 不检查任何权限，任何登录用户都能导出任意项目 | 私有项目要求查看权限，否则 406；通过 token 访问时只能导出 token 所属项目 | 信息泄露 |
 | `/api/open/import_data` 的 token | token 无效时继续执行，拿这个 token 调用其他接口，再逐个失败 | 直接返回 40011 | 健壮性 |
+| Mock.js 占位符的参数 | 用 `eval` 求值，括号里可以写任意 JS 代码 | 只接受字面量（数字、字符串、数组、对象），其余与原版出错时一样按逗号拆成字符串；正常写法结果相同 | 代码执行 |
+| Mock 的跨域响应头 | 请求没有 `Origin` 时输出 `Access-Control-Allow-Origin: undefined` | 没有 `Origin` 时不输出 | 健壮性 |
+| Mock 的 multipart 请求体 | 不限大小，文件写到临时目录 | 最多 10MB，文件内容不保存，只记录文件名、类型和大小 | 资源占用 |
+| Mock.js 的 `'x\|10.0': 1` | 小数位数取 0 到 2^53 之间的随机数，一直补位直到内存耗尽 | 小数位最多 17 位 | 拒绝服务 |
 
 ### 正常使用中也能看到的差异
 
@@ -124,11 +130,15 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 首次启动的管理员 | 固定密码 `ymfe.org` | 不配置密码时随机生成，只在日志里出现一次 | 避免公开的默认密码 |
 | 修改用户名、邮箱 | 只同步第一个包含该成员的项目里的副本（漏了 multi） | 同步全部分组和项目 | 数据一致 |
 | 修改项目图标颜色 | 只更新当前用户自己的关注记录 | 更新所有关注该项目的记录 | 数据一致 |
-| 动态列表的顺序 | 只按秒级时间排序，同一秒内的顺序每次都可能不同 | 时间相同时按 ID 倒序 | 结果稳定 |
+| 动态列表的顺序 | 只按秒级时间排序，同一秒内 MongoDB 按插入顺序返回；分组动态（`$or` 查询）同一秒内的先后取决于执行计划 | 时间相同时按 ID 升序：单个项目、分组本身的动态与原版相同，分组里多个项目的动态同一秒内可能先后不同 | 结果稳定 |
 | `/api/interface/up` 的 `nModified` | `up_time` 变了也算修改，同一秒内重复保存是 0，否则是 1 | 忽略 `up_time`，内容没变就是 0 | 结果稳定 |
 | `/api/interface/schema2json` | json-schema-faker | 自己实现的生成器（`internal/schemafake`），覆盖常用关键字；结果本来就是随机的 | 不依赖 Node |
 | `/api/project/swagger_url` | 服务端去请求用户给的任意 URL | 暂不提供，返回 402 和提示；“从 URL 导入”在 M3 做导入功能时再决定是否提供（加地址限制） | SSRF |
 | HTML 导出 | markdown-it 渲染，左侧是 markdown-it-table-of-contents 生成的目录 | goldmark 渲染，目录按"分类 → 接口"生成；样式表沿用原版，页眉页脚文字不同 | HTML 渲染器无法逐字一致；JSON、Markdown、Swagger 导出与原版一致 |
+| 项目的全局 Mock 脚本 | 开启后在 vm 沙箱里执行，可以改返回数据、状态码、响应头、延迟 | 不执行（D5），响应头 `X-ApiYard-Mock-Script: ignored` 提示脚本被忽略；迁移报告列出开启了脚本的项目；界面上的入口已隐藏 | 远程代码执行 |
+| 高级 Mock（期望、接口级脚本） | 插件提供 | 暂不提供，界面入口已隐藏 | 延后功能；脚本部分同上 |
+| JSON Schema 的 Mock 数据 | 代码里设置了 `alwaysFakeOptionals: true`，但 json-schema-faker 0.5.0-rc16 有缺陷：非必填字段随机缺失，没有 `maxItems` 的数组总是空的 | 按原版的设置生成全部字段，数组默认 1–3 项（`interface/schema2json` 相同） | 修正 bug |
+| Mock 响应头 | 没有安全相关的响应头 | 加上 `Content-Security-Policy: sandbox`、`X-Content-Type-Options: nosniff`：在浏览器里直接打开 Mock 地址时，返回的 HTML 与界面隔离；fetch、XHR 等调用不受影响 | 存储型 XSS |
 | `/api/open/import_data` | 1.12 的服务端 Swagger 转换在 Node 里加载就出错（swagger-client 依赖浏览器的 File），总是返回 40011，接口实际不可用 | 按代码本意实现，转换结果与原版 run.js 一致；不支持 `url` 参数和以 http 开头的 `json` | 修正 bug；URL 导入有 SSRF 风险 |
 
 ## YApi 兼容要点
@@ -183,6 +193,9 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 | 导出 | 分类按 index 排序，分类内按 index、标题排序，没有接口的分类不导出；`status=open` 只导出公开接口。JSON 导出中分类去掉了 `_id` 等字段，接口却保留完整字段（原版删的是 Mongoose 文档对象上的属性，没有生效）。项目不存在、请求体或响应体不是合法 JSON（Swagger）时返回 502 `下载出错` | `exts/yapi-plugin-export-*` + 实测 |
 | Markdown 导出 | 字符串拼接，可以逐字复现：JSON Schema 转成 HTML 表格，`<p key=N>` 的 N 把值为 undefined 的字段也算在内；数组行的 key 是 `array-N`，N 来自进程内一直递增的计数器 | `common/markdown.js`、`common/schema-transformTo-table.js` |
 | 数据导入 | 界面导入在**浏览器里解析**文件（Swagger、Postman、HAR、YApi JSON），再按"按名称复用或新建分类 → 有 basePath 时修改项目 → 逐个 `interface/add`（普通模式）或 `interface/save`（智能合并 good、完全覆盖 merge）"写入；`interUpload` 不会被请求。开放 API 的 `import_data` 在服务端走同样的流程，没有标签的接口放进第一个分类；参数 `merge` 默认 normal，旧参数名 `dataSync` 会被参数校验去掉，不起作用 | `common/HandleImportData.js` + 实测 |
+| Mock 地址 | `/mock/{项目 ID}` 后面的部分按项目基础路径的**长度**截掉开头（不检查前缀是否相同），再依次按完整路径、`query_path`、路径参数模板查找；`query_path` 匹配时只看最后一个参数；路径参数模板有多个匹配时最后一个胜出（原版的权重比较写错了），路径参数并入 `query`。项目 ID 转不成数字时返回 403 CastError，项目不存在时也是 403（`toObject` of null），走不到“不存在的项目”那个分支 | `server/middleware/mockServer.js` + 实测 |
+| Mock 返回数据 | `res_body` 用 JSON5 解析（失败时当作字符串模板），先由 `common/mock-extra.js` 替换 `${query.x}` 这类变量（整个值替换成请求里的数据）、把 `name\|regexp` 转成正则，再交给 Mock.js；Mock.js 出错时返回处理前的数据。Koa 的输出规则：null 为 204，字符串为 text/plain（以 `<` 开头为 text/html），其余为 JSON | 源码 + 实测 |
+| 严格模式 | 检查 `required` 为 `"1"` 的查询参数（空字符串也算缺少）和表单字段，JSON Schema 请求体用 ajv 5（draft-04、遇到第一个错误就停、不校验 format）加 ajv-i18n 中文信息。在 `properties` 里有规则的必需属性要等校验 `properties` 时才检查，报错是 `name` 而不是 `.name`；`anyOf`、`oneOf` 会把每个分支的第一个错误一起列出 | `common/utils.js` + 容器内运行原版代码对照 |
 | Swagger 转换 | 由 swagger-client 展开 `$ref`，展开后的对象末尾加 `"$$ref": "原引用"`；循环引用的内层不展开；`allOf` 深度合并；路径级参数追加到操作参数后面。版本号形如 `v1` 的 tag 不作为分类 | `exts/yapi-plugin-import-swagger/run.js` + 容器内运行原版代码对照 |
 
 ### 数据集合（M4 迁移范围）

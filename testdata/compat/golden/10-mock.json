@@ -1,0 +1,1903 @@
+[
+  {
+    "step": "管理员登录",
+    "method": "POST",
+    "url": "/api/user/login",
+    "request": {
+      "email": "admin@admin.com",
+      "password": "ymfe.org"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "add_time": "<time>",
+        "email": "admin@admin.com",
+        "role": "admin",
+        "study": false,
+        "type": "site",
+        "uid": "<id>",
+        "up_time": "<time>",
+        "username": "admin"
+      },
+      "errcode": 0,
+      "errmsg": "logout success..."
+    }
+  },
+  {
+    "step": "新建分组",
+    "method": "POST",
+    "url": "/api/group/add",
+    "request": {
+      "group_name": "Mock 组",
+      "owner_uids": []
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "group_name": "Mock 组",
+        "members": [
+          {
+            "_id": "<objectid>",
+            "email": "admin@admin.com",
+            "role": "owner",
+            "uid": "<id>",
+            "username": "admin"
+          }
+        ],
+        "type": "public",
+        "uid": "<id>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建项目",
+    "method": "POST",
+    "url": "/api/project/add",
+    "request": {
+      "basepath": "/api",
+      "desc": "Mock 测试",
+      "group_id": "{{gid}}",
+      "name": "Mock 项目"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/api",
+        "desc": "Mock 测试",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "members": [],
+        "name": "Mock 项目",
+        "project_type": "private",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "默认分类",
+    "method": "GET",
+    "url": "/api/project/get?id={{pid}}",
+    "status": 200,
+    "response": {
+      "data": {
+        "_id": "<id>",
+        "add_time": "<time>",
+        "basepath": "/api",
+        "cat": [
+          {
+            "__v": 0,
+            "_id": "<id>",
+            "add_time": "<time>",
+            "desc": "公共分类",
+            "index": 0,
+            "name": "公共分类",
+            "project_id": "<id>",
+            "uid": "<id>",
+            "up_time": "<time>"
+          }
+        ],
+        "desc": "Mock 测试",
+        "env": [
+          {
+            "_id": "<objectid>",
+            "domain": "http://127.0.0.1",
+            "global": [],
+            "header": [],
+            "name": "local"
+          }
+        ],
+        "group_id": "<id>",
+        "is_json5": false,
+        "is_mock_open": false,
+        "name": "Mock 项目",
+        "project_type": "private",
+        "role": "admin",
+        "strice": false,
+        "switch_notice": true,
+        "tag": [],
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：用户列表",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/users",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "{\"code\": 0, \"data|2-4\": [{\"id|+1\": 1, \"name\": \"@cname\", \"email\": \"@email\", \"age|18-60\": 1, \"active|1\": true, \"created\": \"@datetime\", \"tags|1-3\": [\"@word\"], \"score|1-100.1-2\": 1, \"city\": \"@city(true)\", \"ip\": \"@ip\", \"guid\": \"@guid\", \"color\": \"@color\", \"url\": \"@url\"}], \"phone|regexp\": \"1[3-9]\\\\d{9}\"}",
+      "res_body_type": "json",
+      "title": "用户列表"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/users",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"code\": 0, \"data|2-4\": [{\"id|+1\": 1, \"name\": \"@cname\", \"email\": \"@email\", \"age|18-60\": 1, \"active|1\": true, \"created\": \"@datetime\", \"tags|1-3\": [\"@word\"], \"score|1-100.1-2\": 1, \"city\": \"@city(true)\", \"ip\": \"@ip\", \"guid\": \"@guid\", \"color\": \"@color\", \"url\": \"@url\"}], \"phone|regexp\": \"1[3-9]\\\\d{9}\"}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户列表",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：用户详情",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/users/{id}",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "{\"id\": \"${query.id}\", \"q\": \"${query.q}\", \"params\": \"${params.id}\", \"none\": \"${query.none}\"}",
+      "res_body_type": "json",
+      "title": "用户详情"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/users/{id}",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users/{id}"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [
+          {
+            "_id": "<objectid>",
+            "desc": "",
+            "name": "id"
+          }
+        ],
+        "req_query": [],
+        "res_body": "{\"id\": \"${query.id}\", \"q\": \"${query.q}\", \"params\": \"${params.id}\", \"none\": \"${query.none}\"}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "用户详情",
+        "type": "var",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：新建用户",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "POST",
+      "path": "/users",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_body_type": "json",
+      "req_headers": [],
+      "res_body": "{name: '${body.name}', // JSON5 注释\n tag: '${body.tags}', all: '${params.name}',}",
+      "res_body_type": "json",
+      "title": "新建用户"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/users",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/users"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_body_type": "json",
+        "req_headers": [
+          {
+            "_id": "<objectid>",
+            "name": "Content-Type",
+            "required": "1",
+            "value": "application/json"
+          }
+        ],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{name: '${body.name}', // JSON5 注释\n tag: '${body.tags}', all: '${params.name}',}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "新建用户",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：纯文本",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/plain",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "pong @email",
+      "res_body_type": "raw",
+      "title": "纯文本"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/plain",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/plain"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "pong @email",
+        "res_body_is_json_schema": false,
+        "res_body_type": "raw",
+        "status": "undone",
+        "tag": [],
+        "title": "纯文本",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：HTML",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/html",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "  <p>hi</p>",
+      "res_body_type": "raw",
+      "title": "HTML"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/html",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/html"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "  <p>hi</p>",
+        "res_body_is_json_schema": false,
+        "res_body_type": "raw",
+        "status": "undone",
+        "tag": [],
+        "title": "HTML",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：空响应体",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/empty",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "",
+      "res_body_type": "json",
+      "title": "空响应体"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/empty",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/empty"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "空响应体",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：数字",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/number",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "123",
+      "res_body_type": "json",
+      "title": "数字"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/number",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/number"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "123",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "数字",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：null",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/null",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "null",
+      "res_body_type": "json",
+      "title": "null"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/null",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/null"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "null",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "null",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：不是 JSON",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/text",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "hello @upper(\"x\")",
+      "res_body_type": "json",
+      "title": "不是 JSON"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/text",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/text"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "hello @upper(\"x\")",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "不是 JSON",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：JSON Schema",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/schema",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "{\"type\": \"object\", \"required\": [\"id\", \"name\", \"email\", \"ok\", \"list\"], \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1, \"maximum\": 9}, \"name\": {\"type\": \"string\", \"mock\": {\"mock\": \"@cname\"}}, \"email\": {\"type\": \"string\", \"mock\": {\"mock\": \"@email\"}}, \"ok\": {\"type\": \"boolean\"}, \"list\": {\"type\": \"array\", \"minItems\": 2, \"maxItems\": 2, \"items\": {\"type\": \"object\", \"required\": [\"n\"], \"properties\": {\"n\": {\"type\": \"number\", \"mock\": {\"mock\": \"@integer(1, 5)\"}}}}}}}",
+      "res_body_is_json_schema": true,
+      "res_body_type": "json",
+      "title": "JSON Schema"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/schema",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/schema"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"type\": \"object\", \"required\": [\"id\", \"name\", \"email\", \"ok\", \"list\"], \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1, \"maximum\": 9}, \"name\": {\"type\": \"string\", \"mock\": {\"mock\": \"@cname\"}}, \"email\": {\"type\": \"string\", \"mock\": {\"mock\": \"@email\"}}, \"ok\": {\"type\": \"boolean\"}, \"list\": {\"type\": \"array\", \"minItems\": 2, \"maxItems\": 2, \"items\": {\"type\": \"object\", \"required\": [\"n\"], \"properties\": {\"n\": {\"type\": \"number\", \"mock\": {\"mock\": \"@integer(1, 5)\"}}}}}}}",
+        "res_body_is_json_schema": true,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "JSON Schema",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：查询参数一",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/search?type=1",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "{\"type\": 1}",
+      "res_body_type": "json",
+      "title": "查询参数一"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/search?type=1",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [
+            {
+              "_id": "<objectid>",
+              "name": "type",
+              "value": "1"
+            }
+          ],
+          "path": "/search"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"type\": 1}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "查询参数一",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：查询参数二",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/search?type=2&page=1",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "{\"type\": 2}",
+      "res_body_type": "json",
+      "title": "查询参数二"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/search?type=2&page=1",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [
+            {
+              "_id": "<objectid>",
+              "name": "type",
+              "value": "2"
+            },
+            {
+              "_id": "<objectid>",
+              "name": "page",
+              "value": "1"
+            }
+          ],
+          "path": "/search"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"type\": 2}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "查询参数二",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：段内参数",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/files/{name}.json",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "{\"file\": \"${query.name}\"}",
+      "res_body_type": "json",
+      "title": "段内参数"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/files/{name}.json",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/files/{name}.json"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [
+          {
+            "_id": "<objectid>",
+            "desc": "",
+            "name": "name"
+          }
+        ],
+        "req_query": [],
+        "res_body": "{\"file\": \"${query.name}\"}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "段内参数",
+        "type": "var",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：冒号参数",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/orders/:oid/items",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "{\"oid\": \"${query.oid}\"}",
+      "res_body_type": "json",
+      "title": "冒号参数"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/orders/:oid/items",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/orders/:oid/items"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [
+          {
+            "_id": "<objectid>",
+            "desc": "",
+            "name": "oid"
+          }
+        ],
+        "req_query": [],
+        "res_body": "{\"oid\": \"${query.oid}\"}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "冒号参数",
+        "type": "var",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：Mock.js 出错",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/broken",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "{\"img\": \"@dataImage\", \"n|1-3\": 1}",
+      "res_body_type": "json",
+      "title": "Mock.js 出错"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/broken",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/broken"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"img\": \"@dataImage\", \"n|1-3\": 1}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "Mock.js 出错",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：取不到的变量",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "POST",
+      "path": "/bad-var",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "{\"v\": \"${body.x.y}\"}",
+      "res_body_type": "json",
+      "title": "取不到的变量"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/bad-var",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/bad-var"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"v\": \"${body.x.y}\"}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "取不到的变量",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：表单",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "POST",
+      "path": "/form",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_body_type": "form",
+      "req_headers": [],
+      "res_body": "{\"a\": \"${body.a}\", \"f\": \"${body.f}\", \"all\": \"${body}\"}",
+      "res_body_type": "json",
+      "title": "表单"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/form",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/form"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_body_type": "form",
+        "req_headers": [
+          {
+            "_id": "<objectid>",
+            "name": "Content-Type",
+            "required": "1",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"a\": \"${body.a}\", \"f\": \"${body.f}\", \"all\": \"${body}\"}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "表单",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：XML",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/xml",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "res_body": "<a>@email</a>",
+      "res_body_type": "xml",
+      "title": "XML"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/xml",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/xml"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "<a>@email</a>",
+        "res_body_is_json_schema": false,
+        "res_body_type": "xml",
+        "status": "undone",
+        "tag": [],
+        "title": "XML",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "Mock 规则（形状）",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/users",
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    "response": {
+      "code": "<number>",
+      "data": [
+        {
+          "active": "<boolean>",
+          "age": "<number>",
+          "city": "<string:han>",
+          "color": "<string:color>",
+          "created": "<string:datetime>",
+          "email": "<string:email>",
+          "guid": "<string:guid>",
+          "id": "<number>",
+          "ip": "<string:ip>",
+          "name": "<string:han>",
+          "score": "<number>",
+          "tags": [
+            "<string:lower>"
+          ],
+          "url": "<string:url>"
+        }
+      ],
+      "phone": "<string:digits>"
+    }
+  },
+  {
+    "step": "路径参数和查询参数",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/users/42?q=搜索",
+    "status": 200,
+    "response": {
+      "id": "42",
+      "none": "",
+      "params": "42",
+      "q": "搜索"
+    }
+  },
+  {
+    "step": "请求体变量（JSON5 模板）",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/users",
+    "request": {
+      "name": "tom",
+      "tags": [
+        "a",
+        "b"
+      ]
+    },
+    "status": 200,
+    "response": {
+      "all": "tom",
+      "name": "tom",
+      "tag": [
+        "a",
+        "b"
+      ]
+    }
+  },
+  {
+    "step": "纯文本不处理占位符",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/plain",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/plain; charset=utf-8"
+    },
+    "response": "pong @email"
+  },
+  {
+    "step": "以 < 开头为 HTML",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/html",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html; charset=utf-8"
+    },
+    "response": "  <p>hi</p>"
+  },
+  {
+    "step": "空响应体",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/empty",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/plain; charset=utf-8"
+    },
+    "response": ""
+  },
+  {
+    "step": "数字",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/number",
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    "response": 123
+  },
+  {
+    "step": "null 返回 204",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/null",
+    "status": 204,
+    "response": ""
+  },
+  {
+    "step": "不是 JSON 的模板按字符串处理",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/text",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/plain; charset=utf-8"
+    },
+    "response": "hello X"
+  },
+  {
+    "step": "JSON Schema（形状）",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/schema",
+    "status": 200,
+    "response": {
+      "email": "<string:email>",
+      "id": "<number>",
+      "list": [
+        {
+          "n": "<number>"
+        }
+      ],
+      "name": "<string:han>",
+      "ok": "<boolean>"
+    }
+  },
+  {
+    "step": "XML 原样返回",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/xml",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html; charset=utf-8"
+    },
+    "response": "<a>@email</a>"
+  },
+  {
+    "step": "query_path：type=1",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/search?type=1",
+    "status": 200,
+    "response": {
+      "type": 1
+    }
+  },
+  {
+    "step": "query_path：只看最后一个参数",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/search?page=1&type=9",
+    "status": 200,
+    "response": {
+      "type": 2
+    }
+  },
+  {
+    "step": "query_path：都不匹配",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/search?type=3",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "不存在的api, 当前请求path为 /search， 请求方法为 GET ，请确认是否定义此请求。"
+    }
+  },
+  {
+    "step": "段内的 {name}",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/files/report.json",
+    "status": 200,
+    "response": {
+      "file": "report"
+    }
+  },
+  {
+    "step": "冒号参数",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/orders/A01/items",
+    "status": 200,
+    "response": {
+      "oid": "A01"
+    }
+  },
+  {
+    "step": "段数不同",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/orders/A01",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "不存在的api, 当前请求path为 /orders/A01， 请求方法为 GET ，请确认是否定义此请求。"
+    }
+  },
+  {
+    "step": "方法不对",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/plain",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "不存在的api, 当前请求path为 /plain， 请求方法为 POST ，请确认是否定义此请求。"
+    }
+  },
+  {
+    "step": "不存在的接口",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/nope",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "不存在的api, 当前请求path为 /nope， 请求方法为 GET ，请确认是否定义此请求。"
+    }
+  },
+  {
+    "step": "基础路径只按长度截掉",
+    "method": "GET",
+    "url": "/mock/{{pid}}/xyz/plain",
+    "status": 200,
+    "response": "pong @email"
+  },
+  {
+    "step": "路径编码",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/users/%E4%B8%AD",
+    "status": 200,
+    "response": {
+      "id": "%E4%B8%AD",
+      "none": "",
+      "params": "%E4%B8%AD",
+      "q": ""
+    }
+  },
+  {
+    "step": "项目 ID 不是数字",
+    "method": "GET",
+    "url": "/mock/abc/x",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 403,
+      "errmsg": "Cast to number failed for value \"abc\" at path \"_id\" for model \"project\""
+    }
+  },
+  {
+    "step": "项目不存在",
+    "method": "GET",
+    "url": "/mock/987654/x",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 403,
+      "errmsg": "Cannot read property 'toObject' of null"
+    }
+  },
+  {
+    "step": "项目 ID 是小数",
+    "method": "GET",
+    "url": "/mock/1.5/x",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 403,
+      "errmsg": "Cannot read property 'toObject' of null"
+    }
+  },
+  {
+    "step": "没有项目 ID",
+    "method": "GET",
+    "url": "/mock/",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "projectId不能为空"
+    }
+  },
+  {
+    "step": "Mock.js 出错时返回原模板",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/broken",
+    "status": 200,
+    "response": {
+      "img": "@dataImage",
+      "n|1-3": 1
+    }
+  },
+  {
+    "step": "变量取不到时报解析出错",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/bad-var",
+    "request": {
+      "x": 5
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "解析出错，请检查。Error: Cannot use 'in' operator to search for 'y' in 5"
+    }
+  },
+  {
+    "step": "urlencoded 表单",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/form",
+    "request": "a=1&a=2&f=%E4%B8%AD+x",
+    "status": 200,
+    "response": {
+      "a": [
+        "1",
+        "2"
+      ],
+      "all": {
+        "a": [
+          "1",
+          "2"
+        ],
+        "f": "中 x"
+      },
+      "f": "中 x"
+    }
+  },
+  {
+    "step": "multipart：请求体换成 fields",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/form",
+    "request": "--XBOUNDARY\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nva\r\n--XBOUNDARY\r\nContent-Disposition: form-data; name=\"f\"; filename=\"t.txt\"\r\nContent-Type: text/plain\r\n\r\nfile content\r\n--XBOUNDARY--\r\n",
+    "status": 200,
+    "response": {
+      "a": "va",
+      "all": {
+        "a": "va"
+      },
+      "f": ""
+    }
+  },
+  {
+    "step": "纯文本请求体",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/form",
+    "request": "hello",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 400,
+      "errmsg": "解析出错，请检查。Error: Cannot use 'in' operator to search for 'a' in hello"
+    }
+  },
+  {
+    "step": "带 Origin 的请求",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/plain",
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Allow-Origin": "http://example.com"
+    },
+    "response": "pong @email"
+  },
+  {
+    "step": "跨域预检",
+    "method": "OPTIONS",
+    "url": "/mock/{{pid}}/api/plain",
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Headers": "x-token",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, HEADER, PATCH, OPTIONS",
+      "Access-Control-Allow-Origin": "http://example.com",
+      "Access-Control-Max-Age": "1728000",
+      "Content-Type": "text/plain; charset=utf-8"
+    },
+    "response": "ok"
+  },
+  {
+    "step": "不是预检的 OPTIONS",
+    "method": "OPTIONS",
+    "url": "/mock/{{pid}}/api/plain",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "不存在的api, 当前请求path为 /plain， 请求方法为 OPTIONS ，请确认是否定义此请求。"
+    }
+  },
+  {
+    "step": "开启严格模式",
+    "method": "POST",
+    "url": "/api/project/up",
+    "request": {
+      "id": "{{pid}}",
+      "strice": true
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "n": 1,
+        "nModified": 1,
+        "ok": 1
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：严格：查询参数",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "GET",
+      "path": "/strict/query",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_headers": [],
+      "req_query": [
+        {
+          "name": "page",
+          "required": "1"
+        },
+        {
+          "name": "size",
+          "required": "1"
+        },
+        {
+          "name": "opt",
+          "required": "0"
+        }
+      ],
+      "res_body": "{\"ok\": true}",
+      "res_body_type": "json",
+      "title": "严格：查询参数"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "GET",
+        "path": "/strict/query",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/strict/query"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": false,
+        "req_headers": [],
+        "req_params": [],
+        "req_query": [
+          {
+            "_id": "<objectid>",
+            "name": "page",
+            "required": "1"
+          },
+          {
+            "_id": "<objectid>",
+            "name": "size",
+            "required": "1"
+          },
+          {
+            "_id": "<objectid>",
+            "name": "opt",
+            "required": "0"
+          }
+        ],
+        "res_body": "{\"ok\": true}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "严格：查询参数",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：严格：表单",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "POST",
+      "path": "/strict/form",
+      "project_id": "{{pid}}",
+      "req_body_form": [
+        {
+          "name": "a",
+          "required": "1",
+          "type": "text"
+        },
+        {
+          "name": "file",
+          "required": "1",
+          "type": "file"
+        }
+      ],
+      "req_body_type": "form",
+      "req_headers": [],
+      "res_body": "{\"ok\": true}",
+      "res_body_type": "json",
+      "title": "严格：表单"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/strict/form",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/strict/form"
+        },
+        "req_body_form": [
+          {
+            "_id": "<objectid>",
+            "name": "a",
+            "required": "1",
+            "type": "text"
+          },
+          {
+            "_id": "<objectid>",
+            "name": "file",
+            "required": "1",
+            "type": "file"
+          }
+        ],
+        "req_body_is_json_schema": false,
+        "req_body_type": "form",
+        "req_headers": [
+          {
+            "_id": "<objectid>",
+            "name": "Content-Type",
+            "required": "1",
+            "value": "multipart/form-data"
+          }
+        ],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"ok\": true}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "严格：表单",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "新建接口：严格：JSON Schema",
+    "method": "POST",
+    "url": "/api/interface/add",
+    "request": {
+      "catid": "{{cat}}",
+      "method": "POST",
+      "path": "/strict/json",
+      "project_id": "{{pid}}",
+      "req_body_form": [],
+      "req_body_is_json_schema": true,
+      "req_body_other": "{\"type\": \"object\", \"required\": [\"name\", \"age\"], \"properties\": {\"name\": {\"type\": \"string\", \"minLength\": 2}, \"age\": {\"type\": \"integer\", \"minimum\": 1}, \"tags\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}}",
+      "req_body_type": "json",
+      "req_headers": [],
+      "res_body": "{\"ok\": true}",
+      "res_body_type": "json",
+      "title": "严格：JSON Schema"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "__v": 0,
+        "_id": "<id>",
+        "add_time": "<time>",
+        "api_opened": false,
+        "catid": "<id>",
+        "edit_uid": "<id>",
+        "index": 0,
+        "method": "POST",
+        "path": "/strict/json",
+        "project_id": "<id>",
+        "query_path": {
+          "params": [],
+          "path": "/strict/json"
+        },
+        "req_body_form": [],
+        "req_body_is_json_schema": true,
+        "req_body_other": "{\"type\": \"object\", \"required\": [\"name\", \"age\"], \"properties\": {\"name\": {\"type\": \"string\", \"minLength\": 2}, \"age\": {\"type\": \"integer\", \"minimum\": 1}, \"tags\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}}",
+        "req_body_type": "json",
+        "req_headers": [
+          {
+            "_id": "<objectid>",
+            "name": "Content-Type",
+            "required": "1",
+            "value": "application/json"
+          }
+        ],
+        "req_params": [],
+        "req_query": [],
+        "res_body": "{\"ok\": true}",
+        "res_body_is_json_schema": false,
+        "res_body_type": "json",
+        "status": "undone",
+        "tag": [],
+        "title": "严格：JSON Schema",
+        "type": "static",
+        "uid": "<id>",
+        "up_time": "<time>"
+      },
+      "errcode": 0,
+      "errmsg": "成功！"
+    }
+  },
+  {
+    "step": "缺少查询参数",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/strict/query?size=1",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "接口字段验证不通过, 错误信息：缺少必须字段 page  "
+    }
+  },
+  {
+    "step": "查询参数为空字符串",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/strict/query?page=&size=1",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "接口字段验证不通过, 错误信息：缺少必须字段 page  "
+    }
+  },
+  {
+    "step": "查询参数齐全",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/strict/query?page=1&size=2",
+    "status": 200,
+    "response": {
+      "ok": true
+    }
+  },
+  {
+    "step": "缺少表单字段",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/strict/form",
+    "request": "a=1",
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "接口字段验证不通过, 错误信息：缺少必须字段 file  "
+    }
+  },
+  {
+    "step": "multipart 表单齐全",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/strict/form",
+    "request": "--XBOUNDARY\r\nContent-Disposition: form-data; name=\"a\"\r\n\r\nva\r\n--XBOUNDARY\r\nContent-Disposition: form-data; name=\"file\"; filename=\"t.txt\"\r\nContent-Type: text/plain\r\n\r\nfile content\r\n--XBOUNDARY--\r\n",
+    "status": 200,
+    "response": {
+      "ok": true
+    }
+  },
+  {
+    "step": "JSON 缺少必需属性",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/strict/json",
+    "request": {
+      "name": "tom"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "接口字段验证不通过, 错误信息：schema 验证请求参数 data 应当有必需属性 age"
+    }
+  },
+  {
+    "step": "JSON 类型不对",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/strict/json",
+    "request": {
+      "age": 1.5,
+      "name": "tom"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "接口字段验证不通过, 错误信息：schema 验证请求参数 data.age 应当是 integer 类型"
+    }
+  },
+  {
+    "step": "JSON 数组元素不对",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/strict/json",
+    "request": {
+      "age": 2,
+      "name": "tom",
+      "tags": [
+        "a",
+        1
+      ]
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "接口字段验证不通过, 错误信息：schema 验证请求参数 data.tags[1] 应当是 string 类型"
+    }
+  },
+  {
+    "step": "JSON 长度不够",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/strict/json",
+    "request": {
+      "age": 2,
+      "name": "t"
+    },
+    "status": 200,
+    "response": {
+      "data": null,
+      "errcode": 404,
+      "errmsg": "接口字段验证不通过, 错误信息：schema 验证请求参数 data.name 不应少于 2 个字符"
+    }
+  },
+  {
+    "step": "JSON 通过",
+    "method": "POST",
+    "url": "/mock/{{pid}}/api/strict/json",
+    "request": {
+      "age": 2,
+      "name": "tom"
+    },
+    "status": 200,
+    "response": {
+      "ok": true
+    }
+  },
+  {
+    "step": "GET 不校验请求体",
+    "method": "GET",
+    "url": "/mock/{{pid}}/api/strict/query?page=1&size=1",
+    "status": 200,
+    "response": {
+      "ok": true
+    }
+  }
+]
