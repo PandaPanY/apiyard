@@ -44,7 +44,7 @@ func TestLoadWebAndUpstream(t *testing.T) {
 
 	t.Setenv("APIYARD_YAPI_UPSTREAM", "")
 	cfg, _ = Load(nil)
-	if cfg.WebDir != "web/yapi" || cfg.YAPIUpstream != "" {
+	if cfg.WebDir != "" || cfg.YAPIUpstream != "" {
 		t.Errorf("默认值不对: WebDir=%q YAPIUpstream=%q", cfg.WebDir, cfg.YAPIUpstream)
 	}
 }

@@ -14,7 +14,7 @@ const defaultAddr = ":3000"
 type Config struct {
 	Addr          string // HTTP 监听地址
 	DBPath        string // SQLite 数据库文件
-	WebDir        string // 前端静态文件目录（yapi-vendor 包里的 static 目录）
+	WebDir        string // 前端静态文件目录（yapi-vendor 包里的 static 目录），为空时使用打进可执行文件的前端
 	AdminEmail    string // 首次启动时创建的管理员邮箱
 	AdminPassword string // 首次启动时的管理员密码；为空则随机生成并打印到日志
 	CloseRegister bool   // 关闭用户注册
@@ -28,7 +28,8 @@ func Load(args []string) (Config, error) {
 	var cfg Config
 	fs.StringVar(&cfg.Addr, "addr", envOr("APIYARD_ADDR", defaultAddr), "HTTP 监听地址（环境变量 APIYARD_ADDR）")
 	fs.StringVar(&cfg.DBPath, "db", envOr("APIYARD_DB", "apiyard.db"), "SQLite 数据库文件（环境变量 APIYARD_DB）")
-	fs.StringVar(&cfg.WebDir, "web-dir", envOr("APIYARD_WEB_DIR", "web/yapi"), "前端静态文件目录（环境变量 APIYARD_WEB_DIR）")
+	fs.StringVar(&cfg.WebDir, "web-dir", envOr("APIYARD_WEB_DIR", ""),
+		"前端静态文件目录，为空时使用打进可执行文件的前端（环境变量 APIYARD_WEB_DIR）")
 	fs.StringVar(&cfg.AdminEmail, "admin-email", envOr("APIYARD_ADMIN_EMAIL", "admin@admin.com"),
 		"首次启动时创建的管理员邮箱（环境变量 APIYARD_ADMIN_EMAIL）")
 	fs.StringVar(&cfg.AdminPassword, "admin-password", envOr("APIYARD_ADMIN_PASSWORD", ""),

@@ -3,8 +3,10 @@
 /apiyard.exe
 /dist/
 
-# 由 tools/fetch-yapi-web 下载的 YApi 前端，是否随仓库发布在 M6 决定
-/web/yapi/
+# 由 tools/fetch-yapi-web 下载的 YApi 前端，构建时打进可执行文件，不随仓库提交；
+# 只保留占位文件，没有下载前端时也能编译
+/web/yapi/*
+!/web/yapi/.gitkeep
 
 # 本地数据与配置
 *.db

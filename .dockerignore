@@ -1,0 +1,14 @@
+# 构建镜像只需要源码和前端，其余不发送给 Docker
+.git
+.idea
+.vscode
+dist
+docs
+testenv
+testdata
+**/testdata
+*.db
+*.db-*
+.env
+*.test
+coverage.out

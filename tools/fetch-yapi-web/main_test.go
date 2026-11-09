@@ -59,6 +59,28 @@ func TestExtractStaticOnlyKeepsStaticDir(t *testing.T) {
 	}
 }
 
+func TestDropPlainCopies(t *testing.T) {
+	out := t.TempDir()
+	for _, name := range []string{"index.html", "prd/a.js", "prd/a.js.gz", "prd/b.css.gz", "prd/assets.js"} {
+		p := filepath.Join(out, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(p), 0o750); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(p, []byte(name), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	n, err := dropPlainCopies(out)
+	if err != nil || n != 1 {
+		t.Fatalf("删除了 %d 个, err = %v，应为 1", n, err)
+	}
+	for name, exists := range map[string]bool{"prd/a.js": false, "prd/a.js.gz": true, "prd/b.css.gz": true, "prd/assets.js": true, "index.html": true} {
+		if _, err := os.Stat(filepath.Join(out, filepath.FromSlash(name))); (err == nil) != exists {
+			t.Errorf("%s 是否存在应为 %v", name, exists)
+		}
+	}
+}
+
 func TestExtractStaticRejectsPathTraversal(t *testing.T) {
 	data := makeTarball(t, map[string]string{"package/static/../../evil.txt": "x"})
 	if _, err := extractStatic(bytes.NewReader(data), t.TempDir()); err == nil {

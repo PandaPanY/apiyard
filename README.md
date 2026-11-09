@@ -31,7 +31,7 @@ ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成�
 - [x] M3 开放 API 与导入导出：token 兼容，导入 Swagger 2 / OpenAPI 3、导出 Swagger 2，周边工具实测（easy-yapi 为按源码回放）
 - [x] M4 数据迁移：一条命令从 YApi 的 MongoDB 迁移，原密码、token、链接和 Mock 地址都继续有效
 - [x] M5 Mock 服务：地址与 YApi 一致，支持 Mock.js 规则和占位符、JSON Schema、请求变量和严格模式，不执行脚本
-- [ ] M6 打包发布 v0.1：单文件、Docker 镜像、CI、文档
+- [ ] M6 打包发布 v0.1：单文件、Docker 镜像、CI、文档（都已完成，待公开仓库后打标签发布）
 - [ ] M7 MCP Server（v0.2）
 
 **v0.1 发布标准**：完成 M0.5–M6，一个真实的 YApi 实例可以完整迁移过来并正常使用。每个里程碑的任务、验收标准和工时预估见 [`docs/roadmap.md`](docs/roadmap.md)。
@@ -47,36 +47,22 @@ ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成�
 
 ## 快速开始
 
-需要 Go 1.26 及以上版本。
+**可执行文件**：从 GitHub Releases 下载对应平台的压缩包（Linux、macOS、Windows，amd64 / arm64），解压后运行：
 
 ```bash
-# 获取 YApi 的预构建前端（从 npm 下载 yapi-vendor 并校验，解压到 web/yapi）
-go run ./tools/fetch-yapi-web
-
-# 运行
-go run ./cmd/apiyard
-
-# 测试
-go test ./...
-
-# 代码检查（需要先安装 golangci-lint）
-golangci-lint run
+./apiyard -admin-password '初始密码'
 ```
 
-启动后访问 `http://localhost:3000/healthz` 检查服务状态。
+**Docker**：
 
-| 参数 | 环境变量 | 默认值 | 说明 |
-|---|---|---|---|
-| `-addr` | `APIYARD_ADDR` | `:3000` | 监听地址 |
-| `-db` | `APIYARD_DB` | `apiyard.db` | SQLite 数据库文件，不存在时自动创建 |
-| `-web-dir` | `APIYARD_WEB_DIR` | `web/yapi` | 前端静态文件目录 |
-| `-admin-email` | `APIYARD_ADMIN_EMAIL` | `admin@admin.com` | 首次启动（数据库里还没有用户）时创建的管理员邮箱 |
-| `-admin-password` | `APIYARD_ADMIN_PASSWORD` | 空 | 首次启动时的管理员密码；为空则随机生成，并在日志里打印一次 |
-| `-close-register` | `APIYARD_CLOSE_REGISTER` | `false` | 关闭用户注册 |
-| `-token-salt` | `APIYARD_TOKEN_SALT` | `abcde` | 开放 API token 的加密口令；从 YApi 迁移时填原配置文件里的 `passsalt`，已有的 token 才能继续使用 |
-| `-yapi-upstream` | `APIYARD_YAPI_UPSTREAM` | 空 | 开发用：把**全部** `/api`、`/mock` 请求转发给原版 YApi，用于对比行为（对照实例见 [`testenv/yapi`](testenv/yapi/README.md)） |
+```bash
+docker run -d --name apiyard -p 3000:3000 -v apiyard-data:/data \
+  -e APIYARD_ADMIN_PASSWORD='初始密码' ghcr.io/pandapany/apiyard:0.1
+```
 
-本地开发时可以这样运行：`go run ./cmd/apiyard -db apiyard-dev.db -admin-password ymfe.org`。
+浏览器打开 `http://localhost:3000`，用 `admin@admin.com` 和初始密码登录。不指定初始密码时会随机生成，只在首次启动的日志里出现一次。
+
+配置项、反向代理、备份与升级见 [`docs/deployment.md`](docs/deployment.md)，与 YApi 的不同之处见 [`docs/differences.md`](docs/differences.md)。
 
 ### 从 YApi 迁移
 
@@ -88,9 +74,21 @@ apiyard migrate -mongo "mongodb://127.0.0.1:27017/yapi" -db apiyard.db
 apiyard -db apiyard.db -token-salt 原来的passsalt
 ```
 
-MongoDB 低于 3.6 时，先用 `mongodump` 导出，再用 `-dump <目录>` 代替 `-mongo`。完整步骤见 [`docs/migration.md`](docs/migration.md)。
+MongoDB 低于 3.6 时，先用 `mongodump` 导出，再用 `-dump <目录>` 代替 `-mongo`。完整步骤（包括用 Docker 迁移）见 [`docs/migration.md`](docs/migration.md)。
 
-接口兼容性测试（与原版 YApi 逐字段比对）见 [`docs/testing.md`](docs/testing.md)。
+## 开发
+
+需要 Go 1.26 及以上版本。
+
+```bash
+go run ./tools/fetch-yapi-web     # 下载 YApi 的预构建前端（从 npm 下载 yapi-vendor 并校验），编译时打进可执行文件
+go run ./cmd/apiyard -db apiyard-dev.db -admin-password ymfe.org
+go test ./...
+golangci-lint run                 # 代码检查，需要先安装 golangci-lint
+```
+
+- 接口兼容性测试（与原版 YApi 逐字段比对）见 [`docs/testing.md`](docs/testing.md)，对照实例见 [`testenv/yapi`](testenv/yapi/README.md)。
+- 打包和发布见 [`docs/release.md`](docs/release.md)。
 
 ## 许可证
 

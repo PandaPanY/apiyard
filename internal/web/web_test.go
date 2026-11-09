@@ -1,6 +1,8 @@
 package web
 
 import (
+	"bytes"
+	"compress/gzip"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -91,6 +93,35 @@ func TestPrecompressedGzip(t *testing.T) {
 	if rec.Body.String() != "plain-js" || rec.Header().Get("Content-Encoding") != "" {
 		t.Errorf("不支持 gzip 时应返回原文件: 响应 %q", rec.Body.String())
 	}
+	if rec.Header().Get("Vary") != "Accept-Encoding" {
+		t.Error("有 .gz 时，返回原文件也要带 Vary")
+	}
+}
+
+// 打包的前端只有 .gz 时，不支持 gzip 的客户端得到解压后的内容。
+func TestGzipOnly(t *testing.T) {
+	var buf bytes.Buffer
+	zw := gzip.NewWriter(&buf)
+	_, _ = zw.Write([]byte("console.log(1)"))
+	_ = zw.Close()
+	fsys := fstest.MapFS{"prd/lib@x.js.gz": {Data: buf.Bytes()}}
+
+	req := httptest.NewRequest(http.MethodGet, "/prd/lib@x.js", nil)
+	rec := httptest.NewRecorder()
+	Handler(fsys).ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK || rec.Body.String() != "console.log(1)" || rec.Header().Get("Content-Encoding") != "" {
+		t.Errorf("应返回解压后的内容: %d %q", rec.Code, rec.Body.String())
+	}
+	if ct := rec.Header().Get("Content-Type"); ct != "text/javascript; charset=utf-8" {
+		t.Errorf("Content-Type: %q", ct)
+	}
+
+	req.Header.Set("Accept-Encoding", "gzip")
+	rec = httptest.NewRecorder()
+	Handler(fsys).ServeHTTP(rec, req)
+	if !bytes.Equal(rec.Body.Bytes(), buf.Bytes()) || rec.Header().Get("Content-Encoding") != "gzip" {
+		t.Error("支持 gzip 时应原样返回 .gz")
+	}
 }
 
 func TestCacheControl(t *testing.T) {
@@ -112,5 +143,20 @@ func TestNotFound(t *testing.T) {
 		if rec := get(t, p, ""); rec.Code != http.StatusNotFound {
 			t.Errorf("%s: 状态码 %d, 期望 404", p, rec.Code)
 		}
+	}
+}
+
+func TestOnlyGetAndHead(t *testing.T) {
+	for _, m := range []string{http.MethodPost, http.MethodPut, http.MethodDelete} {
+		rec := httptest.NewRecorder()
+		Handler(testFS).ServeHTTP(rec, httptest.NewRequest(m, "/group/11", nil))
+		if rec.Code != http.StatusMethodNotAllowed || rec.Header().Get("Allow") != "GET, HEAD" {
+			t.Errorf("%s: 状态码 %d, 应为 405", m, rec.Code)
+		}
+	}
+	rec := httptest.NewRecorder()
+	Handler(testFS).ServeHTTP(rec, httptest.NewRequest(http.MethodHead, "/image/favicon.png", nil))
+	if rec.Code != http.StatusOK {
+		t.Errorf("HEAD: 状态码 %d", rec.Code)
 	}
 }

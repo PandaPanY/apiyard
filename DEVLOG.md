@@ -2,6 +2,22 @@
 
 > 按日期倒序记录，最新的在最上面。每条只写要点。
 
+## 2026-11-09 M6：打包发布
+
+- 完成：
+  - 前端打进可执行文件：`web` 包 embed `web/yapi`（仓库里只有占位的 `.gitkeep`），不指定 `-web-dir` 时使用内嵌前端。`fetch-yapi-web` 删掉已有 `.gz` 的原文件，前端从 9.1MB 降到 2.5MB，不支持 gzip 的客户端由服务端解压。
+  - `tools/dist`：交叉编译 6 个平台，打包成 tar.gz / zip 并生成 `checksums.txt`，版本号写进可执行文件；新增 `apiyard version`、`apiyard healthcheck`。
+  - Dockerfile：构建阶段交叉编译（多架构不需要 QEMU），运行阶段 distroless nonroot，解压后约 25MB、压缩后 10.2MB。在测试服务器上实测启动、healthy、重启后数据保留、挂载目录权限、容器里迁移。
+  - GitHub Actions：`ci.yml`（vet、`test -race`、golangci-lint、6 平台编译、镜像构建）、`release.yml`（打 `v*` 标签时生成 Release 草稿和 ghcr.io 镜像）。
+  - 文档：新增 deployment.md（安装、配置、config.json 对照、反向代理、备份升级）、differences.md（面向使用者的差异）、release.md；README 改为下载 / Docker 的快速开始。
+- 问题 / 决定：
+  - 前端不入库：构建前从 npm 下载并按 integrity 校验，仓库不带 9MB 的第三方产物；`go build` 没下载前端也能通过，只是没有界面。
+  - 加上前端后，前端路由对 POST 等方法也会返回 index.html（原来的测试没有前端所以没测到），改为只响应 GET、HEAD，其他返回 405。
+  - yapi-vendor 里的 `.gz` 和原文件是两次混淆的结果，变量名不同；浏览器拿到的一直是 `.gz`，所以只保留 `.gz` 反而让所有客户端一致。
+  - 挂载 root 所有的目录时 SQLite 只报 `unable to open database file (14)`，错误信息里加了检查写权限的提示。
+  - Linux 容器里跑完整测试（含 `-race`）全部通过。工作流文件只做了人工检查，推送后看第一次运行结果。
+- 下一步：推送后确认 CI；然后做公开前的整理（清除内网信息、README 如实描述功能、开发预览说明、issue 模板），公开后打 v0.1.0 标签。
+
 ## 2026-11-09 M5：Mock 服务
 
 - 完成：

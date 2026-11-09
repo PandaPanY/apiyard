@@ -17,6 +17,7 @@ import (
 	"github.com/PandaPanY/apiyard/internal/mock"
 	"github.com/PandaPanY/apiyard/internal/store"
 	"github.com/PandaPanY/apiyard/internal/web"
+	webassets "github.com/PandaPanY/apiyard/web"
 )
 
 const (
@@ -31,12 +32,9 @@ func New(cfg config.Config, st *store.Store, logger *slog.Logger) (http.Handler,
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", handleHealth)
 
-	var webFS fs.FS
-	if info, err := os.Stat(cfg.WebDir); err == nil && info.IsDir() {
-		webFS = os.DirFS(cfg.WebDir)
+	webFS := frontend(cfg.WebDir, logger)
+	if webFS != nil {
 		mux.Handle("/", web.Handler(webFS))
-	} else {
-		logger.Warn("找不到前端目录，界面不可用；可执行 go run ./tools/fetch-yapi-web 获取", "web_dir", cfg.WebDir)
 	}
 
 	if cfg.YAPIUpstream == "" {
@@ -57,11 +55,28 @@ func New(cfg config.Config, st *store.Store, logger *slog.Logger) (http.Handler,
 	return mux, nil
 }
 
+// frontend 返回前端文件：指定了目录就用目录（不回退到内嵌的前端，以免用错版本），否则用打进可执行文件的前端。
+// 都没有时返回 nil，服务照常启动，只是没有界面。
+func frontend(dir string, logger *slog.Logger) fs.FS {
+	if dir == "" {
+		if fsys := webassets.FS(); fsys != nil {
+			return fsys
+		}
+		logger.Warn("可执行文件里没有打包前端，界面不可用；先执行 go run ./tools/fetch-yapi-web 再编译，或用 -web-dir 指定前端目录")
+		return nil
+	}
+	if info, err := os.Stat(dir); err != nil || !info.IsDir() {
+		logger.Warn("找不到前端目录，界面不可用；可执行 go run ./tools/fetch-yapi-web 获取", "web_dir", dir)
+		return nil
+	}
+	return os.DirFS(dir)
+}
+
 // openStore 打开数据库；数据库里还没有用户时创建管理员账号。
 func openStore(ctx context.Context, cfg config.Config, logger *slog.Logger) (*store.Store, error) {
 	st, err := store.Open(ctx, cfg.DBPath)
 	if err != nil {
-		return nil, fmt.Errorf("打开数据库 %s: %w", cfg.DBPath, err)
+		return nil, fmt.Errorf("打开数据库 %s（确认所在目录存在，且运行 ApiYard 的用户有写权限）: %w", cfg.DBPath, err)
 	}
 	created, password, err := api.Bootstrap(ctx, st, cfg.AdminEmail, cfg.AdminPassword)
 	if err != nil {

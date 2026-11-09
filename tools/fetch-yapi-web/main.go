@@ -1,4 +1,5 @@
 // Command fetch-yapi-web 从 npm 下载 yapi-vendor，校验完整性后把其中预构建的前端（static 目录）解压到本地。
+// 已有预压缩 .gz 的文件不保留原文件：前端要打进可执行文件，这样能小 6MB，不支持 gzip 的客户端由服务端解压。
 //
 // 用法：go run ./tools/fetch-yapi-web [-version 1.12.0] [-out web/yapi]
 package main
@@ -15,6 +16,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -75,6 +77,15 @@ func run(registry, version, out string) error {
 	}
 	n, err := extractStatic(bytes.NewReader(tarball), out)
 	if err != nil {
+		return err
+	}
+	dropped, err := dropPlainCopies(out)
+	if err != nil {
+		return err
+	}
+	n -= dropped
+	// 恢复仓库里的占位文件（内容为空），否则 git 会显示它被删除
+	if err := os.WriteFile(filepath.Join(out, ".gitkeep"), nil, 0o600); err != nil {
 		return err
 	}
 	slog.Info("已解压 YApi 前端", "version", version, "files", n, "out", out)
@@ -146,6 +157,29 @@ func extractStatic(r io.Reader, out string) (int, error) {
 		}
 		count++
 	}
+}
+
+// dropPlainCopies 删除 dir 下已有同名 .gz 的原文件，返回删除的个数。
+func dropPlainCopies(dir string) (int, error) {
+	var plain []string
+	err := filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
+		if err != nil || d.IsDir() || !strings.HasSuffix(p, ".gz") {
+			return err
+		}
+		if _, err := os.Stat(strings.TrimSuffix(p, ".gz")); err == nil {
+			plain = append(plain, strings.TrimSuffix(p, ".gz"))
+		}
+		return nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	for _, p := range plain {
+		if err := os.Remove(p); err != nil {
+			return 0, err
+		}
+	}
+	return len(plain), nil
 }
 
 // safeRelPath 拒绝绝对路径和包含 ".." 的路径，防止解压到输出目录之外。

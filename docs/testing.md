@@ -52,6 +52,10 @@ go run ./tools/migcheck -yapi http://localhost:13000 -yard http://127.0.0.1:3101
 
 `migcheck` 用管理员登录两边，遍历用户、分组、项目、分类、接口、动态、导出，并用 YApi 生成的 token 调用开放 API，逐个对比响应。动态列表同一秒内的先后不比较（见 architecture.md），HTML 导出本来就不逐字一致，也不比较。YApi 在第一次读取 `project/token` 时才给项目生成 token，迁移时还没有 token 的项目两边会各自生成一个不同的；遇到这种情况，重新迁移一次再核对。用周边工具核对见 [`testenv/eco`](../testenv/eco/README.md) 的 `migrated.sh`。
 
+## CI
+
+GitHub Actions（`.github/workflows/ci.yml`）在每次推送到 `main` 和每个 PR 时运行：`go vet`、`go test -race`、golangci-lint、6 个平台的编译和镜像构建。兼容测试和 Mock.js 交叉核对用的是仓库里的标准答案，不需要对照实例，所以也在 CI 里跑。测试前会先下载前端，`TestEmbeddedWeb` 检查内嵌的前端；本机没有下载前端时这个测试会跳过。
+
 ## Mock.js 交叉核对
 
 `internal/mockjs` 是 Mock.js 的 Go 实现。随机生成的数据不能逐字比对，所以另做了一套统计对照：`testdata/mockjs/cases.json` 里的每个模板，原版 Mock.js（加上 YApi 的 mock-extra）和 Go 版本各生成 400 次，比较每个字段的类型分布、字符串的类别、数值和长度的 5%～95% 分位数、对象的键（`go test` 自动执行，不需要连接对照实例）。

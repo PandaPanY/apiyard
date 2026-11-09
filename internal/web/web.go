@@ -4,6 +4,8 @@
 package web
 
 import (
+	"bytes"
+	"compress/gzip"
 	"errors"
 	"io"
 	"io/fs"
@@ -38,6 +40,12 @@ var spaPath = regexp.MustCompile(`^/[a-zA-Z0-9/\-_]*$`)
 // Handler 返回前端静态文件处理器，fsys 的根目录对应 yapi-vendor 包里的 static 目录。
 func Handler(fsys fs.FS) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// 前端只有静态文件；其他方法如果也返回 index.html，写错地址的接口调用会得到 200
+		if r.Method != http.MethodGet && r.Method != http.MethodHead {
+			w.Header().Set("Allow", "GET, HEAD")
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
 		clean := path.Clean(r.URL.Path)
 		switch {
 		case isPatchPath(clean):
@@ -57,24 +65,55 @@ func isSPARoute(p string) bool {
 func serveFile(w http.ResponseWriter, r *http.Request, fsys fs.FS, name string) {
 	w.Header().Set("Cache-Control", cacheControl(name))
 
-	// 浏览器支持 gzip 且存在预压缩文件时直接返回 .gz，省去实时压缩
-	if acceptsGzip(r) {
-		if f, ok := openFile(fsys, name+".gz"); ok {
-			defer closeQuietly(f)
+	gz, hasGz := openFile(fsys, name+".gz")
+	if hasGz {
+		defer closeQuietly(gz)
+		w.Header().Add("Vary", "Accept-Encoding")
+		// 浏览器支持 gzip 时直接返回预压缩的 .gz，省去实时压缩
+		if acceptsGzip(r) {
 			w.Header().Set("Content-Encoding", "gzip")
-			w.Header().Add("Vary", "Accept-Encoding")
-			serveContent(w, r, name, f)
+			serveContent(w, r, name, gz)
 			return
 		}
 	}
 
-	f, ok := openFile(fsys, name)
-	if !ok {
-		http.NotFound(w, r)
+	if f, ok := openFile(fsys, name); ok {
+		defer closeQuietly(f)
+		serveContent(w, r, name, f)
 		return
 	}
-	defer closeQuietly(f)
-	serveContent(w, r, name, f)
+	if hasGz {
+		serveGunzipped(w, r, name, gz)
+		return
+	}
+	http.NotFound(w, r)
+}
+
+// maxGunzipped 是实时解压的上限，最大的前端文件解压后约 5MB。
+const maxGunzipped = 64 << 20
+
+// serveGunzipped 解压 .gz 后返回。tools/fetch-yapi-web 下载的前端只保留 .gz（可执行文件因此小了 6MB），
+// 只有不支持 gzip 的客户端（如不加 --compressed 的 curl）会走到这里。
+func serveGunzipped(w http.ResponseWriter, r *http.Request, name string, gz fs.File) {
+	info, err := gz.Stat()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	zr, err := gzip.NewReader(gz)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	data, err := io.ReadAll(io.LimitReader(zr, maxGunzipped))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if ct, ok := contentTypes[path.Ext(name)]; ok {
+		w.Header().Set("Content-Type", ct)
+	}
+	http.ServeContent(w, r, name, info.ModTime(), bytes.NewReader(data))
 }
 
 // openFile 打开普通文件；文件不存在或是目录时返回 false。

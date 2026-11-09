@@ -26,11 +26,12 @@ internal/migrate/       从 YApi 的 MongoDB 或 mongodump 目录迁移数据   
 internal/mock/          Mock 服务：地址匹配、请求变量、严格模式的参数校验 (M5)
 internal/mockjs/        Mock.js 的 Go 实现，以及 YApi 对它的扩展          (M5)
 internal/mcp/           MCP Server                                       (M7)
-web/yapi/               预构建前端（由 tools/fetch-yapi-web 下载，不入库），M6 用 embed 打进可执行文件
-tools/                  compat（录制 / 比对兼容场景）、migcheck（核对迁移结果）、fetch-yapi-web（下载前端）
+web/                    用 embed 把 web/yapi 打进可执行文件                  (M6)
+web/yapi/               预构建前端（由 tools/fetch-yapi-web 下载，不入库，只有占位文件 .gitkeep）
+tools/                  compat（录制 / 比对兼容场景）、migcheck（核对迁移结果）、fetch-yapi-web（下载前端）、dist（交叉编译和打包）
 ```
 
-依赖方向：`server → api/web/mock`，`api → auth/store/yapitoken/schemafake/openapi/jsjson`，`mock → store/mockjs/schemafake/jsjson`，`schemafake → mockjs → jsjson`，`openapi → jsjson`，`migrate → store/jsjson`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
+依赖方向：`server → api/web/mock`，`server → web`（内嵌的前端文件），`api → auth/store/yapitoken/schemafake/openapi/jsjson`，`mock → store/mockjs/schemafake/jsjson`，`schemafake → mockjs → jsjson`，`openapi → jsjson`，`migrate → store/jsjson`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
 
 ## 关键决策
 
@@ -59,6 +60,7 @@ tools/                  compat（录制 / 比对兼容场景）、migcheck（核
 - `yapi-vendor@1.12.0` 自带构建好的前端（`static/prd`），**不需要用老旧的 Node 14 + node-sass 重新构建**。
 - **代价**：前端直接调用 YApi 的内部接口，共 104 个路径（见 [yapi-routes.md](yapi-routes.md)）：v0.1 要实现 66 个、占位 4 个，其余 33 个延后；另有 `project/download` 一个，原版也没有实现。所以从 M1 开始，后端就按 YApi 的路径和响应格式来实现，而不是另起一套。
 - 等后端稳定后，再评估是否重写前端。
+- **打包（M6）**：前端不随仓库提交，构建前由 `tools/fetch-yapi-web` 从 npm 下载并校验，再由 `web` 包 embed 进可执行文件，不指定 `-web-dir` 时使用内嵌的前端。下载时删掉已有 `.gz` 的原文件（可执行文件小 6MB），不支持 gzip 的客户端由服务端解压。yapi-vendor 里的 `.gz` 和原文件是两次混淆的结果，变量名不同、功能相同；浏览器在原版里拿到的也一直是 `.gz`。
 - **状态：基本确认（2026-11-04）。** 由 Go 托管预构建前端、`/api` 转发给原版 YApi 时，登录、建项目、加接口、编辑保存、WebSocket 冲突检测、Mock 都能正常工作。延后功能的隐藏方式见 D6。
 - `-yapi-upstream` 是**全量转发**模式：全部 `/api`、`/mock` 交给原版 YApi，不使用 ApiYard 自己的实现，只用于验证前端托管和对比行为。M0.5 时曾设想"只转发未实现的接口"，但 ApiYard 有了自己的用户表和登录令牌后，两边数据不互通（原版无法识别 ApiYard 签发的 Cookie），混用会导致界面失效，所以 M1 改为全量转发。
 
@@ -78,7 +80,7 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
    - 用 MutationObserver 隐藏暂不支持的功能入口：测试集合、高级 Mock、Wiki、系统信息、Swagger 自动同步、全局 mock 脚本。
 2. 返回 `Content-Security-Policy: connect-src 'self'` 响应头，禁止前端向其他站点发起 XHR 请求（原版会请求 fastmock.site 检查新版本）。WebSocket 不受影响，已实测。
 
-**取舍**：补丁按 DOM 结构和文字匹配，依赖前端版本；但预构建前端固定为 1.12.0，不会再变化，所以这种脆弱性是可控的。直接输入地址（如 `/project/1/wiki`）仍能打开对应页面，此时由后端对延后接口返回"未开放"。
+**取舍**：补丁按 DOM 结构和文字匹配，依赖前端版本；但预构建前端固定为 1.12.0，不会再变化，所以这种脆弱性是可控的。直接输入地址（如 `/project/1/wiki`）仍能打开对应页面，但后端没有延后的接口（返回 404），页面加载不出数据。
 
 ## 与 YApi 刻意不同的地方
 

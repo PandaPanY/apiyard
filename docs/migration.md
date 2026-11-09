@@ -4,9 +4,7 @@
 
 - 原来的账号密码可以直接登录（密码哈希算法与 YApi 相同）；
 - 原来的项目 token 继续可用，yapi-to-typescript、easy-yapi、Yapi-MCP 等工具只需改服务器地址；
-- 原来的接口链接（如 `/project/11/interface/api/25`）、书签都不失效。
-
-> Mock 服务在 M5 实现。在那之前，迁移过来的 Mock 地址还不能用。
+- 原来的接口链接（如 `/project/11/interface/api/25`）、书签和 Mock 地址都不失效。
 
 ## 迁移哪些数据
 
@@ -83,6 +81,19 @@ apiyard migrate -dump ./dump -db apiyard.db
 ```
 
 `-dump` 可以指定 `--out` 的目录，也可以直接指定里面的 `yapi` 目录。数据库名不是 `yapi` 时，用 `-mongo-db` 指定。两种方式迁移出来的数据完全相同。
+
+## 用 Docker 迁移
+
+镜像里同样有 `migrate` 子命令。迁移到数据卷里，再用同一个数据卷启动：
+
+```bash
+docker run --rm -v apiyard-data:/data ghcr.io/pandapany/apiyard:0.1 \
+  migrate -mongo "mongodb://yapi:密码@mongo-host:27017/yapi?authSource=admin" -db /data/apiyard.db
+docker run -d --name apiyard -p 3000:3000 -v apiyard-data:/data \
+  -e APIYARD_TOKEN_SALT=原来的passsalt ghcr.io/pandapany/apiyard:0.1
+```
+
+MongoDB 在本机时，Linux 上加 `--network host` 并用 `127.0.0.1`；Docker Desktop 上用 `host.docker.internal`。用 `-dump` 时把导出目录也挂载进容器。
 
 ## 重新迁移
 

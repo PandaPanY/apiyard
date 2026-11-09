@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/PandaPanY/apiyard/internal/config"
+	webassets "github.com/PandaPanY/apiyard/web"
 )
 
 var discardLogger = slog.New(slog.NewTextHandler(io.Discard, nil))
@@ -91,6 +92,20 @@ func TestWebDir(t *testing.T) {
 	h = newHandler(t, config.Config{WebDir: filepath.Join(dir, "missing")})
 	if rec := do(h, http.MethodGet, "/"); rec.Code != http.StatusNotFound {
 		t.Errorf("没有前端目录时 / 应返回 404, 实际 %d", rec.Code)
+	}
+}
+
+// 不指定前端目录时使用打进可执行文件的前端；编译时没有下载前端则跳过。
+func TestEmbeddedWeb(t *testing.T) {
+	if webassets.FS() == nil {
+		t.Skip("没有下载前端（go run ./tools/fetch-yapi-web）")
+	}
+	h := newHandler(t, config.Config{})
+	if rec := do(h, http.MethodGet, "/group/11"); rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "/apiyard/patch.js") {
+		t.Errorf("前端路由应返回注入了补丁的 index.html: %d", rec.Code)
+	}
+	if rec := do(h, http.MethodGet, "/image/favicon.png"); rec.Code != http.StatusOK {
+		t.Errorf("静态文件: %d", rec.Code)
 	}
 }
 

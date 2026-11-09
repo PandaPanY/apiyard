@@ -170,14 +170,14 @@ v0.2：M7 MCP Server        v0.3 及以后：延后功能，按用户反馈排�
 
 ## M6 打包发布 v0.1（1 周）
 
-| # | 任务 |
-|---|---|
-| 1 | 用 `embed` 把前端打进可执行文件，做到单文件运行 |
-| 2 | 交叉编译 Windows / Linux / macOS，架构包括 amd64 和 arm64 |
-| 3 | Docker 镜像（基于 distroless，镜像体积 < 30MB） |
-| 4 | GitHub Actions：每次提交都跑测试和代码检查；打标签时自动发布 |
-| 5 | 文档：快速开始、从 YApi 迁移、配置说明、和 YApi 的差异 |
-| 6 | 在 YApi 的 issue 区、V2EX、掘金发布公告 |
+| # | 任务 | 进度 |
+|---|---|---|
+| 1 | 用 `embed` 把前端打进可执行文件，做到单文件运行 | ✅ 只保留 `.gz`，前端从 9.1MB 降到 2.5MB；Linux 可执行文件 19.7MB |
+| 2 | 交叉编译 Windows / Linux / macOS，架构包括 amd64 和 arm64 | ✅ `tools/dist`：6 个平台，压缩包加 `checksums.txt`，`apiyard version` 显示版本 |
+| 3 | Docker 镜像（基于 distroless，镜像体积 < 30MB） | ✅ 解压后约 25MB，压缩后 10.2MB；非 root 运行，自带 `HEALTHCHECK`（`apiyard healthcheck`）。在对照实例的机器上实测了启动、重启后数据保留、挂载目录的权限、容器里迁移 |
+| 4 | GitHub Actions：每次提交都跑测试和代码检查；打标签时自动发布 | ✅ 工作流已写好（`ci.yml`、`release.yml`），推送后才能实际验证；发布生成 Release 草稿和 ghcr.io 镜像 |
+| 5 | 文档：快速开始、从 YApi 迁移、配置说明、和 YApi 的差异 | ✅ [deployment.md](deployment.md)、[migration.md](migration.md)、[differences.md](differences.md)、[release.md](release.md) |
+| 6 | 在 YApi 的 issue 区、V2EX、掘金发布公告 | 公开仓库之后再做 |
 
 **v0.1 验收标准**（与 README 一致）：一个真实的 YApi 实例可以完整迁移过来，并正常日常使用。
 
