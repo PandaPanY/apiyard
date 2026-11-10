@@ -60,6 +60,7 @@ func serve(ctx context.Context, args []string, logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
-	logger.Info("ApiYard 启动", "version", version())
+	cfg.Version = version()
+	logger.Info("ApiYard 启动", "version", cfg.Version)
 	return server.Run(ctx, cfg, logger)
 }

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ApiYard 是兼容 YApi 的轻量接口管理平台。">
+<title>登录 - ApiYard</title>
+<link rel="icon" type="image/svg+xml" href="/apiyard/logo.svg">
+<link rel="stylesheet" href="/apiyard/login.css">
+</head>
+<body>
+<div class="page">
+  <section class="intro" aria-label="ApiYard 简介">
+    <div class="brand">
+      <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><rect x="2" y="2" width="60" height="60" rx="14" fill="#14b8a6"/><g fill="none" stroke="#0d2a27" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M25 16c-5 0-7.5 2.5-7.5 7v4.5c0 3-1.5 4.5-4.5 4.5 3 0 4.5 1.5 4.5 4.5V41c0 4.5 2.5 7 7.5 7"/><path d="M39 16c5 0 7.5 2.5 7.5 7v4.5c0 3 1.5 4.5 4.5 4.5-3 0-4.5 1.5-4.5 4.5V41c0 4.5-2.5 7-7.5 7"/></g><circle cx="32" cy="32" r="4.5" fill="#0d2a27"/></svg>
+      <span>ApiYard</span>
+    </div>
+
+    <div class="pitch">
+      <h1>团队的接口文档、Mock 和协作，放在一处</h1>
+      <p class="lead">兼容 YApi 的轻量接口管理平台。熟悉的操作方式，更简单的部署。</p>
+      <ul class="facts">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg><span>一个可执行文件加一个 SQLite 文件，不需要 Node.js 和 MongoDB</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h12M12 6l6 6-6 6"/><path d="M20 5v14"/></svg><span>一条命令从 YApi 迁移，账号、token 和 Mock 地址照常可用</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span>内网部署时不向外部发送任何数据</span></li>
+      </ul>
+      <div class="sample" aria-hidden="true">
+        <div class="sample-head"><span class="method">GET</span><span>/mock/11/pay/orders/{id}</span></div>
+        <pre>{
+  "order_id": "PO20261109001",
+  "amount": 128.5,
+  "status": "paid"
+}</pre>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <span id="version"></span>
+      <a href="https://github.com/PandaPanY/apiyard">GitHub</a>
+      <a href="https://github.com/PandaPanY/apiyard/tree/main/docs">使用文档</a>
+    </footer>
+  </section>
+
+  <main class="panel">
+    <div class="box">
+      <div class="heading">
+        <h2 id="title">登录 ApiYard</h2>
+        <p id="subtitle">使用邮箱和密码登录</p>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="登录或注册" id="tabs">
+        <button type="button" role="tab" id="tab-login" aria-controls="form-login" aria-selected="true">登录</button>
+        <button type="button" role="tab" id="tab-reg" aria-controls="form-reg" aria-selected="false">注册</button>
+      </div>
+
+      <form id="form-login" role="tabpanel" aria-labelledby="tab-login" novalidate>
+        <div class="field">
+          <label for="login-email">邮箱</label>
+          <input id="login-email" name="email" type="email" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="login-password">密码</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <p class="error" role="alert" hidden></p>
+        <button type="submit" class="primary">登录</button>
+        <p class="hint">首次部署？管理员的初始密码在第一次启动的日志里</p>
+      </form>
+
+      <form id="form-reg" role="tabpanel" aria-labelledby="tab-reg" novalidate hidden>
+        <div class="field">
+          <label for="reg-username">用户名</label>
+          <input id="reg-username" name="username" type="text" autocomplete="nickname" required>
+        </div>
+        <div class="field">
+          <label for="reg-email">邮箱</label>
+          <input id="reg-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="reg-password">密码</label>
+          <input id="reg-password" name="password" type="password" autocomplete="new-password" required>
+        </div>
+        <div class="field">
+          <label for="reg-confirm">确认密码</label>
+          <input id="reg-confirm" name="confirm" type="password" autocomplete="new-password" required>
+        </div>
+        <p class="error" role="alert" hidden></p>
+        <button type="submit" class="primary">注册</button>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="/apiyard/login.js"></script>
+</body>
+</html>

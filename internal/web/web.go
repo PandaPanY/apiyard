@@ -1,6 +1,7 @@
 // Package web 托管 YApi 预构建的前端，行为与 YApi 的 server/app.js 保持一致：
 // 前端路由回退到 index.html，/prd 下的资源优先返回预压缩的 .gz 文件。
-// 此外在 index.html 中注入 ApiYard 的前端补丁（见 patch.go），用于隐藏暂不支持的功能和禁止外连。
+// 此外在 index.html 中注入 ApiYard 的前端补丁和主题样式（见 patch.go），用于隐藏暂不支持的功能、禁止外连和调整外观；
+// 把界面上的 YApi 名称、logo、链接和配色换成 ApiYard 的（见 brand.go）；首页和登录页换成 ApiYard 自己的登录页。
 package web
 
 import (
@@ -9,10 +10,12 @@ import (
 	"errors"
 	"io"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	"path"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // contentTypes 固定常见前端资源的 MIME 类型。Go 默认会参考操作系统的注册表，
@@ -37,8 +40,27 @@ var contentTypes = map[string]string{
 // YApi 的正则还用负向前瞻排除了 /api 开头的路径，Go 不支持前瞻，改在 isSPARoute 里单独判断。
 var spaPath = regexp.MustCompile(`^/[a-zA-Z0-9/\-_]*$`)
 
+// Options 是前端处理器的可选配置。
+type Options struct {
+	Version string       // ApiYard 版本号，显示在页脚
+	Logger  *slog.Logger // 为 nil 时不记录日志
+}
+
 // Handler 返回前端静态文件处理器，fsys 的根目录对应 yapi-vendor 包里的 static 目录。
-func Handler(fsys fs.FS) http.Handler {
+// index.html 和前端主包在创建时读取并替换品牌文字（见 brand.go），之后修改前端目录需要重启才生效。
+func Handler(fsys fs.FS, opts Options) http.Handler {
+	logger := opts.Logger
+	if logger == nil {
+		logger = slog.New(slog.DiscardHandler)
+	}
+	index := loadIndex(fsys, opts.Version, logger)
+	login := loadLoginPage(opts.Version)
+	front, err := loadBrandedFrontend(fsys)
+	if err != nil {
+		logger.Warn("前端品牌替换失败，界面按 YApi 原样显示", "err", err)
+		front = &brandedFrontend{}
+	}
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// 前端只有静态文件；其他方法如果也返回 index.html，写错地址的接口调用会得到 200
 		if r.Method != http.MethodGet && r.Method != http.MethodHead {
@@ -47,15 +69,40 @@ func Handler(fsys fs.FS) http.Handler {
 			return
 		}
 		clean := path.Clean(r.URL.Path)
+		name := strings.TrimPrefix(clean, "/")
 		switch {
 		case isPatchPath(clean):
 			serveFile(w, r, patchFS, strings.TrimPrefix(clean, patchPrefix))
+		case isLoginRoute(r.URL.Path) && index != nil:
+			// 原版的首页和登录页换成 ApiYard 自己的登录页；没有前端时仍按原逻辑返回 404
+			serveHTML(w, login)
 		case isSPARoute(r.URL.Path) || clean == "/index.html":
-			serveIndex(w, r, fsys)
+			serveIndex(w, r, index)
 		default:
-			serveFile(w, r, fsys, strings.TrimPrefix(clean, "/"))
+			if f, ok := front.files[name]; ok {
+				serveBytes(w, r, name, f.plain, f.gz)
+				return
+			}
+			serveFile(w, r, fsys, name)
 		}
 	})
+}
+
+// serveBytes 返回内存里的文件内容；gz 不为空且浏览器支持 gzip 时返回压缩后的内容。
+func serveBytes(w http.ResponseWriter, r *http.Request, name string, plain, gz []byte) {
+	w.Header().Set("Cache-Control", cacheControl(name))
+	if ct, ok := contentTypes[path.Ext(name)]; ok {
+		w.Header().Set("Content-Type", ct)
+	}
+	data := plain
+	if gz != nil {
+		w.Header().Add("Vary", "Accept-Encoding")
+		if acceptsGzip(r) {
+			w.Header().Set("Content-Encoding", "gzip")
+			data = gz
+		}
+	}
+	http.ServeContent(w, r, name, time.Time{}, bytes.NewReader(data))
 }
 
 func isSPARoute(p string) bool {

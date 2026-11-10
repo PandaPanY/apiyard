@@ -20,6 +20,8 @@ type Config struct {
 	CloseRegister bool   // 关闭用户注册
 	TokenSalt     string // 开放 API token 的加密口令，对应 YApi 配置文件里的 passsalt
 	YAPIUpstream  string // 开发用：把全部 /api、/mock 请求转发到这个原版 YApi，为空则不转发
+
+	Version string // ApiYard 版本号，不是命令行参数，由 main 在 Load 之后填写
 }
 
 // Load 从命令行参数和环境变量构造配置，args 不包含程序名。

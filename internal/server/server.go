@@ -34,7 +34,7 @@ func New(cfg config.Config, st *store.Store, logger *slog.Logger) (http.Handler,
 
 	webFS := frontend(cfg.WebDir, logger)
 	if webFS != nil {
-		mux.Handle("/", web.Handler(webFS))
+		mux.Handle("/", web.Handler(webFS, web.Options{Version: cfg.Version, Logger: logger}))
 	}
 
 	if cfg.YAPIUpstream == "" {

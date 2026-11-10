@@ -27,12 +27,12 @@ func get(t *testing.T, target, acceptEncoding string) *httptest.ResponseRecorder
 		req.Header.Set("Accept-Encoding", acceptEncoding)
 	}
 	rec := httptest.NewRecorder()
-	Handler(testFS).ServeHTTP(rec, req)
+	Handler(testFS, Options{}).ServeHTTP(rec, req)
 	return rec
 }
 
 func TestSPARoutesServeIndex(t *testing.T) {
-	for _, p := range []string{"/", "/login", "/group/11", "/project/11/interface/api/25", "/prd/", "/index.html"} {
+	for _, p := range []string{"/group/11", "/project/11/interface/api/25", "/user/list", "/prd/", "/index.html"} {
 		rec := get(t, p, "")
 		body := rec.Body.String()
 		if rec.Code != http.StatusOK || !strings.Contains(body, "<html>index</html>") {
@@ -47,16 +47,60 @@ func TestSPARoutesServeIndex(t *testing.T) {
 	}
 }
 
+// 原版的首页和登录页换成 ApiYard 自己的登录页
+func TestLoginRoutes(t *testing.T) {
+	for _, p := range []string{"/", "/login", "/login/"} {
+		req := httptest.NewRequest(http.MethodGet, p, nil)
+		rec := httptest.NewRecorder()
+		Handler(testFS, Options{Version: "v1.2.3"}).ServeHTTP(rec, req)
+		body := rec.Body.String()
+		if rec.Code != http.StatusOK || !strings.Contains(body, "/apiyard/login.js") {
+			t.Errorf("%s: 状态码 %d, 期望返回登录页", p, rec.Code)
+		}
+		if !strings.Contains(body, `window.APIYARD_VERSION="v1.2.3"`) {
+			t.Errorf("%s: 登录页没有写入版本号", p)
+		}
+		if strings.Contains(body, patchScriptTag) {
+			t.Errorf("%s: 登录页不需要补丁脚本", p)
+		}
+		if rec.Header().Get("Content-Security-Policy") != contentSecurityPolicy {
+			t.Errorf("%s: 缺少 CSP 响应头", p)
+		}
+	}
+	// 没有前端时与其他前端路由一样返回 404
+	rec := httptest.NewRecorder()
+	Handler(fstest.MapFS{}, Options{}).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/", nil))
+	if rec.Code != http.StatusNotFound {
+		t.Errorf("没有前端时 / 的状态码 = %d, 期望 404", rec.Code)
+	}
+}
+
+func TestInjectTheme(t *testing.T) {
+	in := `<head><script>document.write('<link rel="stylesheet" href="/prd/index.css">')</script></head><body></body>`
+	want := `<head><script>document.write('<link rel="stylesheet" href="/prd/index.css">')</script>` + themeLinkTag + `</head><body></body>`
+	if got := string(injectTheme([]byte(in))); got != want {
+		t.Errorf("injectTheme = %q, 期望 %q", got, want)
+	}
+	if got := string(injectTheme([]byte("<body>x</body>"))); got != "<body>x</body>" {
+		t.Errorf("没有 </head> 时应原样返回: %q", got)
+	}
+}
+
 func TestInjectPatch(t *testing.T) {
+	tags := `<script>window.APIYARD_VERSION="v0.1.0"</script>` + patchScriptTag
 	tests := []struct{ in, want string }{
-		{"<html><head><title>x</title></head></html>", "<html><head>" + patchScriptTag + "<title>x</title></head></html>"},
-		{`<HEAD lang="zh"><meta>`, `<HEAD lang="zh">` + patchScriptTag + "<meta>"},
-		{"<body>no head</body>", patchScriptTag + "<body>no head</body>"},
+		{"<html><head><title>x</title></head></html>", "<html><head>" + tags + "<title>x</title></head></html>"},
+		{`<HEAD lang="zh"><meta>`, `<HEAD lang="zh">` + tags + "<meta>"},
+		{"<body>no head</body>", tags + "<body>no head</body>"},
 	}
 	for _, tt := range tests {
-		if got := string(injectPatch([]byte(tt.in))); got != tt.want {
+		if got := string(injectPatch([]byte(tt.in), "v0.1.0")); got != tt.want {
 			t.Errorf("injectPatch(%q) = %q, 期望 %q", tt.in, got, tt.want)
 		}
+	}
+	// 版本号里的 </script> 不能提前结束脚本
+	if got := string(injectPatch([]byte("<head>"), "</script>")); strings.Count(got, "</script>") != 2 {
+		t.Errorf("版本号没有转义: %q", got)
 	}
 }
 
@@ -108,7 +152,7 @@ func TestGzipOnly(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodGet, "/prd/lib@x.js", nil)
 	rec := httptest.NewRecorder()
-	Handler(fsys).ServeHTTP(rec, req)
+	Handler(fsys, Options{}).ServeHTTP(rec, req)
 	if rec.Code != http.StatusOK || rec.Body.String() != "console.log(1)" || rec.Header().Get("Content-Encoding") != "" {
 		t.Errorf("应返回解压后的内容: %d %q", rec.Code, rec.Body.String())
 	}
@@ -118,7 +162,7 @@ func TestGzipOnly(t *testing.T) {
 
 	req.Header.Set("Accept-Encoding", "gzip")
 	rec = httptest.NewRecorder()
-	Handler(fsys).ServeHTTP(rec, req)
+	Handler(fsys, Options{}).ServeHTTP(rec, req)
 	if !bytes.Equal(rec.Body.Bytes(), buf.Bytes()) || rec.Header().Get("Content-Encoding") != "gzip" {
 		t.Error("支持 gzip 时应原样返回 .gz")
 	}
@@ -149,13 +193,13 @@ func TestNotFound(t *testing.T) {
 func TestOnlyGetAndHead(t *testing.T) {
 	for _, m := range []string{http.MethodPost, http.MethodPut, http.MethodDelete} {
 		rec := httptest.NewRecorder()
-		Handler(testFS).ServeHTTP(rec, httptest.NewRequest(m, "/group/11", nil))
+		Handler(testFS, Options{}).ServeHTTP(rec, httptest.NewRequest(m, "/group/11", nil))
 		if rec.Code != http.StatusMethodNotAllowed || rec.Header().Get("Allow") != "GET, HEAD" {
 			t.Errorf("%s: 状态码 %d, 应为 405", m, rec.Code)
 		}
 	}
 	rec := httptest.NewRecorder()
-	Handler(testFS).ServeHTTP(rec, httptest.NewRequest(http.MethodHead, "/image/favicon.png", nil))
+	Handler(testFS, Options{}).ServeHTTP(rec, httptest.NewRequest(http.MethodHead, "/image/favicon.png", nil))
 	if rec.Code != http.StatusOK {
 		t.Errorf("HEAD: 状态码 %d", rec.Code)
 	}

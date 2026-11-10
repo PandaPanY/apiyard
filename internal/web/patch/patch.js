@@ -47,6 +47,33 @@
     });
   }
 
+  // 3. 原版的首页和登录页由服务端换成了 ApiYard 的登录页（/login，见 login.html）。
+  // 原版在未登录、退出登录时用 history.push('/') 做站内跳转，不会请求服务器，这里改为整页打开登录页。
+  // 原来所在的页面放进 redirect 参数，登录后回到这里。
+  function openLoginPage(url) {
+    var dest;
+    try {
+      dest = new URL(url, location.href);
+    } catch (e) {
+      return false;
+    }
+    if (dest.origin !== location.origin || (dest.pathname !== '/' && dest.pathname !== '/login')) {
+      return false;
+    }
+    var from = location.pathname + location.search;
+    location.assign(from === '/' ? '/login' : '/login?redirect=' + encodeURIComponent(from));
+    return true;
+  }
+  ['pushState', 'replaceState'].forEach(function (name) {
+    var original = history[name];
+    history[name] = function (state, title, url) {
+      if (url != null && openLoginPage(url)) {
+        return undefined;
+      }
+      return original.apply(this, arguments);
+    };
+  });
+
   // 前端是单页应用，页面切换时 DOM 会重建，所以持续监听变化。
   // 直接在回调里处理：MutationObserver 本身会把同一轮的多次变化合并成一次回调，且在绘制前执行；
   // 不用 requestAnimationFrame，因为页面在后台或不渲染时 rAF 会暂停，入口就藏不住。
