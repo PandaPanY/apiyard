@@ -1,0 +1,27 @@
+name: 功能建议
+description: 希望支持的 YApi 功能，或新的功能
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: 暂不支持的 YApi 功能列在 docs/differences.md，提交前请先看一下。
+  - type: textarea
+    id: need
+    attributes:
+      label: 需要解决的问题
+      description: 你在什么场景下需要它
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: 期望的做法
+  - type: dropdown
+    id: yapi
+    attributes:
+      label: YApi 是否有这个功能
+      options:
+        - 有，ApiYard 还不支持
+        - 没有，是新功能
+    validations:
+      required: true

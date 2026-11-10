@@ -2,6 +2,10 @@
 
 兼容 YApi 的轻量接口管理平台：一个可执行文件就能部署，现有的 YApi 周边工具不用改就能接入。
 
+> **开发预览**：v0.1 已经能从真实的 YApi 实例迁移过来日常使用，但还没有经过大量团队的长期使用。升级前请备份数据库，遇到问题欢迎[提 issue](https://github.com/PandaPanY/apiyard/issues)。
+
+![接口列表](docs/images/interfaces.png)
+
 ## 背景
 
 [YApi](https://github.com/YMFE/yapi) 曾是国内最流行的自托管接口管理平台（27k+ Star），但 2022 年后已停止维护：
@@ -10,24 +14,25 @@
 - Mock 脚本沙箱存在**未修复的未授权远程代码执行漏洞**；
 - 仍有大量团队在用，IDEA 插件、TypeScript 代码生成、MCP 等周边工具也仍在活跃更新。
 
-ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成本、安全地迁移过来。立项调研见 [`../_research/yapi.md`](../_research/yapi.md)，架构设计见 [`docs/architecture.md`](docs/architecture.md)。
+ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成本、安全地迁移过来。架构设计见 [`docs/architecture.md`](docs/architecture.md)。
 
-## 核心特性（规划）
+## 核心特性
 
 - **单文件部署**：Go 编译，前端内嵌，默认使用 SQLite，不需要 MongoDB
 - **兼容 YApi 开放 API**：15 个开放接口与 YApi 保持一致，easy-yapi、yapi-to-typescript、Yapi-MCP 等工具无需修改
 - **一键迁移**：直接从 YApi 的 MongoDB（或 mongodump 导出的目录）导入用户、分组、项目、接口和动态，原有账号密码、token、接口链接都继续有效
 - **安全的 Mock**：Mock 地址、Mock.js 规则和占位符与 YApi 一致，但不执行任何脚本，从根上消除原版的远程代码执行漏洞
 - **内网友好**：去掉原版前端的 Google Analytics 统计和外部版本检查，不向外部站点发送任何数据
-- **标准格式**：支持导入导出 OpenAPI 3 / Swagger 2
-- **AI 接入**：内置 MCP Server
+- **标准格式**：导入 OpenAPI 3 / Swagger 2，导出 Swagger 2、HTML、Markdown 和 JSON
+- **熟悉的界面**：沿用 YApi 的页面结构和操作，换了新的配色、布局和登录页，迁移过来的用户不用重新学
+- **AI 接入**（规划中，v0.2）：内置 MCP Server
 
 ## 开发目标
 
 - [x] M0 立项：调研、架构设计、工程骨架
 - [x] M0.5 前置验证：搭建 YApi 对照环境，验证能否沿用原有前端，搭好兼容测试框架
 - [x] M1 账号与分组：SQLite 存储、登录会话、角色权限、用户 / 分组接口（24 个）
-- [ ] M2 项目与接口：项目 / 接口 / 动态接口（38 个），界面核心流程可用，公开仓库
+- [x] M2 项目与接口：项目 / 接口 / 动态接口（38 个），界面核心流程可用，公开仓库
 - [x] M3 开放 API 与导入导出：token 兼容，导入 Swagger 2 / OpenAPI 3、导出 Swagger 2，周边工具实测（easy-yapi 为按源码回放）
 - [x] M4 数据迁移：一条命令从 YApi 的 MongoDB 迁移，原密码、token、链接和 Mock 地址都继续有效
 - [x] M5 Mock 服务：地址与 YApi 一致，支持 Mock.js 规则和占位符、JSON Schema、请求变量和严格模式，不执行脚本
@@ -42,7 +47,7 @@ ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成�
 
 - 语言：Go（标准库 `net/http`）
 - 存储：SQLite（`modernc.org/sqlite`，纯 Go 实现，不需要 CGO），后续支持 PostgreSQL / MySQL
-- 前端：第一阶段沿用 YApi 原有前端（React），之后逐步替换
+- 前端：第一阶段沿用 YApi 1.12 的预构建前端（React），由服务端换上 ApiYard 的名称、配色和登录页，之后逐步替换
 - 其他依赖：`coder/websocket`（编辑冲突检测）、`yuin/goldmark`（导出 HTML 时渲染 Markdown），都是纯 Go 实现
 
 ## 快速开始
@@ -90,6 +95,11 @@ golangci-lint run                 # 代码检查，需要先安装 golangci-lint
 - 接口兼容性测试（与原版 YApi 逐字段比对）见 [`docs/testing.md`](docs/testing.md)，对照实例见 [`testenv/yapi`](testenv/yapi/README.md)。
 - 打包和发布见 [`docs/release.md`](docs/release.md)。
 
+## 参与
+
+- 问题和建议：[GitHub Issues](https://github.com/PandaPanY/apiyard/issues)。和 YApi 行为不一致的地方也算问题，请写明 YApi 的表现。
+- 安全漏洞：请按 [SECURITY.md](SECURITY.md) 私下报告，不要公开发 issue。
+
 ## 许可证
 
-[Apache-2.0](LICENSE)。本项目不隶属于 YApi 及其原作者；沿用的 YApi 代码见 [NOTICE](NOTICE)。
+[Apache-2.0](LICENSE)。本项目不隶属于 YApi 及其原作者；内嵌的 YApi 前端和沿用的代码见 [NOTICE](NOTICE)。

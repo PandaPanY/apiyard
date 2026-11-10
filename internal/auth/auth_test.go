@@ -7,6 +7,7 @@ import (
 )
 
 // 以下向量取自 YApi 1.12.0 对照实例（测试环境，管理员使用 YApi 公开的默认密码）。
+// 令牌的签名密钥就是 yapiSalt，令牌可以由上面的值重新算出，不是需要保密的凭据；它在 yapiExp 时已过期。
 const (
 	yapiSalt  = "xgskmxt1zf"
 	yapiHash  = "255defe17b8aa0d1a75e674851ba76d6eeb22c72" // "ymfe.org" 的哈希

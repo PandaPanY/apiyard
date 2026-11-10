@@ -2,5 +2,21 @@ ApiYard
 Copyright 2026 ApiYard contributors
 
 本项目与 YApi（https://github.com/YMFE/yapi）的接口、数据格式保持兼容。
-YApi 由 YMFE 团队开发，以 Apache License 2.0 发布。
+YApi 由 YMFE 团队开发，Copyright YMFE，以 Apache License 2.0 发布。
 沿用或改写自 YApi 的代码会在对应文件中注明出处。
+
+内嵌的 YApi 前端
+----------------
+发布的可执行文件和 Docker 镜像内嵌了 npm 包 yapi-vendor@1.12.0 中预构建的
+YApi 前端（目录 static，Apache License 2.0）。源码仓库不包含这些文件，
+构建前由 tools/fetch-yapi-web 从 npm 下载并按 integrity 校验。
+
+ApiYard 在运行时修改了这部分前端，修改内容包括：
+- 替换页面标题、logo、页脚和文档入口中的名称，并改用 ApiYard 的配色和字体
+  （internal/web/brand.go）；
+- 追加样式表和补丁脚本，调整页面布局、隐藏暂不支持的功能、拦截外部统计请求
+  （internal/web/patch/）；
+- 用 ApiYard 自己的登录页替代原版的首页和登录页。
+
+预构建前端中还打包了 YApi 依赖的第三方开源组件（如 React、Ant Design 等），
+它们的许可证以各自项目为准。
