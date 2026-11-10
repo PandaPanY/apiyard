@@ -29,8 +29,8 @@ func TestDevVersion(t *testing.T) {
 		want     string
 	}{
 		{nil, "dev"},
-		{[]debug.BuildSetting{{Key: "vcs.revision", Value: "9a4b021f00d"}, {Key: "vcs.modified", Value: "false"}}, "dev-9a4b021"},
-		{[]debug.BuildSetting{{Key: "vcs.revision", Value: "9a4b021f00d"}, {Key: "vcs.modified", Value: "true"}}, "dev-9a4b021-dirty"},
+		{[]debug.BuildSetting{{Key: "vcs.revision", Value: "abc1234f00d"}, {Key: "vcs.modified", Value: "false"}}, "dev-abc1234"},
+		{[]debug.BuildSetting{{Key: "vcs.revision", Value: "abc1234f00d"}, {Key: "vcs.modified", Value: "true"}}, "dev-abc1234-dirty"},
 	} {
 		if got := devVersion(c.settings); got != c.want {
 			t.Errorf("devVersion = %q，应为 %q", got, c.want)
