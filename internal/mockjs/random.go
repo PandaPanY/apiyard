@@ -12,6 +12,8 @@ import (
 	"sync"
 	"time"
 	"unicode/utf8"
+
+	"github.com/PandaPanY/apiyard/internal/genbudget"
 )
 
 // randomFunc 是一个占位符函数，对应 Mock.Random 上的方法。args 的个数就是 JS 里 arguments.length。
@@ -152,8 +154,8 @@ func randomString(args []any) (any, error) {
 		return nil, err
 	}
 	n := toNumber(length)
-	if n > 1e6 {
-		return nil, errors.New("字符串长度太大") // 原版会一直生成下去
+	if n > genbudget.MaxLength {
+		return nil, genbudget.ErrLimit
 	}
 	var b strings.Builder
 	for i := 0; float64(i) < n; i++ {
@@ -204,8 +206,8 @@ func randomRange(args []any) (any, error) {
 	if math.IsNaN(n) {
 		n = 0
 	}
-	if n > 1e5 {
-		return nil, errors.New("range 的范围太大")
+	if n > genbudget.MaxLength {
+		return nil, genbudget.ErrLimit
 	}
 	out := &rArray{}
 	for i := 0; float64(i) < n; i++ {
@@ -473,12 +475,18 @@ func textRange(defMin, defMax float64, minArg, maxArg any) float64 {
 }
 
 func repeatJoin(n float64, sep string, fn func() string) (string, error) {
-	if n > 1e5 {
-		return "", errors.New("文本长度太大")
+	if n > genbudget.MaxLength {
+		return "", genbudget.ErrLimit
 	}
 	var parts []string
+	total := 0
 	for i := 0; float64(i) < n; i++ {
-		parts = append(parts, fn())
+		text := fn()
+		total += len(text) + len(sep)
+		if total > genbudget.MaxBytes {
+			return "", genbudget.ErrLimit
+		}
+		parts = append(parts, text)
 	}
 	return strings.Join(parts, sep), nil
 }
@@ -925,16 +933,19 @@ func init() {
 		"province": simple(func([]any) any { return pickRegion(provinces).name }),
 		"city":     city(2),
 		"county":   city(3),
-		"zip": simple(func(a []any) any {
+		"zip": withErr(func(a []any) (any, error) {
 			n := 6.0
 			if v := arg(a, 0); truthy(v) {
 				n = toNumber(v)
+			}
+			if n > genbudget.MaxLength {
+				return nil, genbudget.ErrLimit
 			}
 			zip := ""
 			for i := 0; float64(i) < n && i < 1e5; i++ {
 				zip += jsString(randomNatural(0, 9))
 			}
-			return zip
+			return zip, nil
 		}),
 
 		"capitalize": simple(func(a []any) any { return capitalize(jsString(arg(a, 0))) }),

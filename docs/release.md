@@ -2,6 +2,8 @@
 
 发布由 GitHub Actions 完成（`.github/workflows/release.yml`），本机只需要打标签。
 
+下一版本的 [v0.1.1 发布说明草稿](releases/v0.1.1.md) 和 [验收记录](releases/v0.1.1-validation.md) 已独立整理。推送版本标签会在验证通过后推送镜像，因此发布准备阶段不要推送标签。
+
 ## 步骤
 
 1. 确认 `main` 上的 CI 全部通过，`DEVLOG.md`、`README.md` 已更新。
@@ -13,7 +15,7 @@
    ```
 
 3. 工作流会做两件事：
-   - 运行测试，用 `tools/dist` 编译 6 个平台（Linux、macOS、Windows 的 amd64 和 arm64），创建 **Release 草稿**，附上压缩包和 `checksums.txt`；
+   - 两个发布任务都依赖共同的 vet、race 测试和漏洞检查成功。用 `tools/dist` 编译 6 个平台（Linux、macOS、Windows 的 amd64 和 arm64），创建 **Release 草稿**，附上压缩包、`checksums.txt` 和 `modules.json`；
    - 构建 amd64 和 arm64 的镜像，推送到 `ghcr.io/pandapany/apiyard`，标签为 `0.1.0` 和 `0.1`。
 4. 在 GitHub 的 Releases 页面检查草稿的说明和附件，确认后点“Publish release”。
 

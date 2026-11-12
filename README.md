@@ -4,6 +4,8 @@
 
 > **开发预览**：v0.1 已经能从真实的 YApi 实例迁移过来日常使用，但还没有经过大量团队的长期使用。升级前请备份数据库，遇到问题欢迎[提 issue](https://github.com/PandaPanY/apiyard/issues)。
 
+下一安全补丁版本见 [v0.1.1 发布说明草稿](docs/releases/v0.1.1.md)，包含 token 权限变化和升级步骤；当前尚未发布。
+
 ![接口列表](docs/images/interfaces.png)
 
 ## 背景

@@ -48,14 +48,18 @@ func tokenScope(ctx context.Context) (projectID int64, ok bool) {
 // errInvalidToken 表示 token 能解密，但对应的项目或用户不存在。
 var errInvalidToken = errors.New("token 无效")
 
-// tokenAuth 按 YApi 的规则解析开放 API 的 token，返回 token 所属的项目和代表的用户。
-//   - 新格式：用 passsalt 加密的 "uid|原始 token"，代表生成 token 的用户；
-//   - 旧格式：原始项目 token，代表 uid 为 999999 的 system 用户；
-//   - 两种都对不上时返回 user 为 nil，与 YApi 一样忽略 token，沿用 Cookie 的登录状态。
-//
-// 与 YApi 不同：能解密但项目 token 或用户不存在时返回 errInvalidToken。YApi 只写了一个 42014 的响应就继续往下执行，
-// 结果把请求当成 token 里 uid 对应的用户；在默认的 passsalt 下，这等于可以伪造任意用户的身份。
+// tokenAuth resolves server-issued random credentials to their actual issuer.
+// Legacy raw/encrypted YApi tokens are scoped integration capabilities with
+// edit/view permission only; their unauthenticated uid never grants a role.
 func (a *API) tokenAuth(ctx context.Context, token string) (projectID int64, user *store.User, err error) {
+	projectID, uid, credentialErr := a.store.ProjectCredential(ctx, token)
+	if credentialErr == nil {
+		user, err = a.store.UserByID(ctx, uid)
+		return projectID, user, err
+	}
+	if !errors.Is(credentialErr, store.ErrNotFound) {
+		return 0, nil, credentialErr
+	}
 	uidText, raw, decodeErr := yapitoken.Decode(token, a.tokenSalt())
 	if decodeErr != nil {
 		projectID, err = a.store.ProjectIDByToken(ctx, token)
@@ -82,11 +86,53 @@ func (a *API) tokenAuth(ctx context.Context, token string) (projectID int64, use
 	if uid == legacyTokenUID {
 		return projectID, &store.User{ID: legacyTokenUID, Role: "member", Username: "system"}, nil
 	}
-	user, err = a.store.UserByID(ctx, uid)
+	_, err = a.store.UserByID(ctx, uid)
 	if errors.Is(err, store.ErrNotFound) {
 		return 0, nil, errInvalidToken
 	}
-	return projectID, user, err
+	if err != nil {
+		return 0, nil, err
+	}
+	// Legacy encrypted claims are unauthenticated. Never use their uid as an
+	// authorization identity, even when the referenced user still exists.
+	return projectID, &store.User{ID: legacyTokenUID, Role: "member", Username: "system"}, nil
+}
+
+// AuthenticateMCP resolves one or more comma-separated project tokens. Unlike the
+// legacy open API behavior, MCP requires every supplied token to be valid.
+func (a *API) AuthenticateMCP(ctx context.Context, tokens string) ([]int64, error) {
+	parts := strings.Split(tokens, ",")
+	projectIDs := make([]int64, 0, len(parts))
+	seen := make(map[int64]struct{}, len(parts))
+	for _, token := range parts {
+		token = strings.TrimSpace(token)
+		if token == "" {
+			return nil, errInvalidToken
+		}
+		if _, _, err := a.store.ProjectCredential(ctx, token); err != nil {
+			if errors.Is(err, store.ErrNotFound) {
+				return nil, errInvalidToken
+			}
+			return nil, err
+		}
+		projectID, user, err := a.tokenAuth(ctx, token)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			return nil, errInvalidToken
+		}
+		if ok, err := a.canProject(ctx, user, projectID, actionView); err != nil {
+			return nil, err
+		} else if !ok {
+			return nil, errInvalidToken
+		}
+		if _, ok := seen[projectID]; !ok {
+			seen[projectID] = struct{}{}
+			projectIDs = append(projectIDs, projectID)
+		}
+	}
+	return projectIDs, nil
 }
 
 // applyToken 在参数校验之前处理 token：认证成功时以 token 代表的用户身份继续，并把 project_id（以及导出接口用的 pid）
@@ -110,11 +156,12 @@ func (a *API) applyToken(c *call, params map[string]any) (bool, error) {
 	return true, nil
 }
 
-// canWrite 对应 YApi 中 "if (!this.$tokenAuth) checkAuth(...)" 的写法：通过 token 访问时不检查角色。
-// 与 YApi 不同：token 只能操作所属的项目。YApi 在这里完全不检查，任何项目的 token 都能改其他项目的接口和分类。
+// canWrite enforces both project scope and the issuer's current role.
 func (a *API) canWrite(ctx context.Context, u *store.User, projectID int64, action string) (bool, error) {
 	if scope, ok := tokenScope(ctx); ok {
-		return projectID == scope, nil
+		if projectID != scope {
+			return false, nil
+		}
 	}
 	return a.canProject(ctx, u, projectID, action)
 }

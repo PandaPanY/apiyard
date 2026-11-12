@@ -1,5 +1,7 @@
 # 部署与配置
 
+升级前请阅读 [安全修复与升级说明](security-hardening.md)，其中列出了 token 权限变化、数据库迁移和恢复步骤。
+
 ApiYard 只有一个可执行文件，前端已经打在里面，数据存在一个 SQLite 文件里，不需要 Node、MongoDB 或其他服务。
 
 ## 安装
@@ -96,6 +98,7 @@ go build -o apiyard ./cmd/apiyard
 | `-admin-email` | `APIYARD_ADMIN_EMAIL` | `admin@admin.com` | 首次启动（数据库里还没有用户）时创建的管理员邮箱 |
 | `-admin-password` | `APIYARD_ADMIN_PASSWORD` | 空 | 首次启动时的管理员密码；为空则随机生成，并在日志里打印一次 |
 | `-close-register` | `APIYARD_CLOSE_REGISTER` | `false` | 关闭用户注册 |
+| `-mcp` | `APIYARD_MCP` | `off` | MCP 模式：`on`、`readonly`、`off`；v0.1.1 默认关闭，工具尚在开发 |
 | `-token-salt` | `APIYARD_TOKEN_SALT` | `abcde` | 开放 API token 的加密口令；从 YApi 迁移时填原配置文件里的 `passsalt`，已有的 token 才能继续使用 |
 | `-web-dir` | `APIYARD_WEB_DIR` | 空 | 前端目录；为空时使用打进可执行文件的前端，一般不需要设置 |
 | `-yapi-upstream` | `APIYARD_YAPI_UPSTREAM` | 空 | 开发用：把**全部** `/api`、`/mock` 请求转发给原版 YApi，用于对比行为 |

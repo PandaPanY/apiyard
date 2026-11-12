@@ -3,18 +3,26 @@ package api
 import (
 	"net/http"
 
+	"github.com/PandaPanY/apiyard/internal/genbudget"
 	"github.com/PandaPanY/apiyard/internal/jsjson"
 	"github.com/PandaPanY/apiyard/internal/schemafake"
 )
 
 // interfaceSchema2JSON 按 JSON Schema 生成示例数据，直接把结果作为响应体（不包 errcode），与 YApi 一致。
 func (a *API) interfaceSchema2JSON(c *call) error {
+	release, ok := genbudget.Acquire(c.r.Context())
+	if !ok {
+		http.Error(c.w, "Mock generation busy", http.StatusTooManyRequests)
+		c.replied = true
+		return nil
+	}
+	defer release()
 	opts := schemafake.Options{AlwaysFakeOptionals: true}
 	if v, ok := c.params["required"]; ok {
 		b, _ := castBool(v)
 		opts.AlwaysFakeOptionals = b
 	}
-	value, err := schemafake.Generate(c.params["schema"], opts)
+	value, err := schemafake.GenerateContext(c.r.Context(), c.params["schema"], opts)
 	if err != nil {
 		// json-schema-faker 出错时 YApi 把错误信息作为纯文本返回
 		c.replied = true

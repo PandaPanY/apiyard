@@ -18,10 +18,16 @@ func (s *Store) ProjectToken(ctx context.Context, projectID int64) (string, erro
 
 // SetProjectToken 写入或替换项目的原始 token。
 func (s *Store) SetProjectToken(ctx context.Context, projectID int64, token string) error {
-	_, err := s.db.ExecContext(ctx,
-		"INSERT INTO tokens (project_id, token) VALUES (?, ?) ON CONFLICT (project_id) DO UPDATE SET token = excluded.token",
-		projectID, token)
-	return err
+	return s.withTx(ctx, func(tx *sql.Tx) error {
+		_, err := tx.ExecContext(ctx,
+			"INSERT INTO tokens (project_id, token) VALUES (?, ?) ON CONFLICT (project_id) DO UPDATE SET token = excluded.token",
+			projectID, token)
+		if err != nil {
+			return err
+		}
+		_, err = tx.ExecContext(ctx, "DELETE FROM project_credentials WHERE project_id=?", projectID)
+		return err
+	})
 }
 
 // ProjectIDByToken 按原始 token 查找项目；找不到时返回 ErrNotFound。

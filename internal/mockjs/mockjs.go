@@ -9,10 +9,12 @@
 package mockjs
 
 import (
+	"context"
 	"encoding/json"
 	"math"
 	"sync/atomic"
 
+	"github.com/PandaPanY/apiyard/internal/genbudget"
 	"github.com/PandaPanY/apiyard/internal/jsjson"
 )
 
@@ -27,12 +29,66 @@ type RegExp struct {
 // 结果也是 jsjson 的值，可以直接用 jsjson.Marshal 输出（NaN、Infinity 输出为 null，与 JSON.stringify 相同）。
 // 返回错误相当于原版抛出异常（例如 @dataImage 在 Node 里没有 canvas）。
 func Mock(template any) (any, error) {
-	m := &mocker{guid: guid.Add(1)}
+	return MockContext(context.Background(), template)
+}
+
+// MockContext generates data with a resource budget and request cancellation.
+func MockContext(ctx context.Context, template any) (any, error) {
+	return MockWithBudget(template, genbudget.New(ctx))
+}
+
+// MockWithBudget shares an existing budget with a parent Schema generator.
+func MockWithBudget(template any, budget *genbudget.Budget) (any, error) {
+	if err := checkTemplate(template, budget, 0); err != nil {
+		return nil, err
+	}
+	m := &mocker{guid: guid.Add(1), budget: budget}
 	v, err := m.gen(fromJS(template), "", nil)
 	if err != nil {
 		return nil, err
 	}
+	if err := checkTemplate(v, budget, 0); err != nil {
+		return nil, err
+	}
 	return toJS(v), nil
+}
+
+// ValidateContext checks a template before recursive preprocessing.
+func ValidateContext(ctx context.Context, v any) error {
+	return checkTemplate(v, genbudget.New(ctx), 0)
+}
+
+func checkTemplate(v any, b *genbudget.Budget, depth int) error {
+	if !b.Step(depth) {
+		return b.Err()
+	}
+	switch x := v.(type) {
+	case *rArray:
+		for _, value := range x.items {
+			if err := checkTemplate(value, b, depth+1); err != nil {
+				return err
+			}
+		}
+	case *jsjson.Object:
+		for _, k := range x.Keys() {
+			if !b.Size(len(k)) {
+				return b.Err()
+			}
+			value, _ := x.Get(k)
+			if err := checkTemplate(value, b, depth+1); err != nil {
+				return err
+			}
+		}
+	case []any:
+		for _, value := range x {
+			if err := checkTemplate(value, b, depth+1); err != nil {
+				return err
+			}
+		}
+	case string:
+		b.Size(len(x))
+	}
+	return b.Err()
 }
 
 // guid 对应 Mock.js 的 Constant.GUID：每次生成从新的编号开始，@order 按它区分不同的模板。

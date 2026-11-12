@@ -2,12 +2,34 @@ package api
 
 import (
 	"context"
+	"errors"
+	"io"
+	"log/slog"
 	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/PandaPanY/apiyard/internal/yapitoken"
 )
+
+func TestAuthenticateMCPProjectTokens(t *testing.T) {
+	e := newOpenEnv(t)
+	a := New(e.env.st, Options{}, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	p := e.admin.call("GET", "/api/project/token?project_id="+q(e.pid), nil)["data"].(string)
+	qtok := e.admin.call("GET", "/api/project/token?project_id="+q(e.qid), nil)["data"].(string)
+	ids, err := a.AuthenticateMCP(context.Background(), " "+p+", "+qtok+" ")
+	if err != nil {
+		t.Fatalf("多个有效 token 应通过认证: %v", err)
+	}
+	if len(ids) != 2 || ids[0] != int64(e.pid) || ids[1] != int64(e.qid) {
+		t.Fatalf("项目 ID = %v，期望 [%d %d]", ids, int64(e.pid), int64(e.qid))
+	}
+	for _, tokens := range []string{"", e.rawP + ",invalid", e.rawP + ","} {
+		if _, err := a.AuthenticateMCP(context.Background(), tokens); !errors.Is(err, errInvalidToken) {
+			t.Errorf("tokens %q 的错误 = %v，期望 errInvalidToken", tokens, err)
+		}
+	}
+}
 
 // openEnv 在 interfaceEnv 的基础上准备第二个私有项目 Q（含一个接口），并给两个项目设置已知的原始 token。
 type openEnv struct {
@@ -67,7 +89,7 @@ func TestTokenCannotLeaveItsProject(t *testing.T) {
 	if pid := r["data"].(map[string]any)["project_id"]; pid != e.pid {
 		t.Errorf("project_id 应被 token 覆盖为 P, 实际 %v", pid)
 	}
-	expectCode(t, e.anon.call("POST", "/api/project/up?token="+tok, map[string]any{"id": e.pid, "desc": "管理员可以改"}), 0)
+	expectCode(t, e.anon.call("POST", "/api/project/up?token="+tok, map[string]any{"id": e.pid, "desc": "legacy uid cannot grant admin"}), 405)
 }
 
 func TestForgedAndInvalidTokens(t *testing.T) {
@@ -94,8 +116,8 @@ func TestForgedAndInvalidTokens(t *testing.T) {
 
 func TestLegacyRawToken(t *testing.T) {
 	e := newOpenEnv(t)
-	// 旧格式 token 代表 system 普通会员：与 YApi 一样，看不了私有项目，但可以写接口（写操作不检查角色）
-	expectCode(t, e.anon.call("GET", "/api/interface/list_menu?token="+e.rawP, nil), 406)
+	// Legacy tokens are scoped integration capabilities; embedded uid is ignored.
+	expectCode(t, e.anon.call("GET", "/api/interface/list_menu?token="+e.rawP, nil), 0)
 	r := e.anon.call("POST", "/api/interface/add?token="+e.rawP, map[string]any{"catid": e.cat, "title": "旧 token", "path": "/legacy", "method": "GET"})
 	expectCode(t, r, 0)
 	if uid := r["data"].(map[string]any)["uid"]; uid != float64(legacyTokenUID) {

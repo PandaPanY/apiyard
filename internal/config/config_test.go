@@ -54,3 +54,20 @@ func TestLoadUnknownFlag(t *testing.T) {
 		t.Fatal("未知参数应当返回错误")
 	}
 }
+
+func TestLoadMCPMode(t *testing.T) {
+	t.Setenv("APIYARD_MCP", "")
+	cfg, err := Load(nil)
+	if err != nil || cfg.MCPMode != "off" {
+		t.Fatalf("默认 MCP 模式 = %q, err = %v，期望 off", cfg.MCPMode, err)
+	}
+	for _, mode := range []string{"on", "readonly", "off"} {
+		cfg, err = Load([]string{"-mcp", mode})
+		if err != nil || cfg.MCPMode != mode {
+			t.Errorf("MCP 模式 = %q, err = %v，期望 %q", cfg.MCPMode, err, mode)
+		}
+	}
+	if _, err := Load([]string{"-mcp", "invalid"}); err == nil {
+		t.Fatal("无效 MCP 模式应返回错误")
+	}
+}

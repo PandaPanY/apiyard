@@ -3,6 +3,7 @@ package config
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"strconv"
 )
@@ -20,6 +21,7 @@ type Config struct {
 	CloseRegister bool   // 关闭用户注册
 	TokenSalt     string // 开放 API token 的加密口令，对应 YApi 配置文件里的 passsalt
 	YAPIUpstream  string // 开发用：把全部 /api、/mock 请求转发到这个原版 YApi，为空则不转发
+	MCPMode       string // MCP 服务模式：on、readonly、off
 
 	Version string // ApiYard 版本号，不是命令行参数，由 main 在 Load 之后填写
 }
@@ -41,8 +43,13 @@ func Load(args []string) (Config, error) {
 	fs.BoolVar(&cfg.CloseRegister, "close-register", envBool("APIYARD_CLOSE_REGISTER"), "关闭用户注册（环境变量 APIYARD_CLOSE_REGISTER）")
 	fs.StringVar(&cfg.YAPIUpstream, "yapi-upstream", envOr("APIYARD_YAPI_UPSTREAM", ""),
 		"开发用：把全部 /api、/mock 请求转发到原版 YApi，如 http://localhost:13000（环境变量 APIYARD_YAPI_UPSTREAM）")
+	fs.StringVar(&cfg.MCPMode, "mcp", envOr("APIYARD_MCP", "off"),
+		"MCP 服务模式：on、readonly 或 off（环境变量 APIYARD_MCP）")
 	if err := fs.Parse(args); err != nil {
 		return Config{}, err
+	}
+	if cfg.MCPMode != "on" && cfg.MCPMode != "readonly" && cfg.MCPMode != "off" {
+		return Config{}, fmt.Errorf("无效的 MCP 模式 %q：应为 on、readonly 或 off", cfg.MCPMode)
 	}
 	return cfg, nil
 }

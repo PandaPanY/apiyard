@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"regexp"
 	"slices"
 	"strings"
@@ -54,13 +55,23 @@ type check func(ctx context.Context, st *store.Store) (string, error)
 // 返回的报告列出各集合的数量和跳过、修正的记录。
 func Run(ctx context.Context, src Source, opt Options) (*Report, error) {
 	start := time.Now()
+	lock, err := os.OpenFile(opt.Target+".migrate.lock", os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+	if err != nil {
+		return nil, fmt.Errorf("无法锁定迁移目标（确认没有其他迁移正在运行）: %w", err)
+	}
+	_ = lock.Close()
+	defer func() { _ = os.Remove(opt.Target + ".migrate.lock") }()
 	if !opt.DryRun && !opt.Overwrite {
 		if _, err := os.Stat(opt.Target); err == nil {
 			return nil, fmt.Errorf("目标数据库 %s 已存在；要用迁移的数据替换它，请加 -overwrite", opt.Target)
 		}
 	}
-	tmp := opt.Target + ".migrating"
-	if err := removeDB(tmp); err != nil {
+	f, err := os.CreateTemp(filepath.Dir(opt.Target), filepath.Base(opt.Target)+".migrating-*")
+	if err != nil {
+		return nil, err
+	}
+	tmp := f.Name()
+	if err := f.Close(); err != nil {
 		return nil, err
 	}
 	defer func() { _ = removeDB(tmp) }() // 成功时临时文件已改名，这里什么也不做
@@ -87,10 +98,55 @@ func Run(ctx context.Context, src Source, opt Options) (*Report, error) {
 	if opt.DryRun {
 		return m.rep, nil
 	}
-	if err := removeDB(opt.Target); err != nil {
-		return m.rep, err
+	return m.rep, installDatabase(tmp, opt.Target, opt.Overwrite, opt.Progress, os.Rename)
+}
+
+// installDatabase never deletes the destination before installing the verified
+// database. A durable copy is retained before replacing an existing database.
+func installDatabase(tmp, target string, overwrite bool, progress io.Writer, rename func(string, string) error) error {
+	for _, suffix := range []string{"-wal", "-shm", "-journal"} {
+		if _, err := os.Stat(target + suffix); err == nil {
+			return fmt.Errorf("目标数据库存在 %s；请停止服务并完成 checkpoint 后重试", suffix)
+		} else if !errors.Is(err, os.ErrNotExist) {
+			return err
+		}
 	}
-	return m.rep, os.Rename(tmp, opt.Target)
+	if !overwrite {
+		return os.Link(tmp, target)
+	} // atomic no-replace installation
+	old, err := os.Open(target) // #nosec G304 -- target is the operator-selected CLI database path
+	if errors.Is(err, os.ErrNotExist) {
+		return os.Link(tmp, target)
+	}
+	if err != nil {
+		return err
+	}
+	defer func() { _ = old.Close() }()
+	backup, err := os.CreateTemp(filepath.Dir(target), filepath.Base(target)+".before-migrate-*")
+	if err != nil {
+		return err
+	}
+	_, copyErr := io.Copy(backup, old)
+	if copyErr == nil {
+		copyErr = backup.Sync()
+	}
+	closeErr := backup.Close()
+	if copyErr == nil {
+		copyErr = closeErr
+	}
+	if copyErr != nil {
+		return fmt.Errorf("备份旧库失败，原库保留: %w", copyErr)
+	}
+	if progress != nil {
+		_, _ = fmt.Fprintf(progress, "旧库备份：%s\n", backup.Name())
+	}
+	if err := old.Close(); err != nil {
+		return err
+	}
+	if err := rename(tmp, target); err != nil {
+		return fmt.Errorf("替换数据库失败；旧库备份保留在 %s: %w", backup.Name(), err)
+	}
+	return nil
 }
 
 // removeDB 删除 SQLite 数据库文件及其 WAL 文件，文件不存在不算错误。

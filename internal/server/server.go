@@ -14,6 +14,7 @@ import (
 
 	"github.com/PandaPanY/apiyard/internal/api"
 	"github.com/PandaPanY/apiyard/internal/config"
+	"github.com/PandaPanY/apiyard/internal/mcp"
 	"github.com/PandaPanY/apiyard/internal/mock"
 	"github.com/PandaPanY/apiyard/internal/store"
 	"github.com/PandaPanY/apiyard/internal/web"
@@ -38,8 +39,12 @@ func New(cfg config.Config, st *store.Store, logger *slog.Logger) (http.Handler,
 	}
 
 	if cfg.YAPIUpstream == "" {
-		api.New(st, api.Options{CloseRegister: cfg.CloseRegister, TokenSalt: cfg.TokenSalt, WebFS: webFS}, logger).Register(mux)
+		apiServer := api.New(st, api.Options{CloseRegister: cfg.CloseRegister, TokenSalt: cfg.TokenSalt, WebFS: webFS}, logger)
+		apiServer.Register(mux)
 		mux.Handle("/mock/", mock.New(st, logger))
+		mcpHandler := mcp.New(apiServer, cfg.MCPMode, cfg.Version)
+		mux.Handle("/mcp", mcpHandler)
+		mux.Handle("/mcp/", mcpHandler)
 		return mux, nil
 	}
 

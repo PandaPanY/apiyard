@@ -1,5 +1,7 @@
 # 从 YApi 迁移
 
+安全修复后的旧 token 权限、覆盖备份和异常恢复流程见 [安全修复与升级说明](security-hardening.md)。
+
 `apiyard migrate` 把 YApi 的数据从 MongoDB 读出来，写进 ApiYard 的 SQLite 数据库。所有 ID 原样保留，所以迁移后：
 
 - 原来的账号密码可以直接登录（密码哈希算法与 YApi 相同）；

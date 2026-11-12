@@ -281,6 +281,9 @@ func (a *API) projectGet(c *call) error {
 	if !ok {
 		id, _ = c.int("project_id") // 通过开放 API token 访问时用 project_id
 	}
+	if scope, ok := tokenScope(ctx); ok && scope != id {
+		return c.fail(406, "没有权限")
+	}
 	p, err := a.store.ProjectByID(ctx, id)
 	if err != nil {
 		return err // YApi 在项目不存在时同样会抛异常
@@ -597,17 +600,18 @@ func (a *API) projectToken(c *call) error {
 	} else if !ok {
 		return c.fail(405, "没有权限")
 	}
-	raw, err := a.store.ProjectToken(ctx, id)
+	_, err := a.store.ProjectToken(ctx, id)
 	if errors.Is(err, store.ErrNotFound) {
-		if raw, err = newRawToken(); err != nil {
-			return err
+		raw, createErr := newRawToken()
+		if createErr != nil {
+			return createErr
 		}
 		err = a.store.SetProjectToken(ctx, id, raw)
 	}
 	if err != nil {
 		return err
 	}
-	token, err := yapitoken.Encode(strconv.FormatInt(c.user.ID, 10), raw, a.tokenSalt())
+	token, err := a.store.IssueProjectCredential(ctx, id, c.user.ID)
 	if err != nil {
 		return err
 	}
@@ -636,7 +640,7 @@ func (a *API) projectUpdateToken(c *call) error {
 	if err := a.store.SetProjectToken(ctx, id, raw); err != nil {
 		return err
 	}
-	token, err := yapitoken.Encode(strconv.FormatInt(c.user.ID, 10), raw, a.tokenSalt())
+	token, err := a.store.IssueProjectCredential(ctx, id, c.user.ID)
 	if err != nil {
 		return err
 	}

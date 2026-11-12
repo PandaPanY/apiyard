@@ -6,13 +6,15 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/PandaPanY/apiyard/internal/genbudget"
 	"github.com/PandaPanY/apiyard/internal/jsjson"
 )
 
 // mocker 保存一次 Mock 调用的状态。
 type mocker struct {
-	guid  int64
-	order map[string]*orderCache // @order 的游标，按模板路径区分
+	budget *genbudget.Budget
+	guid   int64
+	order  map[string]*orderCache // @order 的游标，按模板路径区分
 }
 
 // stack 是共享的访问路径，与原版一样在递归时 push / pop。
@@ -40,7 +42,23 @@ type options struct {
 }
 
 // gen 对应 Handler.gen：按模板的类型生成数据。
-func (m *mocker) gen(template any, name string, in *genContext) (any, error) {
+func (m *mocker) gen(template any, name string, in *genContext) (result any, err error) {
+	depth := 0
+	if in != nil && in.path != nil {
+		depth = len(in.path.items)
+	}
+	if !m.budget.Step(depth) {
+		return nil, m.budget.Err()
+	}
+	defer func() {
+		if text, ok := result.(string); ok {
+			m.budget.Size(len(text))
+		}
+		if e := m.budget.Err(); e != nil {
+			result = nil
+			err = e
+		}
+	}()
 	if in == nil {
 		in = &genContext{}
 	}
@@ -64,6 +82,17 @@ func (m *mocker) gen(template any, name string, in *genContext) (any, error) {
 		}
 	}
 	o := &options{template: template, name: name, rule: parseRule(name), ctx: &c}
+	if o.rule.dcount != nil && *o.rule.dcount > genbudget.MaxLength {
+		return nil, genbudget.ErrLimit
+	}
+	if o.rule.count != nil && (jsType(template) == "array" || jsType(template) == "string" || jsType(template) == "regexp") {
+		if *o.rule.count > genbudget.MaxLength {
+			return nil, genbudget.ErrLimit
+		}
+		if text, ok := template.(string); ok && *o.rule.count > 0 && float64(len(text))**o.rule.count > genbudget.MaxBytes {
+			return nil, genbudget.ErrLimit
+		}
+	}
 	switch jsType(template) {
 	case "array":
 		return m.array(o)
@@ -290,6 +319,9 @@ func (m *mocker) string(o *options) (any, error) {
 	}
 	placeholders := rePlaceholder.FindAllString(result, -1)
 	for i := 0; i < len(placeholders); i++ {
+		if !m.budget.Size(len(result)) {
+			return nil, m.budget.Err()
+		}
 		ph := placeholders[i]
 		if strings.HasPrefix(ph, `\`) { // 前面有反斜杠转义，不解析
 			placeholders = append(placeholders[:i], placeholders[i+1:]...)
@@ -305,12 +337,21 @@ func (m *mocker) string(o *options) (any, error) {
 			return phed, nil
 		}
 		result = jsReplace(result, ph, jsString(phed))
+		if len(result) > genbudget.MaxBytes || m.budget.Err() != nil {
+			return nil, genbudget.ErrLimit
+		}
 	}
 	return result, nil
 }
 
 func (m *mocker) regexp(o *options) (any, error) {
 	tpl := o.template.(RegExp)
+	if len(tpl.Source) > genbudget.MaxBytes {
+		return nil, genbudget.ErrLimit
+	}
+	if o.rule.count != nil && float64(len(tpl.Source))**o.rule.count > genbudget.MaxBytes {
+		return nil, genbudget.ErrLimit
+	}
 	source := ""
 	if o.rule.count == nil {
 		source += tpl.Source
@@ -319,11 +360,14 @@ func (m *mocker) regexp(o *options) (any, error) {
 			source += tpl.Source
 		}
 	}
-	return genRegexp(source), nil
+	return genRegexpWithBudget(source, m.budget)
 }
 
 // placeholder 计算一个占位符。obj 是正在生成的对象（优先引用里面已经生成的属性），templateContext 是对应的模板。
 func (m *mocker) placeholder(ph string, obj, templateContext any, o *options) (any, error) {
+	if !m.budget.Step(len(o.ctx.path.items)) {
+		return nil, m.budget.Err()
+	}
 	parts := rePlaceholder.FindStringSubmatchIndex(ph)
 	if parts == nil {
 		return ph, nil

@@ -26,8 +26,7 @@ type importEnv struct {
 func newImportEnv(t *testing.T) *importEnv {
 	t.Helper()
 	e := &importEnv{openEnv: newOpenEnv(t)}
-	adminUID := e.admin.call("GET", "/api/user/status", nil)["data"].(map[string]any)["_id"]
-	e.tok = tokenFor(t, adminUID, e.rawP)
+	e.tok = e.admin.call("GET", "/api/project/token?project_id="+q(e.pid), nil)["data"].(string)
 	expectCode(t, e.admin.call("POST", "/api/interface/add_cat", map[string]any{"name": "pet", "project_id": e.pid, "desc": "已有的宠物分类"}), 0)
 	return e
 }

@@ -3,20 +3,22 @@ package mockjs
 import (
 	"regexp/syntax"
 	"strings"
+
+	"github.com/PandaPanY/apiyard/internal/genbudget"
 )
 
 // genRegexp 生成一个与正则匹配的随机字符串，规则与 Mock.js 的 RegExp Handler 相同：
 // 没有上限的量词（*、+、{n,}）重复 min 到 min+3~7 次，字符集里随机取一项，. 取任意可打印字符，
 // 取反的字符集只在可打印 ASCII 字符里取，^ $ \b 这类断言不生成字符。
 // 正则用 Go 的语法解析，Go 不支持的写法（反向引用、先行断言）原样返回模式文本。
-func genRegexp(source string) string {
+func genRegexpWithBudget(source string, budget *genbudget.Budget) (string, error) {
 	re, err := syntax.Parse(source, syntax.Perl)
 	if err != nil {
-		return source
+		return source, nil
 	}
 	var b strings.Builder
-	genNode(re, &b)
-	return b.String()
+	genNode(re, &b, budget)
+	return b.String(), budget.Err()
 }
 
 const printable = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
@@ -30,7 +32,11 @@ func repeatCount(minCount, maxCount int) int {
 	return int(randomInteger(lo, hi))
 }
 
-func genNode(re *syntax.Regexp, b *strings.Builder) {
+func genNode(re *syntax.Regexp, b *strings.Builder, budget *genbudget.Budget) {
+	if !budget.Step(0) || b.Len() > genbudget.MaxBytes {
+		budget.Fail()
+		return
+	}
 	switch re.Op {
 	case syntax.OpLiteral:
 		b.WriteString(string(re.Rune))
@@ -39,24 +45,24 @@ func genNode(re *syntax.Regexp, b *strings.Builder) {
 	case syntax.OpAnyChar, syntax.OpAnyCharNotNL:
 		b.WriteString(randomCharacter(undefined))
 	case syntax.OpCapture:
-		genNode(re.Sub[0], b)
+		genNode(re.Sub[0], b, budget)
 	case syntax.OpStar:
-		repeatNode(re.Sub[0], repeatCount(0, -1), b)
+		repeatNode(re.Sub[0], repeatCount(0, -1), b, budget)
 	case syntax.OpPlus:
-		repeatNode(re.Sub[0], repeatCount(1, -1), b)
+		repeatNode(re.Sub[0], repeatCount(1, -1), b, budget)
 	case syntax.OpQuest:
-		repeatNode(re.Sub[0], repeatCount(0, 1), b)
+		repeatNode(re.Sub[0], repeatCount(0, 1), b, budget)
 	case syntax.OpRepeat:
-		repeatNode(re.Sub[0], repeatCount(re.Min, re.Max), b)
+		repeatNode(re.Sub[0], repeatCount(re.Min, re.Max), b, budget)
 	case syntax.OpConcat:
 		for _, sub := range re.Sub {
-			genNode(sub, b)
+			genNode(sub, b, budget)
 		}
 	case syntax.OpAlternate:
 		// 原版的选择是二叉的（a|b|c 为 a 或 (b|c)），各取一半的概率
 		for i, sub := range re.Sub {
 			if i == len(re.Sub)-1 || random() >= 0.5 {
-				genNode(sub, b)
+				genNode(sub, b, budget)
 				return
 			}
 		}
@@ -64,9 +70,12 @@ func genNode(re *syntax.Regexp, b *strings.Builder) {
 	// 其余是 ^ $ \b 等断言和空匹配，不生成字符
 }
 
-func repeatNode(re *syntax.Regexp, n int, b *strings.Builder) {
+func repeatNode(re *syntax.Regexp, n int, b *strings.Builder, budget *genbudget.Budget) {
 	for i := 0; i < n; i++ {
-		genNode(re, b)
+		if budget.Err() != nil {
+			return
+		}
+		genNode(re, b, budget)
 	}
 }
 

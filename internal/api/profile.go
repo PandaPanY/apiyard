@@ -220,6 +220,9 @@ func (a *API) userProject(c *call) error {
 		typ, id = "project", it.ProjectID
 	}
 	if typ == "project" {
+		if denied, err := a.privateDenied(ctx, c.user, id, actionView); err != nil || denied {
+			return c.sendDenied(err)
+		}
 		p, err := a.store.ProjectByID(ctx, id)
 		if errors.Is(err, store.ErrNotFound) {
 			return notFound("Cannot read property 'toObject' of null")
@@ -246,6 +249,19 @@ func (a *API) userProject(c *call) error {
 		}
 		if err != nil {
 			return err
+		}
+		if g.Type == "private" {
+			if ok, err := a.canGroup(ctx, c.user, id, actionView); err != nil {
+				return err
+			} else if !ok {
+				if result["project"] != nil {
+					// A project-only member may navigate the project without
+					// receiving the personal space's member list or settings.
+					result["group"] = map[string]any{"_id": g.ID, "group_name": g.Name, "role": "member"}
+					return c.ok(result)
+				}
+				return c.sendDenied(nil)
+			}
 		}
 		doc, err := a.groupFullDoc(ctx, g)
 		if err != nil {

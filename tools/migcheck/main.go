@@ -125,6 +125,11 @@ func (c *checker) compare(path string) any {
 	if strings.HasPrefix(path, "/api/log/list?") {
 		sortLogs(got.Response)
 	}
+	original := want.Response
+	if err := securityDifferences(path, &want, &got); err != nil {
+		c.fail(path, err.Error())
+		return original
+	}
 	diffs, err := compat.Diff([]compat.Exchange{want}, []compat.Exchange{got})
 	if err != nil {
 		c.fail(path, err.Error())
@@ -133,7 +138,56 @@ func (c *checker) compare(path string) any {
 	} else if c.verbose {
 		fmt.Println("✓", path)
 	}
-	return want.Response
+	return original
+}
+
+// securityDifferences accounts only for documented token identity changes;
+// project data and response errors continue to be compared exactly.
+func securityDifferences(path string, want, got *compat.Exchange) error {
+	if strings.HasPrefix(path, "/api/project/token?") {
+		for _, ex := range []*compat.Exchange{want, got} {
+			m, ok := ex.Response.(map[string]any)
+			if !ok {
+				return errors.New("token response is not JSON")
+			}
+			token, ok := m["data"].(string)
+			if !ok || token == "" {
+				return errors.New("token issuance failed")
+			}
+			if _, err := hex.DecodeString(token); err != nil {
+				return fmt.Errorf("token format: %w", err)
+			}
+			cloned := make(map[string]any, len(m))
+			for k, v := range m {
+				cloned[k] = v
+			}
+			cloned["data"] = "<token>"
+			ex.Response = cloned
+		}
+	}
+	if strings.HasPrefix(path, "/api/project/get?token=") {
+		wm, _ := want.Response.(map[string]any)
+		gm, _ := got.Response.(map[string]any)
+		wd, _ := wm["data"].(map[string]any)
+		gd, _ := gm["data"].(map[string]any)
+		if wd != nil && gd != nil {
+			if gd["role"] != false {
+				return errors.New("legacy token unexpectedly retained a user role")
+			}
+			data := make(map[string]any, len(wd))
+			for k, v := range wd {
+				data[k] = v
+			}
+			data["role"] = false
+			cloned := make(map[string]any, len(wm))
+			for k, v := range wm {
+				cloned[k] = v
+			}
+			cloned["data"] = data
+			want.Response = cloned
+		}
+	}
+	return nil
 }
 
 func (c *checker) fail(path, msg string) {
@@ -249,7 +303,8 @@ func (c *checker) project(pid string) {
 	c.compare("/api/interface/list?page=1&limit=10000&" + q)
 }
 
-// yapiToken 读取 YApi 生成的项目 token，并对比两边是否相同。
+// yapiToken reads the original legacy token; ApiYard now issues independent
+// random credentials, so issuance responses are compared by format, not value.
 func (c *checker) yapiToken(pid string) (string, error) {
 	r, ok := c.compare("/api/project/token?project_id=" + pid).(map[string]any)
 	if !ok {

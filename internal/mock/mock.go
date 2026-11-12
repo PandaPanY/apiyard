@@ -20,6 +20,7 @@ import (
 	"strings"
 	"unicode/utf16"
 
+	"github.com/PandaPanY/apiyard/internal/genbudget"
 	"github.com/PandaPanY/apiyard/internal/jsjson"
 	"github.com/PandaPanY/apiyard/internal/mockjs"
 	"github.com/PandaPanY/apiyard/internal/schemafake"
@@ -44,6 +45,12 @@ type errResponse struct {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	release, ok := genbudget.Acquire(r.Context())
+	if !ok {
+		http.Error(w, "Mock generation busy", http.StatusTooManyRequests)
+		return
+	}
+	defer release()
 	// Mock 返回的是项目成员写的任意内容，又与界面同源：直接在浏览器里打开时，sandbox 把页面隔离成独立的源，
 	// 里面的脚本拿不到界面的登录状态（原版没有这层保护）。fetch、XHR 等调用不受影响
 	w.Header().Set("Content-Security-Policy", "sandbox")
@@ -150,7 +157,7 @@ func (h *Handler) serve(w http.ResponseWriter, r *http.Request) (*result, *errRe
 	if project.IsMockOpen && project.ProjectMockScript != nil && *project.ProjectMockScript != "" {
 		w.Header().Set("X-ApiYard-Mock-Script", "ignored")
 	}
-	value, e := h.mockData(it, req)
+	value, e := h.mockDataContext(ctx, it, req)
 	if e != nil {
 		return nil, e
 	}
@@ -229,7 +236,7 @@ func (h *Handler) findInterface(ctx context.Context, projectID int64, path strin
 }
 
 // mockData 生成 Mock 数据，对应原版“mock 返回值处理”一段。
-func (h *Handler) mockData(it *store.Interface, req *request) (any, *errResponse) {
+func (h *Handler) mockDataContext(ctx context.Context, it *store.Interface, req *request) (any, *errResponse) {
 	if it.ResBody == nil {
 		return nil, nil
 	}
@@ -237,8 +244,12 @@ func (h *Handler) mockData(it *store.Interface, req *request) (any, *errResponse
 		return *it.ResBody, nil // 其他类型原样返回
 	}
 	var res any
+	template := parseJSON5(*it.ResBody)
+	if err := mockjs.ValidateContext(ctx, template); err != nil {
+		return nil, &errResponse{400, err.Error()}
+	}
 	if it.ResBodyIsJSONSchema {
-		res = schemaToJSON(parseJSON5(*it.ResBody))
+		res = schemaToJSONContext(ctx, template)
 	} else {
 		body := req.body
 		if req.multipart { // 原版把 multipart 请求体换成其中的 fields
@@ -246,14 +257,17 @@ func (h *Handler) mockData(it *store.Interface, req *request) (any, *errResponse
 		}
 		vars := jsjson.NewObject("query", req.query, "body", body, "params", assignParams(req.query, body))
 		var err error
-		if res, err = mockjs.Extra(parseJSON5(*it.ResBody), vars); err != nil {
+		if res, err = mockjs.Extra(template, vars); err != nil {
 			return nil, &errResponse{400, "解析出错，请检查。Error: " + err.Error()}
 		}
 	}
 	// Mock.js 出错时原版只记日志，返回处理前的数据
-	if v, err := mockjs.Mock(res); err == nil {
+	if v, err := mockjs.MockContext(ctx, res); err == nil {
 		res = v
 	} else {
+		if errors.Is(err, genbudget.ErrLimit) || ctx.Err() != nil {
+			return nil, &errResponse{400, err.Error()}
+		}
 		h.logger.Info("Mock.js 处理出错，返回原始数据", "interface", it.ID, "err", err)
 	}
 	return res, nil
@@ -269,7 +283,7 @@ func parseJSON5(s string) any {
 }
 
 // schemaToJSON 对应原版的 schemaToJson（json-schema-faker，非必填字段也生成）；出错时与原版一样返回错误信息。
-func schemaToJSON(schema any) any {
+func schemaToJSONContext(ctx context.Context, schema any) any {
 	data, err := jsjson.Marshal(schema, "")
 	if err != nil {
 		return err.Error()
@@ -278,7 +292,7 @@ func schemaToJSON(schema any) any {
 	if err := json.Unmarshal(data, &plain); err != nil {
 		return err.Error()
 	}
-	v, err := schemafake.Generate(plain, schemafake.Options{AlwaysFakeOptionals: true})
+	v, err := schemafake.GenerateContext(ctx, plain, schemafake.Options{AlwaysFakeOptionals: true})
 	if err != nil {
 		return err.Error()
 	}

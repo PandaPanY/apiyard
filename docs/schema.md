@@ -1,7 +1,11 @@
 # 数据库表结构
 
-> 状态：M0.5 草案（2026-11-04），已用 SQLite 3.53 校验。M1 落地时作为第一个迁移执行。
-> DDL：[`internal/store/migrations/0001_init.sql`](../internal/store/migrations/0001_init.sql)
+> 状态：已落地。启动时按 `PRAGMA user_version` 执行尚未应用的迁移。
+> DDL：[初始表结构](../internal/store/migrations/0001_init.sql)、[项目凭据](../internal/store/migrations/0002_project_credentials.sql)。
+
+## ApiYard 项目凭据
+
+`project_credentials` 是安全修复增加的原生表，不对应 YApi 集合。`(project_id, uid)` 为主键，`credential` 是唯一的 32 字节随机 token（十六进制保存）。凭据绑定签发用户，重启后保持不变；删除用户或项目会级联删除，重置项目 token 会在同一事务内删除该项目全部凭据。迁移来的原始项目 token 继续保存在 `tokens`，只按受限项目能力解释，详见 [安全修复与升级说明](security-hardening.md)。
 
 ## 集合与表的对应
 

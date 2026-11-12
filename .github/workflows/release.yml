@@ -10,7 +10,21 @@ permissions:
   contents: read
 
 jobs:
+  validate:
+    name: 发布验证
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.27"
+      - run: go run ./tools/fetch-yapi-web
+      - run: go vet ./...
+      - run: go test -race ./...
+      - run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+
   binaries:
+    needs: validate
     name: 可执行文件
     runs-on: ubuntu-latest
     permissions:
@@ -26,6 +40,10 @@ jobs:
         run: go test ./...
       - name: 编译并打包六个平台
         run: go run ./tools/dist -version "$GITHUB_REF_NAME"
+      - name: 保存依赖清单
+        run: |
+          go list -m -json all > dist/modules.json
+          sha256sum dist/modules.json >> dist/checksums.txt
       - name: 创建 Release 草稿
         env:
           GH_TOKEN: ${{ github.token }}
@@ -33,9 +51,10 @@ jobs:
           flags=(--draft --title "$GITHUB_REF_NAME" --generate-notes --verify-tag)
           # 带后缀的版本（如 v0.1.0-rc.1）标为预发布
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then flags+=(--prerelease); fi
-          gh release create "$GITHUB_REF_NAME" "${flags[@]}" dist/*.tar.gz dist/*.zip dist/checksums.txt
+          gh release create "$GITHUB_REF_NAME" "${flags[@]}" dist/*.tar.gz dist/*.zip dist/checksums.txt dist/modules.json
 
   image:
+    needs: validate
     name: Docker 镜像
     runs-on: ubuntu-latest
     permissions:

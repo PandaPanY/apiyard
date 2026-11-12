@@ -4,6 +4,7 @@
 package schemafake
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"math"
@@ -11,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/PandaPanY/apiyard/internal/genbudget"
 	"github.com/PandaPanY/apiyard/internal/mockjs"
 )
 
@@ -28,19 +30,56 @@ const maxDepth = 20
 
 // Generate 按 schema 生成一个示例值。
 func Generate(schema any, opts Options) (any, error) {
+	return GenerateContext(context.Background(), schema, opts)
+}
+
+// GenerateContext generates data with bounded resources and cancellation.
+func GenerateContext(ctx context.Context, schema any, opts Options) (any, error) {
 	root, ok := schema.(map[string]any)
 	if !ok {
 		return nil, ErrInvalidSchema
 	}
-	g := &generator{root: root, opts: opts}
+	g := &generator{root: root, opts: opts, budget: genbudget.New(ctx)}
 	v := g.value(root, 0)
+	g.account(v, 0)
+	if err := g.budget.Err(); err != nil {
+		return nil, err
+	}
 	return v, g.err
 }
 
+func (g *generator) account(v any, depth int) {
+	if !g.budget.Step(depth) {
+		return
+	}
+	switch x := v.(type) {
+	case string:
+		g.budget.Size(len(x))
+	case map[string]any:
+		for k, val := range x {
+			if !g.budget.Size(len(k)) {
+				return
+			}
+			g.account(val, depth+1)
+			if g.budget.Err() != nil {
+				return
+			}
+		}
+	case []any:
+		for _, val := range x {
+			g.account(val, depth+1)
+			if g.budget.Err() != nil {
+				return
+			}
+		}
+	}
+}
+
 type generator struct {
-	root map[string]any
-	opts Options
-	err  error // Mock 规则出错（与原版一样，整个生成失败）
+	budget *genbudget.Budget
+	root   map[string]any
+	opts   Options
+	err    error // Mock 规则出错（与原版一样，整个生成失败）
 }
 
 // #nosec G404 -- 示例数据不需要密码学安全的随机数
@@ -51,7 +90,15 @@ func randInt(lo, hi int64) int64 {
 	return lo + rand.Int64N(hi-lo+1)
 }
 
-func (g *generator) value(s map[string]any, depth int) any {
+func (g *generator) value(s map[string]any, depth int) (result any) {
+	if !g.budget.Step(depth) {
+		return nil
+	}
+	defer func() {
+		if s, ok := result.(string); ok {
+			g.budget.Size(len(s))
+		}
+	}()
 	if depth > maxDepth {
 		return nil
 	}
@@ -76,7 +123,7 @@ func (g *generator) value(s map[string]any, depth int) any {
 	// 值是 Mock.mock(规则) 的结果（不按 type 转换，例如 @integer 得到数字）
 	if m, ok := s["mock"].(map[string]any); ok {
 		if text, ok := m["mock"].(string); ok && text != "" {
-			v, err := mockjs.Mock(text)
+			v, err := mockjs.MockWithBudget(text, g.budget)
 			if err != nil {
 				g.err = err
 				return nil
@@ -91,6 +138,12 @@ func (g *generator) value(s map[string]any, depth int) any {
 	case "array":
 		return g.array(s, depth)
 	case "string":
+		for _, key := range []string{"minLength", "maxLength"} {
+			if n, ok := intOf(s[key]); ok && (n < 0 || n > genbudget.MaxLength) {
+				g.budget.Fail()
+				return nil
+			}
+		}
 		return fakeString(s)
 	case "integer":
 		return fakeInteger(s)
@@ -210,6 +263,10 @@ func (g *generator) object(s map[string]any, depth int) map[string]any {
 func (g *generator) array(s map[string]any, depth int) []any {
 	lo, hasMin := intOf(s["minItems"])
 	hi, hasMax := intOf(s["maxItems"])
+	if lo < 0 || hi < 0 || lo > genbudget.MaxLength || hi > genbudget.MaxLength {
+		g.budget.Fail()
+		return nil
+	}
 	switch {
 	case !hasMin && !hasMax:
 		lo, hi = 1, 3
@@ -220,6 +277,10 @@ func (g *generator) array(s map[string]any, depth int) []any {
 	}
 	// 元组形式：items 是数组时按位置生成
 	if tuple, ok := s["items"].([]any); ok {
+		if len(tuple) > genbudget.MaxLength {
+			g.budget.Fail()
+			return nil
+		}
 		out := make([]any, 0, len(tuple))
 		for _, item := range tuple {
 			if m, ok := item.(map[string]any); ok {
@@ -230,9 +291,19 @@ func (g *generator) array(s map[string]any, depth int) []any {
 	}
 	items, _ := s["items"].(map[string]any)
 	n := randInt(lo, hi)
+	if n < 0 || n > genbudget.MaxLength {
+		g.budget.Fail()
+		return nil
+	}
 	out := make([]any, 0, n)
 	for range n {
+		if g.budget.Err() != nil {
+			return nil
+		}
 		if items == nil {
+			if !g.budget.Step(depth + 1) {
+				return nil
+			}
 			out = append(out, nil)
 			continue
 		}

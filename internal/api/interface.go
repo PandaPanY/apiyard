@@ -434,6 +434,9 @@ func (a *API) interfaceGet(c *call) error {
 
 // privateDenied 判断私有项目是否拒绝当前用户执行 action；项目不存在时不拒绝（交给调用方处理）。
 func (a *API) privateDenied(ctx context.Context, u *store.User, projectID int64, action string) (bool, error) {
+	if scope, ok := tokenScope(ctx); ok && scope != projectID {
+		return true, nil
+	}
 	p, err := a.store.ProjectByID(ctx, projectID)
 	if errors.Is(err, store.ErrNotFound) {
 		return false, nil

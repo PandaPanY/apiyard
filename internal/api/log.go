@@ -58,15 +58,29 @@ func (a *API) logList(c *call) error {
 		if err != nil {
 			return err
 		}
-		ids := make([]int64, len(projects))
+		ids := make([]int64, 0, len(projects))
 		names := map[int64]string{}
-		for i, p := range projects {
-			ids[i], names[p.ID] = p.ID, p.Name
+		for _, p := range projects {
+			if denied, err := a.privateDenied(ctx, c.user, p.ID, actionView); err != nil {
+				return err
+			} else if denied {
+				continue
+			}
+			ids = append(ids, p.ID)
+			names[p.ID] = p.Name
 		}
-		if logs, err = a.store.ListGroupLogs(ctx, typeID, ids, page, limit); err != nil {
+		// Group events are visible to members; project-only visitors see only
+		// events from projects they can view. Apply filtering before pagination.
+		groupID := int64(-1)
+		if ok, err := a.canGroup(ctx, c.user, typeID, actionView); err != nil {
+			return err
+		} else if ok {
+			groupID = typeID
+		}
+		if logs, err = a.store.ListGroupLogs(ctx, groupID, ids, page, limit); err != nil {
 			return err
 		}
-		if count, err = a.store.CountGroupLogs(ctx, typeID, ids); err != nil {
+		if count, err = a.store.CountGroupLogs(ctx, groupID, ids); err != nil {
 			return err
 		}
 		for _, l := range logs {

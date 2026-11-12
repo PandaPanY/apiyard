@@ -116,6 +116,9 @@ func (a *API) projectRole(ctx context.Context, u *store.User, projectID int64) (
 	if scope, ok := tokenScope(ctx); ok && scope != projectID {
 		return "", nil
 	}
+	if _, ok := tokenScope(ctx); ok && u.ID == legacyTokenUID {
+		return "dev", nil // legacy credentials are project capabilities, never administrators
+	}
 	if u.Role == "admin" {
 		return "admin", nil
 	}
