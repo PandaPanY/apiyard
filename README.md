@@ -37,7 +37,7 @@ ApiYard 用 Go 重新实现 YApi 的核心能力，让这些团队可以低成�
 - [x] M4 数据迁移：一条命令从 YApi 的 MongoDB 迁移，原密码、token、链接和 Mock 地址都继续有效
 - [x] M5 Mock 服务：地址与 YApi 一致，支持 Mock.js 规则和占位符、JSON Schema、请求变量和严格模式，不执行脚本
 - [x] M6 打包发布 v0.1：单文件、Docker 镜像、CI、文档，2026-11-10 发布 [v0.1.0](https://github.com/PandaPanY/apiyard/releases/tag/v0.1.0)
-- [ ] M7 MCP Server（v0.2）
+- [ ] M7 MCP Server（v0.2）：服务端内置 `/mcp`，用项目 token 鉴权，提供查接口、生成 Mock 示例、保存接口、导入导出 OpenAPI 等 9 个工具
 
 **v0.1 发布标准**：完成 M0.5–M6，一个真实的 YApi 实例可以完整迁移过来并正常使用。每个里程碑的任务、验收标准和工时预估见 [`docs/roadmap.md`](docs/roadmap.md)。
 

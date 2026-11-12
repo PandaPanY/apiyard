@@ -25,13 +25,13 @@ internal/jsjson/        按 JS 规则解析和输出 JSON（保持键顺序）�
 internal/migrate/       从 YApi 的 MongoDB 或 mongodump 目录迁移数据     (M4)
 internal/mock/          Mock 服务：地址匹配、请求变量、严格模式的参数校验 (M5)
 internal/mockjs/        Mock.js 的 Go 实现，以及 YApi 对它的扩展          (M5)
-internal/mcp/           MCP Server                                       (M7)
+internal/mcp/           MCP Server（/mcp，工具调用 api 的同一套逻辑）     (M7，计划中)
 web/                    用 embed 把 web/yapi 打进可执行文件                  (M6)
 web/yapi/               预构建前端（由 tools/fetch-yapi-web 下载，不入库，只有占位文件 .gitkeep）
 tools/                  compat（录制 / 比对兼容场景）、migcheck（核对迁移结果）、fetch-yapi-web（下载前端）、dist（交叉编译和打包）
 ```
 
-依赖方向：`server → api/web/mock`，`server → web`（内嵌的前端文件），`api → auth/store/yapitoken/schemafake/openapi/jsjson`，`mock → store/mockjs/schemafake/jsjson`，`schemafake → mockjs → jsjson`，`openapi → jsjson`，`migrate → store/jsjson`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
+依赖方向：`server → api/web/mock/mcp`，`mcp → api`（M7），`server → web`（内嵌的前端文件），`api → auth/store/yapitoken/schemafake/openapi/jsjson`，`mock → store/mockjs/schemafake/jsjson`，`schemafake → mockjs → jsjson`，`openapi → jsjson`，`migrate → store/jsjson`；`store`、`auth` 等底层包互不依赖，也不依赖 HTTP 层。
 
 ## 关键决策
 
@@ -91,6 +91,13 @@ YApi 前端的插件在构建时就编译进了产物，无法在运行时关闭
 界面只用系统字体，不请求外部字体。具体功能的帮助链接（Mock 规则、数据导入、开放 API 等）用法与 YApi 相同，仍指向 YApi 文档；已隐藏功能里的文字不改。每条替换都核对出现次数，与 1.12.0 不一致时整体放弃，按原样返回前端并在日志里警告。
 
 **取舍**：补丁按 DOM 结构和文字匹配，品牌和配色替换按字符串匹配，主题样式按原版的类名覆盖，都依赖前端版本；但预构建前端固定为 1.12.0，不会再变化，所以这种脆弱性是可控的，测试会用打包的真实前端核对每条替换。直接输入地址（如 `/project/1/wiki`）仍能打开对应页面，但后端没有延后的接口（返回 404），页面加载不出数据。
+
+### D7：MCP Server 内置在服务端（M7，计划中）
+
+- 地址 `/mcp`，Streamable HTTP，用官方 Go SDK 以无状态模式运行，同时支持 `2025-11-25` 和 `2026-07-28` 两个协议版本。
+- 鉴权沿用开放 API 的项目 token（`Authorization: Bearer`，多个项目用逗号分隔），权限按 token 所属用户计算，MCP 能做的事不超过开放 API 已经允许的范围。
+- 工具直接调用 `internal/api` 的逻辑，权限、校验、动态记录与界面一致；不提供删除工具，可用 `-mcp off|readonly` 关闭写入或整个服务。
+- 工具清单、任务和验收标准见 [roadmap.md](roadmap.md) 的 M7。
 
 ## 与 YApi 刻意不同的地方
 
