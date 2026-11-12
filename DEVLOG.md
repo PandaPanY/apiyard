@@ -2,6 +2,13 @@
 
 > 按日期倒序记录，最新的在最上面。每条只写要点。
 
+## 2026-11-12 v0.1.1 正式发布
+
+- 发布提交 `bbae602`，主分支 CI 与标签发布工作流全部通过；[GitHub Release](https://github.com/PandaPanY/apiyard/releases/tag/v0.1.1) 已公开。
+- 六平台安装包与模块清单下载后完成 SHA-256 核验；正式 Linux 包在 pan-t5 通过启动、健康检查、内嵌前端、MCP 默认关闭及数据库完整性检查。
+- `ghcr.io/pandapany/apiyard:0.1.1` 已发布，支持 linux/amd64、linux/arm64；版本、源码提交与 `0.1` / `latest` 别名核对通过。
+- 发布说明包含旧 token 权限变化、升级备份及回退步骤；完整记录见 `docs/releases/v0.1.1-validation.md`。
+
 ## 2026-11-12 v0.1.1 发布准备
 
 - 用现有 YApi 数据通过 v0.1.0 迁移到 schema 1，再启动新版升级到 schema 2：4 个项目、59 个接口，79 个读取响应一致，原密码和 4 个旧 token 验证通过，新 token 重启后保持有效。
